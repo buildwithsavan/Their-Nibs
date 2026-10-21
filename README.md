@@ -1,4 +1,4 @@
-# 👑 Their Nibs — Luxury Sleepwear & Loungewear Platform
+# Their Nibs — Luxury Sleepwear & Loungewear Platform
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Django](https://img.shields.io/badge/Django-6.1.1-092E20?style=for-the-badge&logo=django&logoColor=white)](https://www.djangoproject.com/)
@@ -14,7 +14,7 @@
 
 ## 🌟 Key Highlights & Modules
 
-### 🛍️ 1. Customer Boutique Storefront
+### 1. Customer Boutique Storefront
 * **Heritage Brand Experience**: Bespoke serif typography, warm terracotta (`#ba6853`) aesthetic, custom preloader, and boutique catalog presentation.
 * **Responsive Category Browsing**: Curated collections for **Womens**, **Mens**, **Kids & Tweens**, **Gifting**, **Halloween**, and seasonal drops.
 * **Quick Shop / Quick View**: Slide-out modal with dynamic variant/size selection (`XS` to `3XL`), stock alerts, and single-tap cart addition with mobile touch-scroll support.
@@ -26,14 +26,14 @@
 * **5-Stage Order Tracking**: Real-time status tracker (Placed &rarr; Confirmed &rarr; Dispatched &rarr; In Transit &rarr; Delivered) for customer peace of mind.
 * **Customer Account Portal**: Dedicated orders history, saved shipping addresses, profile settings, and persistent interactive wishlist.
 
-### 📦 2. Seller Merchant Hub (`/seller-panel/`)
+### 2. Seller Merchant Hub (`/seller-panel/`)
 * **Merchant Dashboard**: Real-time sales metrics, order volumes, revenue summaries, and quick action cards.
 * **Inventory Replenishment Center**: Automated low-stock categorization (**Critical Stock (1-3 units)**, **Below Threshold**, and **Out of Stock**) to ensure sellers never miss a restock.
 * **Product Catalog Management**: Add, update, and manage nightwear collections with variant sizes, descriptions, and pricing.
 * **Orders & Shipping Feed**: Track pending shipments, mark orders as dispatched, and inspect live customer delivery statuses.
 * **Mobile Seller Experience**: Slide-out drawer navigation with overlay backdrops for managing shop operations on mobile devices.
 
-### 🛡️ 3. Admin Operations Portal (`/admin-panel/`)
+### 3. Admin Operations Portal (`/admin-panel/`)
 * **Store Governance**: Global oversight of catalog products, categories, active sellers, and customer orders.
 * **COD Verification Pipeline**: Review, approve, or reject Cash on Delivery orders with structured rejection logs.
 * **Real-Time Notification Feed**: System notifications for new merchant registrations, inventory shortages, and high-value orders.
@@ -133,12 +133,12 @@ Open your browser and navigate to:
 
 This project was built collaboratively by our dedicated team of 4 software engineers:
 
-| Contributor | GitHub Profile | Primary Contributions |
-| :--- | :--- | :--- |
-| **Savan Bharvadiya** | [@buildwithsavan](https://github.com/buildwithsavan) | **Full-Stack Lead & System Architect**<br>Core Django backend architecture, order fulfillment pipeline, customer auth restrictions, database migration, and security configuration. |
-| **Harsh Mordiya** | [@harshmordiya](https://github.com/harshmordiya) | **Seller Panel & Inventory Specialist**<br>Seller dashboard design, Low Stock Replenishment Center, merchant restock alerts, and order overview sheets. |
-| **Khushi Parmar** | [@parmarkhushi2026-max](https://github.com/parmarkhushi2026-max) | **Frontend & Storefront Engineer**<br>Boutique UI/UX styling, mobile navigation drawer, responsive collection catalogs, and customer wishlist interactions. |
-| **Aastha Prajapati** | [@prajapatiaastha844-png](https://github.com/prajapatiaastha844-png) | **Admin Operations & Checkout Specialist**<br>Admin governance hub, Razorpay payment modal responsiveness, COD verification system, and ReportLab PDF invoicing. |
+| Contributor | GitHub Profile |
+| :--- | :--- |
+| **Savan Bharvadiya** | [@buildwithsavan](https://github.com/buildwithsavan) |
+| **Harsh Mordiya** | [@harshmordiya](https://github.com/harshmordiya) |
+| **Khushi Parmar** | [@parmarkhushi2026-max](https://github.com/parmarkhushi2026-max) |
+| **Aastha Prajapati** | [@prajapatiaastha844-png](https://github.com/prajapatiaastha844-png) |
 
 ---
 
