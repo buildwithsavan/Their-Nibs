@@ -12,7 +12,7 @@
 
 ---
 
-## 🌟 Key Highlights & Modules
+## Key Highlights & Modules
 
 ### 1. Customer Boutique Storefront
 * **Heritage Brand Experience**: Bespoke serif typography, warm terracotta (`#ba6853`) aesthetic, custom preloader, and boutique catalog presentation.
@@ -41,7 +41,7 @@
 
 ---
 
-## 📸 Visual Showcase & Platform Screenshots
+## Visual Showcase & Platform Screenshots
 
 ### 1. Customer Boutique Storefront
 *Immersive British heritage luxury nightwear shopping experience with hand-drawn signature prints and responsive catalog layout.*
@@ -93,7 +93,7 @@
 
 ---
 
-## 🏗️ Architecture & Technology Stack
+## Architecture & Technology Stack
 
 | Component | Technology | Description |
 | :--- | :--- | :--- |
@@ -193,14 +193,14 @@ The pre-seeded SQLite database comes pre-configured with active accounts across 
 | **Verified Merchant / Seller** | [`/seller-panel/`](http://127.0.0.1:8000/seller-panel/) | `seller@gmail.com` | `seller123` | Authorized seller studio, catalog creation, inventory alerts, low-stock replenishment & order management |
 | **Customer Shopper** | [`/`](http://127.0.0.1:8000/) or [`/customer/login/`](http://127.0.0.1:8000/customer/login/) | `user@gmail.com` | `user123` | Boutique purchasing, size selector, interactive wishlist, COD/online checkout & 5-stage order tracking |
 
-> **💡 Quick Tip**: If you ever need to reset or re-seed these default credentials on a fresh clone or new database, simply run:
+> ** Quick Tip**: If you ever need to reset or re-seed these default credentials on a fresh clone or new database, simply run:
 > ```bash
 > python seed_demo_accounts.py
 > ```
 
 ---
 
-## 👥 The Engineering Team & Contributors
+## The Team
 
 This project was built collaboratively by our dedicated team of 4 software engineers:
 
