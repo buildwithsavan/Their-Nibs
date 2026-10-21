@@ -47,10 +47,10 @@
 | :--- | :--- | :--- |
 | **Backend Framework** | **Django 6.1.1 (Python 3.10+)** | Robust Model-View-Template (MVT) architecture with strict session authentication |
 | **Database** | **SQLite (`db.sqlite3`)** | Zero-configuration, portable relational database with 2,800+ seeded luxury products |
-| **Frontend** | **Vanilla HTML5, CSS3 & JavaScript** | High-performance client without heavy front-end framework overhead |
+| **Frontend** | **HTML5, CSS3 & JavaScript** | High-performance client without heavy front-end framework overhead |
 | **PDF Engine** | **ReportLab 5.0+** | Dynamic thermal & A4 invoice generation for confirmed purchases |
 | **Security** | **python-dotenv** | Environment-isolated secrets with zero hardcoded API keys |
-
+| **Payment** | **Razorpay** | Secure online payment processing with Razorpay Checkout, payment verification, and transaction handling |
 ---
 
 ## 📁 Project Directory Structure
