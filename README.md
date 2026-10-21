@@ -41,6 +41,58 @@
 
 ---
 
+## 📸 Visual Showcase & Platform Screenshots
+
+### 1. Customer Boutique Storefront
+*Immersive British heritage luxury nightwear shopping experience with hand-drawn signature prints and responsive catalog layout.*
+
+![Customer Storefront Homepage](docs/screenshots/01_storefront_homepage.png)
+
+---
+
+### 2. Interactive Department Mega Menu
+*Deep multi-tier navigation supporting Shop by Style, Fabric, and Curated Occasions with instantaneous hover interactions.*
+
+![Mega Menu Navigation](docs/screenshots/02_interactive_megamenu.png)
+
+---
+
+### 3. Real-Time Order Tracking & Milestone Pipeline
+*5-stage live fulfillment progress bar with courier synchronization (BlueDart Express AWB) and dispatch milestones.*
+
+![Order Tracking Pipeline](docs/screenshots/03_order_tracking_pipeline.png)
+
+---
+
+### 4. Dedicated Merchant & Seller Onboarding Portal
+*Secure boutique login and multi-step onboarding workflow for independent nightwear creators and fashion brands.*
+
+![Seller Portal Authentication](docs/screenshots/04_seller_portal_login.png)
+
+---
+
+### 5. Seller Studio — Low Stock Replenishment Center
+*Actionable merchant center categorizing critical stock shortages (1–3 units), below-threshold alerts, and one-click replenishment.*
+
+![Seller Replenishment Center](docs/screenshots/05_seller_replenishment_center.png)
+
+---
+
+### 6. Admin Studio Operations Dashboard
+*Central executive command center displaying live revenue metrics, recent orders feed, and real-time fulfillment donut distribution.*
+
+![Admin Studio Dashboard](docs/screenshots/06_admin_studio_dashboard.png)
+
+---
+
+### 7. Multi-Vendor KYC Moderation & Seller Governance
+*Granular merchant compliance verification examining business entity records, GSTIN/PAN proofs, and one-click store moderation.*
+
+![Seller KYC Verification](docs/screenshots/07_admin_seller_kyc_verification.png)
+
+
+---
+
 ## 🏗️ Architecture & Technology Stack
 
 | Component | Technology | Description |
@@ -71,7 +123,9 @@ theirnibs/
 ├── product/                # Product collection views & catalog filters
 ├── templates/              # Base templates, navigation headers, modals & customer portal
 ├── static/                 # CSS stylesheets, custom JS modules, brand logos & favicon assets
-├── db.sqlite3              # Pre-seeded SQLite database (ready to run immediately)
+├── docs/screenshots/       # High-resolution platform screenshots for GitHub
+├── db.sqlite3              # Pre-seeded SQLite database with 2,800+ items & demo credentials
+├── seed_demo_accounts.py   # One-click seed script for Admin, Seller & Customer accounts
 ├── .env.example            # Environment configuration template
 ├── .gitignore              # Production Git ignore rules
 ├── manage.py               # Django management CLI
@@ -89,8 +143,8 @@ theirnibs/
 
 ### 2. Clone the Repository
 ```bash
-git clone https://github.com/buildwithsavan/TheirNibs.git
-cd TheirNibs/theirnibs
+git clone https://github.com/buildwithsavan/Their-Nibs.git
+cd Their-Nibs/theirnibs
 ```
 
 ### 3. Create and Activate a Virtual Environment
@@ -126,6 +180,23 @@ Open your browser and navigate to:
 * **Customer Boutique**: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 * **Seller Portal**: [http://127.0.0.1:8000/seller-panel/](http://127.0.0.1:8000/seller-panel/)
 * **Admin Hub**: [http://127.0.0.1:8000/admin-panel/](http://127.0.0.1:8000/admin-panel/)
+
+---
+
+## 🔑 Demo Credentials & Portal Access
+
+The pre-seeded SQLite database comes pre-configured with active accounts across all three platform tiers for immediate evaluation:
+
+| Role / Portal | Portal URL | Username / Email | Password | Permissions & Capabilities |
+| :--- | :--- | :--- | :--- | :--- |
+| **Store Administrator** | [`/admin-panel/`](http://127.0.0.1:8000/admin-panel/) | `admin` | `admin123` | Full superuser access, platform governance, order dispatch, COD review, and vendor KYC moderation |
+| **Verified Merchant / Seller** | [`/seller-panel/`](http://127.0.0.1:8000/seller-panel/) | `seller@gmail.com` | `seller123` | Authorized seller studio, catalog creation, inventory alerts, low-stock replenishment & order management |
+| **Customer Shopper** | [`/`](http://127.0.0.1:8000/) or [`/customer/login/`](http://127.0.0.1:8000/customer/login/) | `user@gmail.com` | `user123` | Boutique purchasing, size selector, interactive wishlist, COD/online checkout & 5-stage order tracking |
+
+> **💡 Quick Tip**: If you ever need to reset or re-seed these default credentials on a fresh clone or new database, simply run:
+> ```bash
+> python seed_demo_accounts.py
+> ```
 
 ---
 
