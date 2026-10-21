@@ -46,7 +46,7 @@
 ### 1. Customer Boutique Storefront
 *Immersive British heritage luxury nightwear shopping experience with hand-drawn signature prints and responsive catalog layout.*
 
-![Customer Storefront Homepage](docs/screenshots/01_storefront_homepage.png)
+![Customer Storefront Homepage](https://res.cloudinary.com/doexdsxo/image/upload/v1792560445/Screenshot_2026-10-21_105402.png)
 
 ---
 
@@ -67,7 +67,7 @@
 ### 4. Dedicated Merchant & Seller Onboarding Portal
 *Secure boutique login and multi-step onboarding workflow for independent nightwear creators and fashion brands.*
 
-![Seller Portal Authentication](docs/screenshots/04_seller_portal_login.png)
+![Seller Portal Authentication](https://res.cloudinary.com/doexdsxo/image/upload/v1792560437/Screenshot_2026-10-21_105503.png)
 
 ---
 
