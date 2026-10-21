@@ -53,14 +53,14 @@
 ### 2. Interactive Department Mega Menu
 *Deep multi-tier navigation supporting Shop by Style, Fabric, and Curated Occasions with instantaneous hover interactions.*
 
-![Mega Menu Navigation](docs/screenshots/02_interactive_megamenu.png)
+![Mega Menu Navigation]([docs/screenshots/02_interactive_megamenu.png](https://res.cloudinary.com/doexdsxo/image/upload/v1792560850/Screenshot_2026-10-21_105934.png))
 
 ---
 
 ### 3. Real-Time Order Tracking & Milestone Pipeline
 *5-stage live fulfillment progress bar with courier synchronization (BlueDart Express AWB) and dispatch milestones.*
 
-![Order Tracking Pipeline](docs/screenshots/03_order_tracking_pipeline.png)
+![Order Tracking Pipeline]([docs/screenshots/03_order_tracking_pipeline.png](https://res.cloudinary.com/doexdsxo/image/upload/v1792560847/Screenshot_2026-10-21_110159.png))
 
 ---
 
@@ -81,14 +81,14 @@
 ### 6. Admin Studio Operations Dashboard
 *Central executive command center displaying live revenue metrics, recent orders feed, and real-time fulfillment donut distribution.*
 
-![Admin Studio Dashboard](docs/screenshots/06_admin_studio_dashboard.png)
+![Admin Studio Dashboard]([docs/screenshots/06_admin_studio_dashboard.png](https://res.cloudinary.com/doexdsxo/image/upload/v1792560848/Screenshot_2026-10-21_110259.png))
 
 ---
 
 ### 7. Multi-Vendor KYC Moderation & Seller Governance
 *Granular merchant compliance verification examining business entity records, GSTIN/PAN proofs, and one-click store moderation.*
 
-![Seller KYC Verification](docs/screenshots/07_admin_seller_kyc_verification.png)
+![Seller KYC Verification]([docs/screenshots/07_admin_seller_kyc_verification.png](https://res.cloudinary.com/doexdsxo/image/upload/v1792560849/Screenshot_2026-10-21_110318.png))
 
 
 ---
