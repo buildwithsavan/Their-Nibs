@@ -1,0 +1,762 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Their Nibs Boutique{% endblock %} | Atelier Admin</title>
+
+    <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg?v=crown2026">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/images/favicon-32.png?v=crown2026">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/images/favicon-192.png?v=crown2026">
+    <link rel="apple-touch-icon" href="/static/images/favicon.png?v=crown2026">
+    <link rel="shortcut icon" type="image/x-icon" href="/static/images/favicon.ico?v=crown2026">
+    <meta name="theme-color" content="#1e2632">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/admin_panel/css/admin.css?v=20261016-sellerdigits">
+    <link rel="stylesheet" href="/static/css/preloader.css?v=20261016-sellerdigits">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <style>
+
+        :root {
+            --sidebar-width: 260px;
+            --bg-sidebar: #f5cfbd;
+            --bg-sidebar-active: #e3b099;
+            --border-subtle: #dcb3a0;
+        }
+
+        .stat-card,
+        .no-icon-card {
+            background: #ffffff !important;
+            border: 1px solid var(--border-subtle, #dcb3a0) !important;
+            border-radius: var(--radius-md, 10px) !important;
+            box-shadow: 0 1px 3px rgba(35, 30, 20, 0.04) !important;
+            padding: 1.4rem 1.5rem !important;
+        }
+
+        .stat-card-header,
+        .no-icon-card-header {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+            font-size: 0.76rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.08em !important;
+            text-transform: uppercase !important;
+            color: var(--text-muted, #4a453f) !important;
+            margin-bottom: 0.6rem !important;
+        }
+
+        .stat-value,
+        .stat-card-value,
+        .admin-card-value,
+        .no-icon-card-value,
+        .seller-card-value {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+            font-size: 1.85rem !important;
+            font-weight: 700 !important;
+            color: #000000 !important;
+            margin-bottom: 0.35rem !important;
+            line-height: 1.15 !important;
+            letter-spacing: -0.02em !important;
+            font-variant-numeric: lining-nums tabular-nums !important;
+            display: flex !important;
+            align-items: baseline !important;
+            gap: 0.25rem !important;
+        }
+
+        .stat-currency,
+        .seller-card-currency {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+            font-size: 1.45rem !important;
+            font-weight: 600 !important;
+            line-height: 1 !important;
+            opacity: 0.9 !important;
+        }
+
+        .stat-unit,
+        .seller-card-unit {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+            font-size: 0.85rem !important;
+            font-weight: 500 !important;
+            color: #64748b !important;
+            letter-spacing: normal !important;
+            margin-left: 0.25rem !important;
+        }
+
+        .stat-subtext,
+        .no-icon-card-subtext {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+            font-size: 0.82rem !important;
+            color: var(--text-secondary, #4a453f) !important;
+        }
+
+        .stat-icon {
+            display: none !important;
+        }
+
+        .menu-badge,
+        .sidebar-badge {
+            display: none !important;
+        }
+
+        .admin-wrapper {
+            display: flex;
+            min-height: 100vh;
+            background-color: var(--bg-main, #ffffff);
+            width: 100%;
+        }
+
+        .admin-sidebar {
+            width: 260px;
+            background-color: #f5cfbd;
+            color: #000000;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            border-right: 1px solid #dcb3a0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            max-height: 100vh;
+            overflow: hidden;
+            z-index: 100;
+        }
+
+        .admin-sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .admin-sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .admin-sidebar::-webkit-scrollbar-thumb {
+            background: rgba(146, 64, 14, 0.25);
+            border-radius: 4px;
+        }
+
+        .sidebar-header {
+            padding: 1.25rem 1.4rem 0.6rem 1.4rem;
+            background-color: #f5cfbd;
+            border-bottom: none;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .sidebar-header .brand-link {
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .sidebar-header .brand-title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1.45rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #000000;
+            line-height: 1.15;
+            margin: 0;
+        }
+
+        .sidebar-header .brand-tag {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #4a453f;
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+            display: block;
+        }
+
+        .sidebar-menu {
+            padding: 0.5rem 0 2rem 0;
+            overflow-y: auto;
+            flex: 1;
+            scrollbar-width: thin;
+            scrollbar-color: #dcb3a0 transparent;
+        }
+
+        .sidebar-menu::-webkit-scrollbar {
+            width: 5px;
+        }
+        .sidebar-menu::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .sidebar-menu::-webkit-scrollbar-thumb {
+            background: #dcb3a0;
+            border-radius: 4px;
+        }
+
+        .menu-category {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #4a453f;
+            padding: 1.1rem 1.4rem 0.4rem 1.4rem;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.6rem 1.4rem;
+            color: #1d1d1b;
+            font-size: 0.88rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            border-radius: 6px;
+            margin: 0 0.5rem;
+        }
+
+        .menu-item svg, .menu-item i {
+            display: none !important;
+        }
+
+        .menu-item:hover {
+            color: #000000;
+            background-color: #e3b099;
+        }
+
+        .menu-item.active {
+            color: #000000;
+            background-color: #e3b099;
+            font-weight: 600;
+        }
+
+        .admin-main {
+            margin-left: 0 !important;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            min-height: 100vh;
+        }
+
+        .admin-mobile-toggle {
+            display: none !important;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            background: #ffffff;
+            border: 1px solid var(--border-subtle, #dcb3a0);
+            border-radius: 6px;
+            color: #000000;
+            cursor: pointer;
+            padding: 0;
+            flex-shrink: 0;
+            transition: background-color 0.15s ease;
+        }
+
+        .admin-mobile-toggle:hover {
+            background-color: var(--bg-sidebar-active, #e3b099);
+        }
+
+        .admin-sidebar-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            z-index: 1040;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+
+        .admin-sidebar-backdrop.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .admin-sidebar-close {
+            display: none;
+            background: transparent;
+            border: none;
+            font-size: 1.35rem;
+            color: #1d1d1b;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            line-height: 1;
+            transition: color 0.15s ease;
+        }
+
+        .admin-sidebar-close:hover {
+            color: #b91c1c;
+        }
+
+        @media (max-width: 1024px) {
+            .admin-mobile-toggle {
+                display: inline-flex !important;
+            }
+            .admin-sidebar-close {
+                display: block !important;
+            }
+            .admin-sidebar {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                bottom: 0 !important;
+                height: 100vh !important;
+                z-index: 1050 !important;
+                transform: translateX(-100%) !important;
+                transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+                box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15) !important;
+                width: 270px !important;
+            }
+            .admin-sidebar.show {
+                transform: translateX(0) !important;
+            }
+            .admin-main {
+                width: 100% !important;
+                min-width: 0 !important;
+                margin-left: 0 !important;
+            }
+            .admin-topbar {
+                padding: 0 1rem !important;
+            }
+            .boutique-store-tag {
+                display: none !important;
+            }
+            .admin-content {
+                padding: 1.15rem;
+            }
+            div[style*="grid-template-columns: 2fr 1fr"],
+            div[style*="grid-template-columns: 1.2fr 1fr"] {
+                grid-template-columns: 1fr !important;
+                gap: 1.25rem !important;
+            }
+            div[style*="grid-template-columns: repeat(4, 1fr)"] {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 1rem !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            div[style*="grid-template-columns: 1fr 1fr"],
+            div[style*="grid-template-columns: 2fr 1fr"],
+            div[style*="grid-template-columns: 1fr 2fr"],
+            div[style*="grid-template-columns: 1fr 1fr 1fr"],
+            div[style*="grid-template-columns: repeat(3, 1fr)"] {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .admin-user-info {
+                display: none;
+            }
+            .topbar-user-pill {
+                padding: 0.2rem;
+                border: none;
+                background: transparent;
+            }
+            .topbar-notif-dropdown {
+                width: calc(100vw - 20px);
+                max-width: 360px;
+                right: -60px;
+            }
+            .admin-content {
+                padding: 0.75rem;
+            }
+            div[style*="grid-template-columns: repeat(4, 1fr)"],
+            div[style*="grid-template-columns: repeat(auto-fit, minmax(210px, 1fr))"],
+            div[style*="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr))"],
+            div[style*="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))"],
+            div[style*="grid-template-columns: repeat(auto-fit, minmax(190px, 1fr))"] {
+                grid-template-columns: 1fr !important;
+                gap: 0.85rem !important;
+            }
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+            .page-actions {
+                width: 100%;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            .page-actions .btn {
+                flex: 1;
+                justify-content: center;
+                text-align: center;
+            }
+        }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<div id="clothifyTopProgress" class="clothify-top-progress"></div>
+
+<div id="clothifyPageLoader" class="clothify-preloader">
+    <div class="preloader-content">
+        <div class="preloader-image-wrap">
+            <img src="/static/images/loader-logo.png" 
+                 alt="Their Nibs" 
+                 class="preloader-custom-img" 
+                 onerror="this.onerror=null; this.src='/static/images/loader-logo-square.png';">
+        </div>
+        <h2 class="preloader-brand-title">Their Nibs</h2>
+        <div class="preloader-brand-subtitle">Luxury Sleepwear &amp; Loungewear</div>
+        <div class="preloader-bar-wrap">
+            <div class="preloader-bar-inner"></div>
+        </div>
+        <div class="preloader-status-text" id="preloaderStatusText">Entering Boutique...</div>
+    </div>
+</div>
+
+<div class="admin-wrapper">
+
+    <aside class="admin-sidebar">
+        <div class="sidebar-header" style="display: flex; align-items: center; justify-content: space-between;">
+            <a href="/admin-panel/dashboard/" class="brand-link">
+                <h1 class="brand-title">THEIR NIBS</h1>
+                <span class="brand-tag">ADMIN STUDIO</span>
+            </a>
+            <button type="button" class="admin-sidebar-close" id="adminSidebarClose" aria-label="Close navigation menu" title="Close menu">
+                ✕
+            </button>
+        </div>
+
+        <nav class="sidebar-menu">
+            <a href="/admin-panel/dashboard/" class="menu-item {% if request.path == '/admin-panel/dashboard/' or request.path == '/admin-panel/' %}active{% endif %}">
+                Dashboard
+            </a>
+
+            <div class="menu-category">CATALOG</div>
+            <a href="/admin-panel/products/" class="menu-item {% if '/admin-panel/products/' in request.path %}active{% endif %}">
+                All Products
+            </a>
+            <a href="/admin-panel/categories/" class="menu-item {% if '/admin-panel/categories/' in request.path %}active{% endif %}">
+                Categories
+            </a>
+            <a href="/admin-panel/subcategories/" class="menu-item {% if '/admin-panel/subcategories/' in request.path %}active{% endif %}">
+                Subcategories
+            </a>
+            <a href="/admin-panel/brands/" class="menu-item {% if '/admin-panel/brands/' in request.path %}active{% endif %}">
+                Brands &amp; Labels
+            </a>
+            <a href="/admin-panel/seasons/" class="menu-item {% if '/admin-panel/seasons/' in request.path %}active{% endif %}">
+                Seasons
+            </a>
+            <a href="/admin-panel/occasions/" class="menu-item {% if '/admin-panel/occasions/' in request.path %}active{% endif %}">
+                Occasions
+            </a>
+
+            <div class="menu-category">INVENTORY</div>
+            <a href="/admin-panel/inventory/" class="menu-item {% if request.path == '/admin-panel/inventory/' %}active{% endif %}">
+                Inventory Master
+            </a>
+            <a href="/admin-panel/inventory/low-stock/" class="menu-item {% if '/admin-panel/inventory/low-stock/' in request.path %}active{% endif %}">
+                Low Stock Alert
+            </a>
+
+            <div class="menu-category">CUSTOMERS</div>
+            <a href="/admin-panel/customers/" class="menu-item {% if '/admin-panel/customers/' in request.path %}active{% endif %}">
+                Customer Directory
+            </a>
+
+            <div class="menu-category">MARKETPLACE</div>
+            <a href="/admin-panel/sellers/" class="menu-item {% if '/admin-panel/sellers/' in request.path %}active{% endif %}">
+                Seller's Management
+            </a>
+
+            <div class="menu-category">ORDERS &amp; FULFILLMENT</div>
+            <a href="/admin-panel/orders/" class="menu-item {% if '/admin-panel/orders/' in request.path and not '/cod-requests/' in request.path %}active{% endif %}">
+                Orders
+            </a>
+            <a href="/admin-panel/cod-requests/" class="menu-item {% if '/admin-panel/cod-requests/' in request.path %}active{% endif %}">
+                CoD Approvals
+            </a>
+            <a href="/admin-panel/shipping/" class="menu-item {% if '/admin-panel/shipping/' in request.path %}active{% endif %}">
+                Dedicated Shipping
+            </a>
+
+            <div class="menu-category">CUSTOMER PAYMENTS</div>
+            <a href="/admin-panel/payments/" class="menu-item {% if '/admin-panel/payments/' in request.path %}active{% endif %}">
+                Payments Log
+            </a>
+            <a href="/admin-panel/refunds/" class="menu-item {% if '/admin-panel/refunds/' in request.path %}active{% endif %}">
+                Customer Refunds
+            </a>
+
+            <div class="menu-category">MARKETING &amp; PR</div>
+            <a href="/admin-panel/coupons/" class="menu-item {% if '/admin-panel/coupons/' in request.path %}active{% endif %}">
+                Coupons &amp; Discounts
+            </a>
+            <a href="/admin-panel/gift-cards/" class="menu-item {% if '/admin-panel/gift-cards/' in request.path %}active{% endif %}">
+                Gift Cards
+            </a>
+            <a href="/admin-panel/collaborations/" class="menu-item {% if '/admin-panel/collaborations/' in request.path %}active{% endif %}">
+                Collaboration &amp; PR
+            </a>
+
+            <div class="menu-category">STORE CREDITS</div>
+            <a href="/admin-panel/wallet/" class="menu-item {% if '/admin-panel/wallet/' in request.path %}active{% endif %}">
+                Customer Wallets
+            </a>
+
+            <div class="menu-category">CUSTOMER TRUST</div>
+            <a href="/admin-panel/reviews/" class="menu-item {% if '/admin-panel/reviews/' in request.path %}active{% endif %}">
+                Reviews &amp; Ratings
+            </a>
+
+            <div class="menu-category">SETTINGS</div>
+            <a href="/admin-panel/settings/" class="menu-item {% if '/admin-panel/settings/' in request.path %}active{% endif %}">
+                Store Settings
+            </a>
+            <a href="/admin-panel/audit-logs/" class="menu-item {% if '/admin-panel/audit-logs/' in request.path %}active{% endif %}">
+                Audit Logs
+            </a>
+            <a href="/admin-panel/notifications/" class="menu-item {% if '/admin-panel/notifications/' in request.path %}active{% endif %}">
+                Notifications
+            </a>
+            <a href="/django-admin/" target="_blank" rel="noopener noreferrer" class="menu-item" title="Open Default Django Admin">
+                Django Admin ↗
+            </a>
+
+            <div style="margin-top: 1.5rem; padding: 1rem 0.5rem; border-top: 1px solid var(--border-subtle);">
+                <a href="/admin-panel/logout/" class="menu-item" style="color: #b91c1c; font-weight: 600;">
+                    Sign Out
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <div class="admin-sidebar-backdrop" id="adminSidebarBackdrop"></div>
+
+    <main class="admin-main">
+
+        <header class="admin-topbar">
+            <div class="topbar-left">
+                <button type="button" class="admin-mobile-toggle" id="adminSidebarToggle" aria-label="Toggle navigation menu">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="topbar-right">
+
+                <div style="position: relative;" class="notif-wrapper">
+                    <button type="button" class="topbar-action-btn notif-bell-btn" id="notifBellBtn" title="View Notifications" aria-label="Notifications" aria-expanded="false">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                        <span class="notif-pulse" id="notifPulse" style="{% if not unread_count or unread_count == 0 %}display: none;{% endif %}"></span>
+                        <span class="notif-count-badge" id="notifBadge" style="{% if not unread_count or unread_count == 0 %}display: none;{% endif %}">{{ unread_count }}</span>
+                    </button>
+
+                    <div class="topbar-notif-dropdown" id="notifDropdown">
+                        <div class="notif-dropdown-header">
+                            <div class="notif-header-title">
+                                <span>Notifications</span>
+                                <span class="notif-badge-pill" id="notifHeaderCount" style="{% if not unread_count or unread_count == 0 %}display: none;{% endif %}">{{ unread_count }} new</span>
+                            </div>
+                            <button type="button" class="notif-mark-all-btn" id="markAllReadBtn" title="Mark all as read" style="{% if not unread_count or unread_count == 0 %}display: none;{% endif %}">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                Mark all read
+                            </button>
+                        </div>
+
+                        <div class="notif-dropdown-body" id="notifListContainer">
+                            {% if unread_notifications %}
+                                {% for notif in unread_notifications %}
+                                <div class="notif-dropdown-item notif-unread" data-notif-id="{{ notif.id }}">
+                                    <div class="notif-item-icon notif-icon-{{ notif.notification_type|default:'default' }}">
+                                        {% if notif.notification_type == 'new_order' %}
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                                        {% elif notif.notification_type == 'low_stock' %}
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                                        {% elif notif.notification_type == 'pending_review' %}
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                                        {% elif notif.notification_type == 'payment_failed' %}
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                                        {% elif notif.notification_type == 'refund_request' %}
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                                        {% else %}
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                                        {% endif %}
+                                    </div>
+                                    <div class="notif-item-content">
+                                        <a href="{{ notif.link|default:'/admin-panel/notifications/' }}" class="notif-item-title">{{ notif.title }}</a>
+                                        <div class="notif-item-msg">{{ notif.message }}</div>
+                                        <div class="notif-item-time">{{ notif.created_at|timesince }} ago</div>
+                                    </div>
+                                    <button type="button" class="notif-dismiss-btn" title="Mark as read" onclick="event.stopPropagation(); window.markNotifReadFromFlyout('{{ notif.id }}', this);">
+                                        ✕
+                                    </button>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="notif-empty-state">
+                                    <div class="notif-empty-icon">✓</div>
+                                    <div class="notif-empty-title">All caught up!</div>
+                                    <div class="notif-empty-subtitle">You have no unread notifications right now.</div>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="notif-dropdown-footer">
+                            <a href="/admin-panel/notifications/">View all notifications in Atelier →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="position: relative;">
+                    <div class="topbar-user-pill" title="Click to view menu">
+                        <img src="https://ui-avatars.com/api/?name={{ request.user.username }}&background=1e2632&color=fff&bold=true" class="user-avatar" alt="Avatar">
+                        <div class="user-info">
+                            <span class="user-name">{{ request.user.get_full_name|default:request.user.username }}</span>
+                            <span class="user-role-badge">{{ current_user_role|default:"Staff"|title }} ▾</span>
+                        </div>
+                    </div>
+                    <div class="topbar-user-dropdown" style="display: none; position: absolute; right: 0; top: calc(100% + 8px); background: #ffffff; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); box-shadow: var(--shadow-elevated); width: 190px; padding: 0.5rem 0; z-index: 1000;">
+                        <div style="padding: 0.5rem 1rem; border-bottom: 1px solid var(--border-subtle); font-size: 0.75rem; color: var(--text-muted);">
+                            Signed in as <strong style="color: var(--primary);">{{ request.user.username }}</strong>
+                        </div>
+                        <a href="/admin-panel/settings/" style="display: block; padding: 0.5rem 1rem; font-size: 0.84rem; color: var(--text-primary);">Store Settings</a>
+                        <a href="/admin-panel/audit-logs/" style="display: block; padding: 0.5rem 1rem; font-size: 0.84rem; color: var(--text-primary);">Audit Logs</a>
+                        <a href="/django-admin/" target="_blank" rel="noopener noreferrer" style="display: block; padding: 0.5rem 1rem; font-size: 0.84rem; color: var(--accent); font-weight: 600;">Django Admin ↗</a>
+                        <div style="border-top: 1px solid var(--border-subtle); margin-top: 0.4rem; padding-top: 0.4rem;">
+                            <a href="/admin-panel/logout/" style="display: block; padding: 0.5rem 1rem; font-size: 0.84rem; color: var(--danger);">Sign Out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="admin-content">
+
+            {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                <div class="clothify-alert alert-{{ message.tags }}">
+                    <span>{{ message }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+</div>
+
+<div class="clothify-modal-backdrop" id="stockModalBackdrop">
+    <div class="clothify-modal">
+        <div class="card-header">
+            <h3 class="card-title">Adjust Inventory Stock</h3>
+            <button onclick="closeQuickStockModal()" style="background:none; border:none; color:var(--text-muted); font-size:1.2rem; cursor:pointer;">✕</button>
+        </div>
+        <form id="quickStockForm">
+            <div class="card-body">
+                <input type="hidden" id="stockModalProdId">
+                <p style="margin-bottom: 1rem; color: var(--text-secondary);">
+                    Updating stock count for: <strong id="stockModalProdName" style="color: var(--primary);"></strong>
+                </p>
+                <div class="form-group">
+                    <label class="form-label">New Total Stock Units</label>
+                    <input type="number" id="stockModalStockInput" class="form-control" min="0" required>
+                </div>
+            </div>
+            <div style="padding: 1rem 1.5rem; background: var(--bg-main); border-top: 1px solid var(--border-subtle); display:flex; justify-content:flex-end; gap:0.75rem;">
+                <button type="button" class="btn btn-secondary" onclick="closeQuickStockModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Stock</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="clothify-lightbox-backdrop" id="clothifyLightboxBackdrop" aria-hidden="true">
+    <div class="clothify-image-modal" role="dialog" aria-modal="true" aria-labelledby="clothifyLightboxTitle">
+
+        <div class="image-modal-header">
+            <div style="overflow: hidden; padding-right: 0.5rem;">
+                <h4 id="clothifyLightboxTitle" style="font-size: 1.05rem; font-weight: 600; margin: 0; color: var(--primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Garment Preview</h4>
+                <div id="clothifyLightboxSubtitle" style="font-size: 0.76rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
+            </div>
+            <button type="button" class="image-modal-close" id="clothifyLightboxClose" title="Close (Esc)">✕</button>
+        </div>
+
+        <div class="image-modal-body">
+            <div class="image-modal-frame">
+                <img id="clothifyLightboxImg" src="" alt="Garment Preview">
+            </div>
+        </div>
+
+        <div class="image-modal-footer">
+            <div id="clothifyLightboxCounter" style="font-size: 0.78rem; color: var(--text-muted);"></div>
+            <div style="display: flex; gap: 0.4rem; align-items: center;">
+                <button type="button" class="btn btn-secondary btn-sm" id="clothifyLightboxPrev" style="padding: 0.3rem 0.65rem; font-size: 0.78rem;">← Prev</button>
+                <button type="button" class="btn btn-secondary btn-sm" id="clothifyLightboxNext" style="padding: 0.3rem 0.65rem; font-size: 0.78rem;">Next →</button>
+                <a id="lightboxNewTabBtn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="padding: 0.3rem 0.65rem; font-size: 0.78rem;">Open ↗</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/admin_panel/js/admin.js?v=20261017-sidebarfixed"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+
+    function alignSidebarToOpenCategory() {
+        const menu = document.querySelector('.admin-sidebar .sidebar-menu');
+        if (!menu) return;
+        const activeItem = menu.querySelector('.menu-item.active');
+        if (!activeItem) return;
+
+        let categoryHeader = null;
+        let prev = activeItem.previousElementSibling;
+        while (prev) {
+            if (prev.classList.contains('menu-category')) {
+                categoryHeader = prev;
+                break;
+            }
+            prev = prev.previousElementSibling;
+        }
+
+        const targetElem = categoryHeader || activeItem;
+        const targetTop = targetElem.offsetTop;
+
+        if (targetTop < 140) {
+            menu.scrollTop = 0;
+        } else {
+            menu.scrollTop = Math.max(0, targetTop - 10);
+        }
+    }
+
+    alignSidebarToOpenCategory();
+    setTimeout(alignSidebarToOpenCategory, 80);
+});
+</script>
+<script src="/static/js/preloader.js?v=20261012-loader10s"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,476 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Their Nibs Seller Registration &ndash; Step 2: Business &amp; Seller Details</title>
+
+  <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg?v=crown2026">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/images/favicon-32.png?v=crown2026">
+  <link rel="icon" type="image/png" sizes="192x192" href="/static/images/favicon-192.png?v=crown2026">
+  <link rel="apple-touch-icon" href="/static/images/favicon.png?v=crown2026">
+  <link rel="shortcut icon" type="image/x-icon" href="/static/images/favicon.ico?v=crown2026">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
+  <link rel="stylesheet" href="{% static 'css/seller_register.css' %}">
+  <link rel="stylesheet" href="{% static 'css/preloader.css' %}?v=20261012-loader10s">
+</head>
+<body>
+
+  <div id="clothifyTopProgress" class="clothify-top-progress"></div>
+  <div id="clothifyPageLoader" class="clothify-preloader">
+    <div class="preloader-content">
+      <div class="preloader-image-wrap">
+        <img src="/static/images/loader-logo.png" 
+             alt="Their Nibs" 
+             class="preloader-custom-img" 
+             onerror="this.onerror=null; this.src='/static/images/loader-logo-square.png';">
+      </div>
+      <h2 class="preloader-brand-title">Their Nibs</h2>
+      <div class="preloader-brand-subtitle">Luxury Sleepwear &amp; Loungewear</div>
+      <div class="preloader-bar-wrap">
+        <div class="preloader-bar-inner"></div>
+      </div>
+      <div class="preloader-status-text" id="preloaderStatusText">Entering Boutique...</div>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="header-container">
+      <a href="{% url 'homepage' %}" class="brand-logo" aria-label="Their Nibs Home">
+        <div class="brand-emblem" aria-hidden="true">
+          <svg width="24" height="18" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 14L4 4L9 9L12 2L15 9L20 4L22 14H2Z"/>
+            <circle cx="12" cy="2" r="1" fill="currentColor"/>
+            <circle cx="4" cy="4" r="1" fill="currentColor"/>
+            <circle cx="20" cy="4" r="1" fill="currentColor"/>
+            <line x1="2" y1="16" x2="22" y2="16"/>
+          </svg>
+        </div>
+        <span class="brand-name">Their Nibs</span>
+      </a>
+
+      <div class="header-actions">
+        <a href="{% url 'homepage' %}" class="btn-secondary" style="padding: 6px 16px; font-size: 0.85rem;">&larr; Back to Home</a>
+        <a href="{% url 'customer_register' %}" class="btn-create-account">Create Account</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="registration-container">
+
+    <div class="stepper-wrapper">
+      <div class="stepper-header">
+        <h1>Their Nibs Seller Registration</h1>
+        <p>Complete your 3-step registration to start selling fashion &amp; apparel on Their Nibs</p>
+      </div>
+
+      <div class="stepper-steps">
+        <div class="step-item completed">
+          <div class="step-badge">&check;</div>
+          <span class="step-label">Personal &amp; ID Details</span>
+        </div>
+        <div class="step-item active">
+          <div class="step-badge">2</div>
+          <span class="step-label">Business Details</span>
+        </div>
+        <div class="step-item">
+          <div class="step-badge">3</div>
+          <span class="step-label">Policy &amp; Agreement</span>
+        </div>
+      </div>
+    </div>
+
+    <form class="form-card" method="POST" action="{% url 'seller_register_step2' %}">
+      {% csrf_token %}
+
+      <div class="section-banner">
+        <span>Business Details</span>
+      </div>
+
+      <div class="section-body">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="business_name">Business / Store Name <span class="required">*</span></label>
+            <input type="text" id="business_name" name="business_name" class="form-control" placeholder="e.g. Royal Weaves Boutique" required value="{{ step2_data.business_name|default:'' }}">
+          </div>
+
+          <div class="form-group">
+            <label for="year_started">Year Business Started</label>
+            <select id="year_started" name="year_started" class="form-control">
+              <option value="" disabled {% if not step2_data.year_started %}selected{% endif %}>Select Year</option>
+              <option value="2026" {% if step2_data.year_started == '2026' %}selected{% endif %}>2026</option>
+              <option value="2025" {% if step2_data.year_started == '2025' %}selected{% endif %}>2025</option>
+              <option value="2024" {% if step2_data.year_started == '2024' %}selected{% endif %}>2024</option>
+              <option value="2023" {% if step2_data.year_started == '2023' %}selected{% endif %}>2023</option>
+              <option value="2022" {% if step2_data.year_started == '2022' %}selected{% endif %}>2022</option>
+              <option value="2021" {% if step2_data.year_started == '2021' %}selected{% endif %}>2021</option>
+              <option value="2020" {% if step2_data.year_started == '2020' %}selected{% endif %}>2020</option>
+              <option value="2015-2019" {% if step2_data.year_started == '2015-2019' %}selected{% endif %}>2015 - 2019</option>
+              <option value="Before 2015" {% if step2_data.year_started == 'Before 2015' %}selected{% endif %}>Before 2015</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group full-width" style="margin-bottom: 20px;">
+          <label>Business Type <span class="required">*</span></label>
+          <div class="role-radio-group">
+            <label class="radio-card-label">
+              <input type="radio" name="business_type" value="Individual/Proprietorship" {% if not step2_data.business_type or step2_data.business_type == 'Individual/Proprietorship' %}checked{% endif %}>
+              <span>Individual / Proprietorship</span>
+            </label>
+
+            <label class="radio-card-label">
+              <input type="radio" name="business_type" value="Partnership" {% if step2_data.business_type == 'Partnership' %}checked{% endif %}>
+              <span>Partnership</span>
+            </label>
+
+            <label class="radio-card-label">
+              <input type="radio" name="business_type" value="LLP" {% if step2_data.business_type == 'LLP' %}checked{% endif %}>
+              <span>LLP</span>
+            </label>
+
+            <label class="radio-card-label">
+              <input type="radio" name="business_type" value="Private Limited" {% if step2_data.business_type == 'Private Limited' %}checked{% endif %}>
+              <span>Private Limited</span>
+            </label>
+
+            <label class="radio-card-label">
+              <input type="radio" name="business_type" value="Other" {% if step2_data.business_type == 'Other' %}checked{% endif %}>
+              <span>Other</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group full-width" style="margin-bottom: 20px;">
+          <label for="business_description">Business Description <span class="required">*</span></label>
+          <textarea id="business_description" name="business_description" class="form-control" rows="3" placeholder="Briefly describe your apparel brand, collections, fabric specialties, or craft" required>{{ step2_data.business_description|default:'' }}</textarea>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="registration_number">Business Registration Number <span style="font-weight:400; color:var(--color-text-meta);">(Optional &mdash; MSME / Udyam / CIN / Reg No.)</span></label>
+          <input type="text" id="registration_number" name="registration_number" class="form-control" placeholder="Enter Registration Number if available" value="{{ step2_data.registration_number|default:'' }}">
+        </div>
+      </div>
+
+      <div class="section-banner">
+        <span>Business &amp; Pickup Address</span>
+      </div>
+
+      <div class="section-body">
+        <h4 style="font-family: var(--font-serif); font-size: 1.1rem; font-style: italic; font-weight: 700; margin-bottom: 12px; color: var(--color-brand-dark);">
+          Official Business Address
+        </h4>
+
+        <div class="form-group full-width" style="margin-bottom: 16px;">
+          <label for="business_address">Business Address <span class="required">*</span></label>
+          <textarea id="business_address" name="business_address" class="form-control" rows="3" placeholder="Shop/Office No, Building Name, Street, Industrial Area" required>{{ step2_data.business_address|default:'' }}</textarea>
+        </div>
+
+        <div class="form-grid-3" style="margin-bottom: 24px;">
+          <div class="form-group">
+            <label for="business_city">City <span class="required">*</span></label>
+            <input type="text" id="business_city" name="business_city" class="form-control" placeholder="Enter City" required value="{{ step2_data.business_city|default:'' }}">
+          </div>
+
+          <div class="form-group">
+            <label for="business_state">State <span class="required">*</span></label>
+            <select id="business_state" name="business_state" class="form-control" required>
+              <option value="" disabled {% if not step2_data.business_state %}selected{% endif %}>Select State</option>
+              <option value="GUJARAT" {% if step2_data.business_state == 'GUJARAT' or not step2_data.business_state %}selected{% endif %}>GUJARAT</option>
+              <option value="MAHARASHTRA" {% if step2_data.business_state == 'MAHARASHTRA' %}selected{% endif %}>MAHARASHTRA</option>
+              <option value="DELHI" {% if step2_data.business_state == 'DELHI' %}selected{% endif %}>DELHI</option>
+              <option value="RAJASTHAN" {% if step2_data.business_state == 'RAJASTHAN' %}selected{% endif %}>RAJASTHAN</option>
+              <option value="KARNATAKA" {% if step2_data.business_state == 'KARNATAKA' %}selected{% endif %}>KARNATAKA</option>
+              <option value="TAMIL NADU" {% if step2_data.business_state == 'TAMIL NADU' %}selected{% endif %}>TAMIL NADU</option>
+              <option value="UTTAR PRADESH" {% if step2_data.business_state == 'UTTAR PRADESH' %}selected{% endif %}>UTTAR PRADESH</option>
+              <option value="OTHER" {% if step2_data.business_state == 'OTHER' %}selected{% endif %}>OTHER</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="business_pincode">PIN Code <span class="required">*</span></label>
+            <input type="text" id="business_pincode" name="business_pincode" class="form-control" placeholder="6-digit PIN Code" maxlength="6" required value="{{ step2_data.business_pincode|default:'' }}">
+          </div>
+        </div>
+
+        <div style="background-color: #fcfbfa; border: 1px solid var(--color-border); border-radius: 6px; padding: 16px 20px; margin-top: 10px;">
+          <label style="font-weight: 600; font-size: 0.92rem; display: block; margin-bottom: 8px;">
+            Is your pickup address different from your business address?
+          </label>
+
+          <div style="display: flex; align-items: center; gap: 20px;">
+            <label class="radio-card-label" style="padding: 6px 16px;">
+              <input type="radio" name="different_pickup" value="No" id="different_pickup_no" {% if not step2_data.different_pickup or step2_data.different_pickup == 'No' %}checked{% endif %}>
+              <span>No</span>
+            </label>
+
+            <label class="radio-card-label" style="padding: 6px 16px;">
+              <input type="radio" name="different_pickup" value="Yes" id="different_pickup_yes" {% if step2_data.different_pickup == 'Yes' %}checked{% endif %}>
+              <span>Yes</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="conditional-field-box" id="pickupAddressBox" style="margin-top: 16px;">
+          <h4 style="font-family: var(--font-serif); font-size: 1.05rem; font-style: italic; font-weight: 700; margin-bottom: 12px; color: var(--color-brand-dark);">
+            Dispatch / Pickup Address
+          </h4>
+
+          <div class="form-group full-width" style="margin-bottom: 16px;">
+            <label for="pickup_address">Pickup Address <span class="required">*</span></label>
+            <textarea id="pickup_address" name="pickup_address" class="form-control" rows="3" placeholder="Warehouse, Factory, or Fulfillment Center location">{{ step2_data.pickup_address|default:'' }}</textarea>
+          </div>
+
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label for="pickup_city">Pickup City <span class="required">*</span></label>
+              <input type="text" id="pickup_city" name="pickup_city" class="form-control" placeholder="Enter Pickup City" value="{{ step2_data.pickup_city|default:'' }}">
+            </div>
+
+            <div class="form-group">
+              <label for="pickup_state">Pickup State <span class="required">*</span></label>
+              <select id="pickup_state" name="pickup_state" class="form-control">
+                <option value="" disabled {% if not step2_data.pickup_state %}selected{% endif %}>Select State</option>
+                <option value="GUJARAT" {% if step2_data.pickup_state == 'GUJARAT' or not step2_data.pickup_state %}selected{% endif %}>GUJARAT</option>
+                <option value="MAHARASHTRA" {% if step2_data.pickup_state == 'MAHARASHTRA' %}selected{% endif %}>MAHARASHTRA</option>
+                <option value="DELHI" {% if step2_data.pickup_state == 'DELHI' %}selected{% endif %}>DELHI</option>
+                <option value="RAJASTHAN" {% if step2_data.pickup_state == 'RAJASTHAN' %}selected{% endif %}>RAJASTHAN</option>
+                <option value="KARNATAKA" {% if step2_data.pickup_state == 'KARNATAKA' %}selected{% endif %}>KARNATAKA</option>
+                <option value="TAMIL NADU" {% if step2_data.pickup_state == 'TAMIL NADU' %}selected{% endif %}>TAMIL NADU</option>
+                <option value="UTTAR PRADESH" {% if step2_data.pickup_state == 'UTTAR PRADESH' %}selected{% endif %}>UTTAR PRADESH</option>
+                <option value="OTHER" {% if step2_data.pickup_state == 'OTHER' %}selected{% endif %}>OTHER</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="pickup_pincode">Pickup PIN Code <span class="required">*</span></label>
+              <input type="text" id="pickup_pincode" name="pickup_pincode" class="form-control" placeholder="6-digit PIN Code" maxlength="6" value="{{ step2_data.pickup_pincode|default:'' }}">
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="section-banner">
+        <span>What Will You Sell?</span>
+      </div>
+
+      <div class="section-body">
+        <div class="form-grid-2" style="margin-bottom: 20px;">
+          <div class="form-group">
+            <label for="main_category">Main Product Category <span class="required">*</span></label>
+            <select id="main_category" name="main_category" class="form-control" required>
+              <option value="" disabled {% if not step2_data.main_category %}selected{% endif %}>Select Main Category</option>
+              <option value="Women's Pyjamas & Sleepwear" {% if step2_data.main_category == "Women's Pyjamas & Sleepwear" %}selected{% endif %}>Women's Pyjamas &amp; Sleepwear</option>
+              <option value="Men's Nightwear & Loungewear" {% if step2_data.main_category == "Men's Nightwear & Loungewear" %}selected{% endif %}>Men's Nightwear &amp; Loungewear</option>
+              <option value="Kids Nightwear & Apparel" {% if step2_data.main_category == "Kids Nightwear & Apparel" %}selected{% endif %}>Kids Nightwear &amp; Apparel</option>
+              <option value="Boutique Accessories" {% if step2_data.main_category == "Boutique Accessories" %}selected{% endif %}>Boutique Accessories (Bags, Jewellery, Eye Masks)</option>
+              <option value="Luxury Gifting & Sets" {% if step2_data.main_category == "Luxury Gifting & Sets" %}selected{% endif %}>Luxury Gifting &amp; Sets</option>
+              <option value="Other Apparel" {% if step2_data.main_category == "Other Apparel" %}selected{% endif %}>Other Apparel &amp; Fashion</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="product_subcategory">Product Subcategory</label>
+            <input type="text" id="product_subcategory" name="product_subcategory" class="form-control" placeholder="e.g. Satin Pyjamas, Printed Silk Robes, Cotton Sleepwear" value="{{ step2_data.product_subcategory|default:'' }}">
+          </div>
+        </div>
+
+        <div class="form-group full-width" style="margin-bottom: 24px;">
+          <label>Target Customer <span class="required">*</span></label>
+          <div class="role-radio-group">
+            <label class="radio-card-label">
+              <input type="checkbox" name="target_customers" value="Women" {% if 'Women' in step2_data.target_customers or not step2_data.target_customers %}checked{% endif %}>
+              <span>Women</span>
+            </label>
+
+            <label class="radio-card-label">
+              <input type="checkbox" name="target_customers" value="Men" {% if 'Men' in step2_data.target_customers %}checked{% endif %}>
+              <span>Men</span>
+            </label>
+
+            <label class="radio-card-label">
+              <input type="checkbox" name="target_customers" value="Kids" {% if 'Kids' in step2_data.target_customers %}checked{% endif %}>
+              <span>Kids</span>
+            </label>
+
+            <label class="radio-card-label">
+              <input type="checkbox" name="target_customers" value="Unisex" {% if 'Unisex' in step2_data.target_customers %}checked{% endif %}>
+              <span>Unisex</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label>Product Source <span class="required">*</span></label>
+          <div class="role-radio-group">
+            <label class="radio-card-label">
+              <input type="radio" name="product_source" value="Own Manufacturing" {% if not step2_data.product_source or step2_data.product_source == 'Own Manufacturing' %}checked{% endif %}>
+              <span>Own Manufacturing</span>
+            </label>
+
+            <label class="radio-card-label">
+              <input type="radio" name="product_source" value="Authorized Brand" {% if step2_data.product_source == 'Authorized Brand' %}checked{% endif %}>
+              <span>Authorized Brand</span>
+            </label>
+
+            <label class="radio-card-label">
+              <input type="radio" name="product_source" value="Wholesale/Supplier" {% if step2_data.product_source == 'Wholesale/Supplier' %}checked{% endif %}>
+              <span>Wholesale / Supplier</span>
+            </label>
+
+            <label class="radio-card-label">
+              <input type="radio" name="product_source" value="Reselling" {% if step2_data.product_source == 'Reselling' %}checked{% endif %}>
+              <span>Reselling</span>
+            </label>
+
+            <label class="radio-card-label">
+              <input type="radio" name="product_source" value="Other" {% if step2_data.product_source == 'Other' %}checked{% endif %}>
+              <span>Other</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-banner">
+        <span>Business Experience</span>
+      </div>
+
+      <div class="section-body">
+        <div class="form-grid-2" style="margin-bottom: 20px;">
+          <div class="form-group">
+            <label for="years_experience">Years in Clothing/Fashion Business <span class="required">*</span></label>
+            <select id="years_experience" name="years_experience" class="form-control" required>
+              <option value="" disabled {% if not step2_data.years_experience %}selected{% endif %}>Select Experience</option>
+              <option value="Less than 1 year" {% if step2_data.years_experience == 'Less than 1 year' %}selected{% endif %}>Less than 1 year</option>
+              <option value="1 - 3 years" {% if step2_data.years_experience == '1 - 3 years' or not step2_data.years_experience %}selected{% endif %}>1 &ndash; 3 years</option>
+              <option value="3 - 5 years" {% if step2_data.years_experience == '3 - 5 years' %}selected{% endif %}>3 &ndash; 5 years</option>
+              <option value="5 - 10 years" {% if step2_data.years_experience == '5 - 10 years' %}selected{% endif %}>5 &ndash; 10 years</option>
+              <option value="10+ years" {% if step2_data.years_experience == '10+ years' %}selected{% endif %}>10+ years</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="online_store_link">Existing Store / Instagram Link <span style="font-weight:400; color:var(--color-text-meta);">(Optional)</span></label>
+            <input type="url" id="online_store_link" name="online_store_link" class="form-control" placeholder="https://instagram.com/yourbrand or website URL" value="{{ step2_data.online_store_link|default:'' }}">
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label>Current Selling Channels</label>
+          <div class="role-radio-group">
+            <label class="radio-card-label">
+              <input type="checkbox" name="selling_channels" value="Physical Store" {% if 'Physical Store' in step2_data.selling_channels %}checked{% endif %}>
+              <span>Physical Store</span>
+            </label>
+
+            <label class="radio-card-label">
+              <input type="checkbox" name="selling_channels" value="Own Website" {% if 'Own Website' in step2_data.selling_channels %}checked{% endif %}>
+              <span>Own Website</span>
+            </label>
+
+            <label class="radio-card-label">
+              <input type="checkbox" name="selling_channels" value="Instagram/Social Media" {% if 'Instagram/Social Media' in step2_data.selling_channels %}checked{% endif %}>
+              <span>Instagram / Social Media</span>
+            </label>
+
+            <label class="radio-card-label">
+              <input type="checkbox" name="selling_channels" value="Other Marketplace" {% if 'Other Marketplace' in step2_data.selling_channels %}checked{% endif %}>
+              <span>Other Marketplace</span>
+            </label>
+
+            <label class="radio-card-label">
+              <input type="checkbox" name="selling_channels" value="None" {% if 'None' in step2_data.selling_channels or not step2_data.selling_channels %}checked{% endif %}>
+              <span>None (Starting New)</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-banner">
+        <span>Tax &amp; Payment Information</span>
+      </div>
+
+      <div class="section-body">
+        <div class="form-grid-2" style="margin-bottom: 20px;">
+          <div class="form-group">
+            <label for="pan_number">PAN Number <span class="required">*</span></label>
+            <input type="text" id="pan_number" name="pan_number" class="form-control" placeholder="10-character PAN (e.g. ABCDE1234F)" maxlength="10" required value="{{ step2_data.pan_number|default:'' }}">
+          </div>
+
+          <div class="form-group">
+            <label>GST Registered? <span class="required">*</span></label>
+            <div style="display: flex; align-items: center; gap: 12px; margin-top: 4px;">
+              <label class="radio-card-label" style="padding: 8px 16px;">
+                <input type="radio" name="gst_registered" value="Yes" id="gst_yes" {% if step2_data.gst_registered == 'Yes' %}checked{% endif %}>
+                <span>Yes</span>
+              </label>
+
+              <label class="radio-card-label" style="padding: 8px 16px;">
+                <input type="radio" name="gst_registered" value="No" id="gst_no" {% if not step2_data.gst_registered or step2_data.gst_registered == 'No' %}checked{% endif %}>
+                <span>No</span>
+              </label>
+
+              <label class="radio-card-label" style="padding: 8px 16px;">
+                <input type="radio" name="gst_registered" value="Not Applicable" id="gst_na" {% if step2_data.gst_registered == 'Not Applicable' %}checked{% endif %}>
+                <span>Not Applicable</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="conditional-field-box" id="gstinBox" style="margin-bottom: 24px;">
+          <div class="form-group full-width">
+            <label for="gstin" style="color: var(--color-brand-dark);">GSTIN (GST Identification Number) <span class="required">*</span></label>
+            <input type="text" id="gstin" name="gstin" class="form-control" placeholder="15-character GSTIN (e.g. 24ABCDE1234F1Z5)" maxlength="15" value="{{ step2_data.gstin|default:'' }}">
+          </div>
+        </div>
+
+        <h4 style="font-family: var(--font-serif); font-size: 1.1rem; font-style: italic; font-weight: 700; margin: 24px 0 14px; color: var(--color-brand-dark); border-top: 1px solid var(--color-border); padding-top: 18px;">
+          Bank Settlement Details
+        </h4>
+
+        <div class="form-grid-3">
+          <div class="form-group">
+            <label for="account_holder_name">Account Holder Name <span class="required">*</span></label>
+            <input type="text" id="account_holder_name" name="account_holder_name" class="form-control" placeholder="Name as per Bank Account" required value="{{ step2_data.account_holder_name|default:'' }}">
+          </div>
+
+          <div class="form-group">
+            <label for="bank_account_number">Bank Account Number <span class="required">*</span></label>
+            <input type="text" id="bank_account_number" name="bank_account_number" class="form-control" placeholder="Enter Bank Account Number" required value="{{ step2_data.bank_account_number|default:'' }}">
+          </div>
+
+          <div class="form-group">
+            <label for="ifsc_code">IFSC Code <span class="required">*</span></label>
+            <input type="text" id="ifsc_code" name="ifsc_code" class="form-control" placeholder="11-character IFSC (e.g. SBIN0001234)" maxlength="11" required value="{{ step2_data.ifsc_code|default:'' }}">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions-footer">
+        <a href="{% url 'seller_register_step1' %}" class="btn-secondary">&larr; Back to Step 1</a>
+        <button type="submit" class="btn-submit-step">
+          Save &amp; Continue
+        </button>
+      </div>
+
+    </form>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-bottom" style="border-top: none; max-width: 1100px; margin: 0 auto;">
+      <p>&copy; 2026 Their Nibs Ltd. All Rights Reserved. Merchant Onboarding Portal.</p>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/seller_register_step2.js' %}"></script>
+  <script src="{% static 'js/preloader.js' %}?v=20261012-loader10s"></script>
+</body>
+</html>

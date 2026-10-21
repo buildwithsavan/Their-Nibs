@@ -1,0 +1,88 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Refund Management{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Refunds & Returns Claims</h1>
+        <p class="page-subtitle">Review customer return claims, approve reimbursements, or credit customer wallets.</p>
+    </div>
+    <div class="page-actions">
+        <a href="/admin-panel/payments/" class="btn btn-secondary">
+            <span>← Payments Log</span>
+        </a>
+    </div>
+</div>
+
+<div class="clothify-card">
+    <div class="card-header">
+        <h3 class="card-title">Refund Claims Queue</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="clothify-table">
+            <thead>
+                <tr>
+                    <th>Refund ID</th>
+                    <th>Order Ref</th>
+                    <th>Customer</th>
+                    <th>Claimed Amount</th>
+                    <th>Reason</th>
+                    <th>Refund Channel</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th style="text-align: right;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ref in refunds %}
+                <tr>
+                    <td><strong style="color: #fff; font-family: monospace;">{{ ref.refund_id }}</strong></td>
+                    <td>
+                        <a href="/admin-panel/orders/{{ ref.order.id }}/">
+                            {{ ref.order.order_number }}
+                        </a>
+                    </td>
+                    <td>{{ ref.user.username }}</td>
+                    <td><strong style="color: var(--danger); font-size: 0.95rem;">₹{{ ref.refund_amount }}</strong></td>
+                    <td style="max-width: 180px; font-size: 0.8rem; color: var(--text-secondary);">
+                        {{ ref.reason }}
+                    </td>
+                    <td>
+                        <span class="status-badge status-info">{{ ref.get_refund_method_display }}</span>
+                    </td>
+                    <td>
+                        <span class="status-badge status-{{ ref.status }}">{{ ref.get_status_display }}</span>
+                    </td>
+                    <td style="font-size: 0.78rem; color: var(--text-muted);">
+                        {{ ref.created_at|date:"M d, Y" }}
+                    </td>
+                    <td style="text-align: right;">
+                        {% if ref.status == 'requested' or ref.status == 'processing' %}
+                        <form method="POST" style="display: inline-flex; gap: 0.35rem;">
+                            {% csrf_token %}
+                            <input type="hidden" name="refund_id" value="{{ ref.id }}">
+                            <button type="submit" name="status" value="completed" class="btn btn-success btn-sm" data-confirm="Approve and disburse refund of ₹{{ ref.refund_amount }}?">
+                                Approve
+                            </button>
+                            <button type="submit" name="status" value="rejected" class="btn btn-danger btn-sm" data-confirm="Reject this refund claim?">
+                                Reject
+                            </button>
+                        </form>
+                        {% else %}
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">Resolved</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                        No pending refund requests found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

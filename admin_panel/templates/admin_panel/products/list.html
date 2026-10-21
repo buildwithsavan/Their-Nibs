@@ -1,0 +1,215 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Product Catalog{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Garment Collections</h1>
+        <p class="page-subtitle">Manage garment collections, sizes, pricing, and live inventory.</p>
+    </div>
+    <div class="page-actions">
+        <a href="/admin-panel/products/add/" class="btn btn-primary">
+            <span>+ Add New Garment</span>
+        </a>
+    </div>
+</div>
+
+<form method="GET" class="filter-bar">
+    <div class="search-input">
+        <input type="text" name="q" value="{{ current_q }}" class="form-control" placeholder="Search by name, SKU, material...">
+    </div>
+
+    <div style="min-width: 140px;">
+        <select name="category" class="form-select" onchange="this.form.submit()">
+            <option value="">All Categories</option>
+            {% for cat in categories %}
+            <option value="{{ cat.id }}" {% if current_category == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div style="min-width: 130px;">
+        <select name="brand" class="form-select" onchange="this.form.submit()">
+            <option value="">All Brands</option>
+            {% for b in brands %}
+            <option value="{{ b.id }}" {% if current_brand == b.id|stringformat:"s" %}selected{% endif %}>{{ b.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div style="min-width: 120px;">
+        <select name="season" class="form-select" onchange="this.form.submit()">
+            <option value="">All Seasons</option>
+            {% for s in seasons %}
+            <option value="{{ s.id }}" {% if current_season == s.id|stringformat:"s" %}selected{% endif %}>{{ s.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div style="min-width: 120px;">
+        <select name="occasion" class="form-select" onchange="this.form.submit()">
+            <option value="">All Occasions</option>
+            {% for occ in occasions %}
+            <option value="{{ occ.id }}" {% if current_occasion == occ.id|stringformat:"s" %}selected{% endif %}>{{ occ.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div style="min-width: 120px;">
+        <select name="stock" class="form-select" onchange="this.form.submit()">
+            <option value="">All Stock</option>
+            <option value="in_stock" {% if current_stock == 'in_stock' %}selected{% endif %}>In Stock (>10)</option>
+            <option value="low_stock" {% if current_stock == 'low_stock' %}selected{% endif %}>Low Stock (≤10)</option>
+            <option value="out_of_stock" {% if current_stock == 'out_of_stock' %}selected{% endif %}>Out of Stock</option>
+        </select>
+    </div>
+
+    <div style="min-width: 110px;">
+        <select name="status" class="form-select" onchange="this.form.submit()">
+            <option value="">All Status</option>
+            <option value="active" {% if current_status == 'active' %}selected{% endif %}>Active</option>
+            <option value="draft" {% if current_status == 'draft' %}selected{% endif %}>Draft</option>
+            <option value="inactive" {% if current_status == 'inactive' %}selected{% endif %}>Inactive</option>
+            <option value="out_of_stock" {% if current_status == 'out_of_stock' %}selected{% endif %}>Out of Stock</option>
+            <option value="archived" {% if current_status == 'archived' %}selected{% endif %}>Archived</option>
+        </select>
+    </div>
+
+    <div style="min-width: 140px;">
+        <select name="sort" class="form-select" onchange="this.form.submit()">
+            <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest First</option>
+            <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Oldest First</option>
+            <option value="price_low" {% if current_sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+            <option value="price_high" {% if current_sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+            <option value="discount_high" {% if current_sort == 'discount_high' %}selected{% endif %}>Highest Discount</option>
+            <option value="stock_high" {% if current_sort == 'stock_high' %}selected{% endif %}>Highest Stock</option>
+            <option value="stock_low" {% if current_sort == 'stock_low' %}selected{% endif %}>Lowest Stock</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
+    <a href="/admin-panel/products/" class="btn btn-secondary btn-sm" title="Clear Filters">Reset</a>
+</form>
+
+<div class="clothify-card">
+    <div class="card-header">
+        <h3 class="card-title">
+            Products Database 
+            <span style="font-size: 0.8rem; font-weight: normal; color: var(--text-muted);">({{ total_count }} total items)</span>
+        </h3>
+    </div>
+    <div class="table-responsive">
+        <table class="clothify-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Product & SKU</th>
+                    <th>Brand & Category</th>
+                    <th>Price</th>
+                    <th>Discount</th>
+                    <th>Stock</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in products %}
+                <tr>
+                    <td style="width: 56px;">
+                        {% if p.image_url %}
+                        <img src="{{ p.image_url }}" alt="{{ p.name }}" class="lightbox-trigger" data-lightbox-src="{{ p.image_url }}" data-lightbox-title="{{ p.name }}" data-lightbox-subtitle="SKU: {{ p.sku }} • ₹{{ p.final_price }} • {{ p.category.name }}" style="width: 44px; height: 52px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-subtle); display: block;" title="Click to view image">
+                        {% else %}
+                        <div style="width: 44px; height: 52px; background: var(--bg-main); border: 1px dashed var(--border-subtle); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.68rem;">
+                            No Img
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <strong style="color: var(--primary); font-size: 0.92rem;">{{ p.name }}</strong>
+                        <div style="font-size: 0.76rem; color: var(--text-muted); font-family: monospace;">SKU: {{ p.sku }}</div>
+                        {% if p.variants.all %}
+                        <span style="font-size: 0.72rem; color: var(--accent);">{{ p.variants.count }} variants</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div><strong>{{ p.brand.name }}</strong></div>
+                        <div style="font-size: 0.78rem; color: var(--text-secondary);">
+                            {{ p.category.name }}{% if p.subcategory %} &gt; {{ p.subcategory.name }}{% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <div><strong style="color: var(--primary);">₹{{ p.final_price }}</strong></div>
+                        {% if p.discount_percent > 0 %}
+                        <div style="font-size: 0.75rem; color: var(--text-muted); text-decoration: line-through;">₹{{ p.price }}</div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if p.discount_percent > 0 %}
+                        <span class="status-badge status-active" style="font-size: 0.7rem;">{{ p.discount_percent }}% OFF</span>
+                        {% else %}
+                        <span style="color: var(--text-muted); font-size: 0.8rem;">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div><strong class="stock-val-{{ p.id }}">{{ p.stock }}</strong> in stock</div>
+                        <span class="status-badge status-{{ p.stock_status|slugify }}" style="margin-top: 0.2rem;">
+                            {{ p.stock_status }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-badge status-{{ p.status }}">{{ p.get_status_display }}</span>
+                    </td>
+                    <td style="font-size: 0.78rem; color: var(--text-muted);">
+                        {{ p.created_at|date:"M d, Y" }}
+                    </td>
+                    <td style="text-align: right; white-space: nowrap;">
+                        <a href="/admin-panel/products/{{ p.id }}/edit/" class="btn btn-secondary btn-sm" title="Edit Product">Edit</a>
+
+                        <a href="/admin-panel/products/{{ p.id }}/toggle-status/" class="btn btn-secondary btn-sm" title="Toggle Active/Inactive">
+                            {% if p.status == 'active' %}Deactivate{% else %}Activate{% endif %}
+                        </a>
+
+                        <a href="/admin-panel/products/{{ p.id }}/archive/" class="btn btn-danger btn-sm" data-confirm="Are you sure you want to archive '{{ p.name }}'?" title="Archive Product">
+                            Archive
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                        No products found matching the criteria.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if products.has_other_pages %}
+    <div class="clothify-pagination">
+        <span style="font-size: 0.82rem; color: var(--text-muted);">
+            Page {{ products.number }} of {{ products.paginator.num_pages }}
+        </span>
+        <div class="pagination-links">
+            {% if products.has_previous %}
+            <a href="?page={{ products.previous_page_number }}&q={{ current_q }}&category={{ current_category }}&brand={{ current_brand }}&status={{ current_status }}&stock={{ current_stock }}&sort={{ current_sort }}" class="page-btn">Prev</a>
+            {% endif %}
+
+            {% for num in products.paginator.page_range %}
+                {% if products.number == num %}
+                <span class="page-btn active">{{ num }}</span>
+                {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
+                <a href="?page={{ num }}&q={{ current_q }}&category={{ current_category }}&brand={{ current_brand }}&status={{ current_status }}&stock={{ current_stock }}&sort={{ current_sort }}" class="page-btn">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if products.has_next %}
+            <a href="?page={{ products.next_page_number }}&q={{ current_q }}&category={{ current_category }}&brand={{ current_brand }}&status={{ current_status }}&stock={{ current_stock }}&sort={{ current_sort }}" class="page-btn">Next</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

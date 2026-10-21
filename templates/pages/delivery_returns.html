@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delivery & Returns – Their Nibs{% endblock %}
+
+{% block extra_css %}
+<style>
+  .policy-container {
+    max-width: 1120px;
+    margin: 40px auto 90px;
+    padding: 0 24px;
+    font-family: var(--font-body, 'Poppins', sans-serif);
+    color: #1d1d1b;
+  }
+  .policy-breadcrumbs {
+    font-size: 13px;
+    color: #71717a;
+    margin-bottom: 24px;
+  }
+  .policy-breadcrumbs a {
+    color: #1d1d1b;
+    text-decoration: none;
+  }
+  .policy-breadcrumbs a:hover {
+    text-decoration: underline;
+  }
+
+  .policy-layout {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .policy-content h1 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    font-size: 2.5rem;
+    font-weight: 400;
+    margin: 0 0 16px;
+    color: #111111;
+  }
+  .policy-content .intro-lead {
+    font-size: 16px;
+    line-height: 1.7;
+    color: #555555;
+    margin-bottom: 32px;
+    border-bottom: 1px solid #e5e5e5;
+    padding-bottom: 24px;
+  }
+  .policy-content h2 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    font-size: 1.6rem;
+    margin: 36px 0 14px;
+    color: #111111;
+  }
+  .policy-content p,
+  .policy-content li {
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: #444444;
+  }
+  .policy-content ul {
+    padding-left: 20px;
+    margin-bottom: 20px;
+  }
+
+  .rate-card {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .rate-info strong {
+    display: block;
+    font-size: 15px;
+    color: #111111;
+    margin-bottom: 4px;
+  }
+  .rate-info span {
+    font-size: 13.5px;
+    color: #666666;
+  }
+  .rate-price {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1d1d1b;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="policy-container">
+  <div class="policy-breadcrumbs">
+    <a href="{% url 'homepage' %}">Home</a> &rsaquo; <a href="{% url 'here_to_help' %}">Here to Help</a> &rsaquo; <span>Delivery &amp; Returns</span>
+  </div>
+
+  <div class="policy-layout">
+
+    <div class="policy-content">
+      <h1>Delivery &amp; Returns</h1>
+      <p class="intro-lead">
+        We carefully wrap every Their Nibs order with signature tissue paper so that opening your parcel feels as special as slipping into your pyjamas.
+      </p>
+
+      <h2>UK Delivery Rates &amp; Options</h2>
+
+      <div class="rate-card">
+        <div class="rate-info">
+          <strong>UK Standard Tracked Delivery (Royal Mail 48)</strong>
+          <span>3 to 5 business days &bull; Fully tracked service</span>
+        </div>
+        <div class="rate-price">£3.95 (FREE over £60)</div>
+      </div>
+
+      <div class="rate-card">
+        <div class="rate-info">
+          <strong>UK Next Working Day Delivery (Royal Mail 24 Tracked)</strong>
+          <span>Order before 1pm Monday to Thursday for next working day delivery</span>
+        </div>
+        <div class="rate-price">£6.95</div>
+      </div>
+
+      <div class="rate-card">
+        <div class="rate-info">
+          <strong>International Tracked Shipping</strong>
+          <span>Europe (5–7 days) &bull; Rest of World (7–12 days)</span>
+        </div>
+        <div class="rate-price">From £12.00</div>
+      </div>
+
+      <h2>Free Delivery Threshold</h2>
+      <p>
+        Enjoy <strong>FREE UK Standard Delivery</strong> on all orders over <strong>£60.00</strong>. The discount is automatically applied at checkout with no promotional voucher required.
+      </p>
+
+      <h2>Easy 28-Day Returns Policy</h2>
+      <p>
+        If your pyjamas are not quite the right size, shape, or colour, you have <strong>28 days from the date of delivery</strong> to return them to us.
+      </p>
+      <ul>
+        <li>Items must be unworn, unwashed, and in their original pristine condition.</li>
+        <li>All original swing tags and packaging must remain attached.</li>
+        <li>For hygiene reasons, scrunchies, shower caps, and earrings cannot be returned if opened, unless faulty.</li>
+      </ul>
+
+      <h2>How to Return Your Item</h2>
+      <ol style="padding-left: 20px; line-height: 1.7; font-size: 14.5px; color: #444;">
+        <li>Package your unworn items securely in the original bag or suitable protective mailer.</li>
+        <li>Include your order packing slip or order number and contact details inside the parcel.</li>
+        <li>Email our team on <a href="mailto:info@their-nibs.com" style="color: #111; font-weight: 500;">info@their-nibs.com</a> with your order number to request a pre-paid Royal Mail return label.</li>
+        <li>Drop your parcel off at any local Post Office branch or Royal Mail Parcel Postbox.</li>
+      </ol>
+
+      <h2>Exchanges</h2>
+      <p>
+        Need a different size? We offer free size exchanges on UK orders, subject to stock availability. Simply note the requested replacement size on your returns note.
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

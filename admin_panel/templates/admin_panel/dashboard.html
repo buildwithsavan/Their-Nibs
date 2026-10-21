@@ -1,0 +1,395 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Boutique Atelier Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Boutique Atelier Overview</h1>
+        <p class="page-subtitle">Welcome back. Real-time store performance, garment collections, orders, and customer relations.</p>
+    </div>
+    <div class="page-actions">
+        <a href="/admin-panel/products/add/" class="btn btn-primary">
+            <span>Add New Garment</span>
+        </a>
+    </div>
+</div>
+
+<div class="stats-grid">
+
+    <div class="stat-card no-icon-card">
+        <div class="stat-card-header no-icon-card-header">GROSS REVENUE</div>
+        <div class="stat-value no-icon-card-value" style="font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important; font-size: 1.85rem !important; font-weight: 700 !important; font-variant-numeric: lining-nums tabular-nums !important; letter-spacing: -0.02em !important; display: flex !important; align-items: baseline !important; gap: 0.25rem !important; color: #000000 !important;">
+            <span class="stat-currency seller-card-currency" style="font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important; font-size: 1.45rem !important; font-weight: 600 !important; line-height: 1 !important; opacity: 0.9 !important;">₹</span> {{ total_revenue|floatformat:2 }}
+        </div>
+        <div class="stat-subtext no-icon-card-subtext"><span class="stat-trend-up trend-up">↑ Settled sales</span></div>
+    </div>
+
+    <div class="stat-card no-icon-card">
+        <div class="stat-card-header no-icon-card-header">TOTAL ORDERS</div>
+        <div class="stat-value no-icon-card-value" style="font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important; font-size: 1.85rem !important; font-weight: 700 !important; font-variant-numeric: lining-nums tabular-nums !important; letter-spacing: -0.02em !important; display: flex !important; align-items: baseline !important; gap: 0.25rem !important; color: #000000 !important;">
+            {{ total_orders }}
+        </div>
+        <div class="stat-subtext no-icon-card-subtext">
+            {% if pending_orders > 0 %}
+            <span class="stat-trend-down" style="color: #d97706; font-weight: 600;">{{ pending_orders }} awaiting dispatch</span>
+            {% else %}
+            <span class="stat-trend-up trend-up">✓ All orders fulfilled</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="stat-card no-icon-card">
+        <div class="stat-card-header no-icon-card-header">CATALOG GARMENTS</div>
+        <div class="stat-value no-icon-card-value" style="font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important; font-size: 1.85rem !important; font-weight: 700 !important; font-variant-numeric: lining-nums tabular-nums !important; letter-spacing: -0.02em !important; display: flex !important; align-items: baseline !important; gap: 0.25rem !important; color: #000000 !important;">
+            {{ total_products }}
+        </div>
+        <div class="stat-subtext no-icon-card-subtext">
+            {% if low_stock_products > 0 %}
+            <span class="stat-trend-down" style="color: #d97706; font-weight: 600;">{{ low_stock_products }} low stock units</span>
+            {% else %}
+            <span class="stat-trend-up trend-up">✓ Healthy inventory</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="stat-card no-icon-card">
+        <div class="stat-card-header no-icon-card-header">ACTIVE SHOPPERS</div>
+        <div class="stat-value no-icon-card-value" style="font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important; font-size: 1.85rem !important; font-weight: 700 !important; font-variant-numeric: lining-nums tabular-nums !important; letter-spacing: -0.02em !important; display: flex !important; align-items: baseline !important; gap: 0.25rem !important; color: #000000 !important;">
+            {{ total_customers }}
+        </div>
+        <div class="stat-subtext no-icon-card-subtext"><span class="stat-trend-up trend-up">↑ Registered boutique accounts</span></div>
+    </div>
+</div>
+
+<div class="action-cards-grid">
+
+    <a href="/admin-panel/products/add/" class="action-stat-card" title="Add New Garment to Catalog">
+        <div class="stat-card-header">
+            <span class="stat-title">Catalog</span>
+        </div>
+        <div class="action-card-name">New Garment</div>
+        <div class="stat-subtext"><span class="stat-trend-up">＋ Add style</span></div>
+    </a>
+
+    <a href="/admin-panel/orders/" class="action-stat-card" title="View Customer Orders">
+        <div class="stat-card-header">
+            <span class="stat-title">Fulfillment</span>
+        </div>
+        <div class="action-card-name">Orders</div>
+        <div class="stat-subtext"><span>Manage dispatch</span></div>
+    </a>
+
+    <a href="/admin-panel/inventory/" class="action-stat-card" title="Live Warehouse Stock">
+        <div class="stat-card-header">
+            <span class="stat-title">Warehouse</span>
+        </div>
+        <div class="action-card-name">Inventory</div>
+        <div class="stat-subtext"><span>Live stock</span></div>
+    </a>
+
+    <a href="/admin-panel/categories/" class="action-stat-card" title="Garment Categories">
+        <div class="stat-card-header">
+            <span class="stat-title">Collections</span>
+        </div>
+        <div class="action-card-name">Categories</div>
+        <div class="stat-subtext"><span>Store taxonomy</span></div>
+    </a>
+
+    <a href="/admin-panel/brands/" class="action-stat-card" title="Designer Brand Labels">
+        <div class="stat-card-header">
+            <span class="stat-title">Designers</span>
+        </div>
+        <div class="action-card-name">Brands</div>
+        <div class="stat-subtext"><span>Partner labels</span></div>
+    </a>
+
+    <a href="/admin-panel/coupons/add/" class="action-stat-card" title="Create Discount Coupon">
+        <div class="stat-card-header">
+            <span class="stat-title">Promotions</span>
+        </div>
+        <div class="action-card-name">New Coupon</div>
+        <div class="stat-subtext"><span>Create discount</span></div>
+    </a>
+
+    <a href="/admin-panel/gift-cards/" class="action-stat-card" title="Manage Gift Cards & Vouchers">
+        <div class="stat-card-header">
+            <span class="stat-title">Vouchers</span>
+        </div>
+        <div class="action-card-name">Gift Cards</div>
+        <div class="stat-subtext"><span>Store cards</span></div>
+    </a>
+
+    <a href="/admin-panel/sellers/" class="action-stat-card" title="Manage Multi-Vendor Sellers">
+        <div class="stat-card-header">
+            <span class="stat-title">Marketplace</span>
+        </div>
+        <div class="action-card-name">Sellers</div>
+        <div class="stat-subtext"><span>Vendor network</span></div>
+    </a>
+
+    <a href="/admin-panel/shipping/" class="action-stat-card" title="Manage Logistics & Carrier Shipments">
+        <div class="stat-card-header">
+            <span class="stat-title">Logistics</span>
+        </div>
+        <div class="action-card-name">Shipping</div>
+        <div class="stat-subtext"><span>Courier AWB</span></div>
+    </a>
+
+    <a href="/admin-panel/collaborations/" class="action-stat-card" title="Brand Collaborations & Influencer PR">
+        <div class="stat-card-header">
+            <span class="stat-title">PR & Creators</span>
+        </div>
+        <div class="action-card-name">Collab</div>
+        <div class="stat-subtext"><span>Influencer desk</span></div>
+    </a>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.95rem; margin-bottom: 0.95rem;">
+
+    <div class="clothify-card" style="margin-bottom: 0;">
+        <div class="card-header" style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1.25rem;">
+            <div>
+                <h3 class="card-title" style="font-size: 0.98rem; font-weight: 700;">Gross Revenue (₹)</h3>
+                <div style="font-size: 0.74rem; color: var(--text-muted); margin-top: 0.15rem;">7-Day gross turnover (₹)</div>
+            </div>
+            <span style="font-size: 0.74rem; font-weight: 700; color: #ba6853; background: #fbf1ee; padding: 0.2rem 0.55rem; border-radius: 4px;">Turnover</span>
+        </div>
+        <div class="card-body" style="height: 235px; padding: 0.75rem 1rem 1rem; position: relative;">
+            <canvas id="grossRevenueBarChart"></canvas>
+        </div>
+    </div>
+
+    <div class="clothify-card" style="margin-bottom: 0;">
+        <div class="card-header" style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1.25rem;">
+            <div>
+                <h3 class="card-title" style="font-size: 0.98rem; font-weight: 700;">Orders Placed Volume</h3>
+                <div style="font-size: 0.74rem; color: var(--text-muted); margin-top: 0.15rem;">7-Day order parcel volume</div>
+            </div>
+            <span style="font-size: 0.74rem; font-weight: 700; color: #1e2632; background: #eef2f6; padding: 0.2rem 0.55rem; border-radius: 4px;">Parcels</span>
+        </div>
+        <div class="card-body" style="height: 235px; padding: 0.75rem 1rem 1rem; position: relative;">
+            <canvas id="ordersVolumeBarChart"></canvas>
+        </div>
+    </div>
+
+    <div class="clothify-card" style="margin-bottom: 0;">
+        <div class="card-header" style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1.25rem;">
+            <div>
+                <h3 class="card-title" style="font-size: 0.98rem; font-weight: 700;">Category Collection Mix</h3>
+                <div style="font-size: 0.74rem; color: var(--text-muted); margin-top: 0.15rem;">Active garment allocation</div>
+            </div>
+            <span class="status-badge" style="background: #fbf1ee; color: var(--accent); font-weight: 700; font-size: 0.74rem; padding: 0.2rem 0.55rem;">{{ total_products }} Styles</span>
+        </div>
+        <div class="card-body" style="height: 235px; padding: 0.5rem 1rem 1rem; display: flex; align-items: center; justify-content: center; position: relative;">
+            <canvas id="categoryChart"></canvas>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ seven_days_labels|json_script:"sevenDaysLabelsData" }}
+{{ seven_days_revenue|json_script:"sevenDaysRevenueData" }}
+{{ seven_days_orders|json_script:"sevenDaysOrdersData" }}
+{{ category_chart_labels|json_script:"categoryChartLabelsData" }}
+{{ category_chart_data|json_script:"categoryChartDataData" }}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fontFamily = "'Plus Jakarta Sans', sans-serif";
+        const gridColor = 'rgba(222, 212, 197, 0.45)';
+        const textColor = '#5e6878';
+
+        Chart.defaults.font.family = fontFamily;
+        Chart.defaults.color = textColor;
+
+        function getJsonData(id, fallback) {
+            try {
+                const el = document.getElementById(id);
+                return el && el.textContent ? JSON.parse(el.textContent) : fallback;
+            } catch (e) {
+                return fallback;
+            }
+        }
+
+        const revCanvas = document.getElementById('grossRevenueBarChart');
+        if (revCanvas) {
+            const revCtx = revCanvas.getContext('2d');
+            const revGradient = revCtx.createLinearGradient(0, 0, 0, 220);
+            revGradient.addColorStop(0, '#ba6853');
+            revGradient.addColorStop(1, '#e3a898');
+
+            const sevenDaysLabels = getJsonData('sevenDaysLabelsData', []);
+            const sevenDaysRevenue = getJsonData('sevenDaysRevenueData', []);
+
+            new Chart(revCanvas, {
+                type: 'bar',
+                data: {
+                    labels: sevenDaysLabels,
+                    datasets: [{
+                        label: 'Gross Revenue (₹)',
+                        data: sevenDaysRevenue,
+                        backgroundColor: revGradient,
+                        hoverBackgroundColor: '#a25541',
+                        borderRadius: 4,
+                        barThickness: 20
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#1e2632',
+                            titleColor: '#ffffff',
+                            bodyColor: '#fbf9f5',
+                            padding: 10,
+                            cornerRadius: 6,
+                            callbacks: {
+                                label: function(context) {
+                                    return ' Revenue: ₹' + Number(context.raw).toLocaleString('en-IN');
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 10 } }
+                        },
+                        y: {
+                            grid: { color: gridColor },
+                            ticks: {
+                                font: { size: 10 },
+                                maxTicksLimit: 6,
+                                callback: function(val) {
+                                    if (val >= 1000) {
+                                        return val % 1000 === 0 ? '₹' + (val / 1000) + 'k' : '';
+                                    }
+                                    return '₹' + val;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        const ordersCanvas = document.getElementById('ordersVolumeBarChart');
+        if (ordersCanvas) {
+            const ordersCtx = ordersCanvas.getContext('2d');
+            const ordersGradient = ordersCtx.createLinearGradient(0, 0, 0, 220);
+            ordersGradient.addColorStop(0, '#1e2632');
+            ordersGradient.addColorStop(1, '#3b485a');
+
+            const sevenDaysLabels = getJsonData('sevenDaysLabelsData', []);
+            const sevenDaysOrders = getJsonData('sevenDaysOrdersData', []);
+
+            new Chart(ordersCanvas, {
+                type: 'bar',
+                data: {
+                    labels: sevenDaysLabels,
+                    datasets: [{
+                        label: 'Orders Placed',
+                        data: sevenDaysOrders,
+                        backgroundColor: ordersGradient,
+                        hoverBackgroundColor: '#0f141c',
+                        borderRadius: 4,
+                        barThickness: 20
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#1e2632',
+                            titleColor: '#ffffff',
+                            bodyColor: '#fbf9f5',
+                            padding: 10,
+                            cornerRadius: 6,
+                            callbacks: {
+                                label: function(context) {
+                                    return ' Orders: ' + context.raw + ' parcels';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 10 } }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: gridColor },
+                            ticks: {
+                                font: { size: 10 },
+                                precision: 0,
+                                maxTicksLimit: 6,
+                                callback: function(val) {
+                                    return Number.isInteger(val) ? val : '';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        const catCanvas = document.getElementById('categoryChart');
+        if (catCanvas) {
+            const catLabels = getJsonData('categoryChartLabelsData', []);
+            const catData = getJsonData('categoryChartDataData', []);
+            const boutiquePalette = ['#ba6853', '#1e2632', '#4a7c59', '#d4a373', '#c28285', '#64748b', '#0284c7', '#7c3aed', '#059669', '#ea580c'];
+            const hasData = catLabels && catLabels.length > 0 && catData && catData.length > 0;
+            const bgColors = hasData ? catLabels.map((_, i) => boutiquePalette[i % boutiquePalette.length]) : ['#ba6853'];
+
+            new Chart(catCanvas, {
+                type: 'doughnut',
+                data: {
+                    labels: hasData ? catLabels : ['All Collections'],
+                    datasets: [{
+                        data: hasData ? catData : [1],
+                        backgroundColor: bgColors,
+                        borderColor: '#ffffff',
+                        borderWidth: 2.5,
+                        hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '66%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 12,
+                                font: { size: 11 },
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#1e2632',
+                            padding: 10,
+                            cornerRadius: 6,
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const pct = total > 0 ? Math.round((context.raw / total) * 100) : 0;
+                                    return ` ${context.label}: ${context.raw} styles (${pct}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

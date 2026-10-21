@@ -1,0 +1,229 @@
+{% extends 'seller_panel/base.html' %}
+
+{% block title %}Customer Returns{% endblock %}
+{% block page_heading %}Orders &amp; Fulfillment — Returns &amp; Restocking{% endblock %}
+
+{% block content %}
+<style>
+
+    .return-category-btn {
+        padding: 10px 22px;
+        font-size: 0.92rem;
+        font-weight: 700;
+        border-radius: var(--radius-md, 10px);
+        border: 2px solid #cbd5e1;
+        background-color: #ffffff;
+        color: #475569;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.25s ease-in-out;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .return-category-btn:hover {
+        background-color: #faf6f0;
+        color: var(--primary);
+        border-color: #b08d74;
+    }
+    .return-category-btn.active {
+        background-color: #f1c4af;
+        color: #080808;
+        border-color: #f1c4af;
+        box-shadow: 0 3px 8px rgba(43,83,41,0.25);
+    }
+    .return-category-btn .return-count-badge {
+        background: #f1f5f9;
+        color: #0f172a;
+        padding: 3px 9px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+    .return-category-btn.active .return-count-badge {
+        background: rgba(255,255,255,0.25);
+        color: #0c0c0c;
+    }
+</style>
+
+<div style="margin-bottom: 1.25rem;">
+    <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; margin: 0 0 0.5rem 0; color: var(--primary); font-weight: 700;">
+        Customer Returns &amp; Refund Management
+    </h2>
+    <span style="font-size: 0.88rem; color: var(--text-muted); display: block; margin-bottom: 1.25rem;">
+        Track customer return shipments in-transit and inspect returned items received at your boutique store.
+    </span>
+
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; background: #faf6f0; padding: 12px; border-radius: 10px; border: 1px solid #e3b099;">
+        <a href="/seller-panel/returns/?tab=on_the_way" class="return-category-btn {% if return_tab == 'on_the_way' or not return_tab %}active{% endif %}">
+            <i class="bi bi-truck-flatbed"></i>
+            On the Way
+            <span class="return-count-badge">{{ on_the_way_count }}</span>
+        </a>
+
+        <a href="/seller-panel/returns/?tab=reached_seller" class="return-category-btn {% if return_tab == 'reached_seller' %}active{% endif %}">
+            <i class="bi bi-box-seam-fill"></i>
+            Reached Store
+            <span class="return-count-badge">{{ reached_seller_count }}</span>
+        </a>
+    </div>
+</div>
+
+{% if return_tab == 'on_the_way' or not return_tab %}
+
+    <div class="clothify-card" style="padding: 0; overflow: hidden;">
+        <div style="padding: 1rem 1.25rem; background-color: #faf8f5; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <h4 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--primary); font-weight: 700;">
+                    Items In-Transit to Seller Store
+                </h4>
+                <span style="font-size: 0.82rem; color: #64748b;">
+                    Return packages picked up from customers currently on their way back to your boutique warehouse.
+                </span>
+            </div>
+            <span class="badge bg-warning text-dark border" style="font-size: 0.82rem; padding: 6px 12px;">
+                {{ on_the_way_count }} Return Packages In Transit
+            </span>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table class="clothify-table" style="width: 100%; font-size: 0.88rem; border-collapse: collapse;">
+                <thead>
+                    <tr style="background-color: #faf6f0; border-bottom: 1px solid var(--seller-border, #e5e7eb);">
+                        <th style="padding: 10px 14px; text-align: left;">RETURN REF</th>
+                        <th style="padding: 10px 14px; text-align: left;">ORDER REF</th>
+                        <th style="padding: 10px 14px; text-align: left;">CUSTOMER</th>
+                        <th style="padding: 10px 14px; text-align: left;">RETURNED GARMENT ITEM</th>
+                        <th style="padding: 10px 14px; text-align: left;">RETURN REASON</th>
+                        <th style="padding: 10px 14px; text-align: left;">RETURN COURIER &amp; AWB</th>
+                        <th style="padding: 10px 14px; text-align: center;">EST. STORE ARRIVAL</th>
+                        <th style="padding: 10px 14px; text-align: center;">STATUS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if on_the_way_returns %}
+                        {% for r in on_the_way_returns %}
+                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                            <td style="padding: 10px 14px; font-weight: 700; color: #92400e;">
+                                {{ r.return_id }}
+                            </td>
+                            <td style="padding: 10px 14px; font-weight: 600; color: var(--primary);">
+                                {{ r.order_number }}
+                            </td>
+                            <td style="padding: 10px 14px; font-weight: 600; color: #1e293b;">
+                                {{ r.customer }}
+                            </td>
+                            <td style="padding: 10px 14px; font-weight: 500; color: #334155;">
+                                {{ r.items }}
+                            </td>
+                            <td style="padding: 10px 14px; font-size: 0.82rem; color: #b91c1c; font-weight: 500;">
+                                {{ r.reason }}
+                            </td>
+                            <td style="padding: 10px 14px;">
+                                <div style="font-weight: 600; color: #1e293b;">{{ r.courier }}</div>
+                                <code style="font-size: 0.78rem; color: var(--primary);">{{ r.return_awb }}</code>
+                            </td>
+                            <td style="padding: 10px 14px; text-align: center; font-size: 0.82rem; font-weight: 600; color: #0284c7;">
+                                {{ r.est_store_arrival }}
+                            </td>
+                            <td style="padding: 10px 14px; text-align: center;">
+                                <span class="badge-status {{ r.status_badge }}">{{ r.status }}</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center py-4 text-muted">
+                                No return packages currently on the way to your store.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% else %}
+
+    <div class="clothify-card" style="padding: 0; overflow: hidden;">
+        <div style="padding: 1rem 1.25rem; background-color: #faf8f5; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <h4 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--primary); font-weight: 700;">
+                    Items Returned &amp; Reached Seller Store
+                </h4>
+                <span style="font-size: 0.82rem; color: #64748b;">
+                    Returned garments that have been received at your store/warehouse ready for quality inspection, restocking, and refund approval.
+                </span>
+            </div>
+            <span class="badge bg-success text-white border" style="font-size: 0.82rem; padding: 6px 12px;">
+                {{ reached_seller_count }} Returned Packages Delivered to Store
+            </span>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table class="clothify-table" style="width: 100%; font-size: 0.88rem; border-collapse: collapse;">
+                <thead>
+                    <tr style="background-color: #faf6f0; border-bottom: 1px solid var(--seller-border, #e5e7eb);">
+                        <th style="padding: 10px 14px; text-align: left;">RETURN REF</th>
+                        <th style="padding: 10px 14px; text-align: left;">ORDER REF</th>
+                        <th style="padding: 10px 14px; text-align: left;">CUSTOMER</th>
+                        <th style="padding: 10px 14px; text-align: left;">RETURNED GARMENT ITEM</th>
+                        <th style="padding: 10px 14px; text-align: center;">ARRIVED DATE</th>
+                        <th style="padding: 10px 14px; text-align: left;">QC / ITEM CONDITION</th>
+                        <th style="padding: 10px 14px; text-align: center;">REFUND STATUS</th>
+                        <th style="padding: 10px 14px; text-align: right;">ACTION</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if reached_seller_returns %}
+                        {% for r in reached_seller_returns %}
+                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                            <td style="padding: 10px 14px; font-weight: 700; color: #15803d;">
+                                {{ r.return_id }}
+                            </td>
+                            <td style="padding: 10px 14px; font-weight: 600; color: var(--primary);">
+                                {{ r.order_number }}
+                            </td>
+                            <td style="padding: 10px 14px; font-weight: 600; color: #1e293b;">
+                                {{ r.customer }}
+                            </td>
+                            <td style="padding: 10px 14px; font-weight: 500; color: #334155;">
+                                {{ r.items }}
+                            </td>
+                            <td style="padding: 10px 14px; text-align: center; font-size: 0.82rem; color: #64748b;">
+                                {{ r.reached_date }}
+                            </td>
+                            <td style="padding: 10px 14px; font-size: 0.82rem; font-weight: 600; color: #16a34a;">
+                                {{ r.item_condition }}
+                            </td>
+                            <td style="padding: 10px 14px; text-align: center;">
+                                <span class="badge bg-light text-success border border-success" style="font-size: 0.78rem; font-weight: 600; padding: 4px 8px;">
+                                    {{ r.refund_status }}
+                                </span>
+                            </td>
+                            <td style="padding: 10px 14px; text-align: right;">
+                                <div style="display: flex; gap: 6px; justify-content: flex-end;">
+                                    <button class="btn btn-primary btn-sm" style="font-size: 0.8rem; padding: 4px 10px;" onclick="alert('Item {{ r.return_id }} restocked into your seller inventory.');">
+                                        Restock to Catalog
+                                    </button>
+                                    <button class="btn btn-secondary btn-sm" style="font-size: 0.8rem; padding: 4px 8px;" onclick="alert('Quality inspection report for {{ r.return_id }} confirmed clean.');">
+                                        QC Report
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center py-4 text-muted">
+                                No returned products currently reached your store.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endif %}
+
+{% endblock %}

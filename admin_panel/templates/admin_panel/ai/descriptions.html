@@ -1,0 +1,157 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}AI Copywriter Studio{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <div class="ai-pill" style="margin-bottom: 0.5rem;">
+            <span>✨ Powered by Google Gemini 1.5</span>
+        </div>
+        <h1 class="page-title">AI Product Description Studio</h1>
+        <p class="page-subtitle">
+            Generate high-converting, sensory-rich fashion descriptions with Gemini. Review, refine, and approve before publishing.
+        </p>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+
+    <div class="clothify-card">
+        <div class="card-header">
+            <h3 class="card-title">1. Select Target Garment Item</h3>
+        </div>
+        <div class="card-body">
+            <form method="GET" style="margin-bottom: 1.5rem;">
+                <label class="form-label">Choose Product from Catalog</label>
+                <div style="display: flex; gap: 0.5rem;">
+                    <select name="product_id" id="ai-product-selector" class="form-select">
+                        <option value="">-- Select Product --</option>
+                        {% for prod in products %}
+                        <option value="{{ prod.id }}" {% if selected_product.id == prod.id %}selected{% endif %}>
+                            {{ prod.name }} ({{ prod.brand.name }} - {{ prod.category.name }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-secondary btn-sm">Load</button>
+                </div>
+            </form>
+
+            {% if selected_product %}
+            <div style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 1.25rem;">
+                <div style="display: flex; gap: 1rem; align-items: start;">
+                    {% if selected_product.image_url %}
+                    <img src="{{ selected_product.image_url }}" alt="{{ selected_product.name }}" style="width: 70px; height: 90px; object-fit: cover; border-radius: 6px;">
+                    {% endif %}
+                    <div style="flex: 1;">
+                        <h4 style="font-size: 1.1rem; color: #fff;">{{ selected_product.name }}</h4>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); font-family: monospace;">SKU: {{ selected_product.sku }}</div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.4rem;">
+                            <strong>Brand:</strong> {{ selected_product.brand.name }} | <strong>Category:</strong> {{ selected_product.category.name }}
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); font-size: 0.82rem; color: var(--text-secondary);">
+                    <div><strong>Gender:</strong> {{ selected_product.get_gender_display }}</div>
+                    <div><strong>Material:</strong> {{ selected_product.material|default:"Standard" }}</div>
+                    <div><strong>Color:</strong> {{ selected_product.color|default:"Multi" }}</div>
+                    <div><strong>Season:</strong> {{ selected_product.season.name|default:"All-Season" }}</div>
+                    <div><strong>Occasion:</strong> {{ selected_product.occasion.name|default:"Everyday" }}</div>
+                    <div><strong>Price:</strong> ₹{{ selected_product.price }}</div>
+                </div>
+
+                <div style="margin-top: 1.25rem;">
+                    <button type="button" class="btn btn-ai" id="btn-generate-ai-desc" style="width: 100%;">
+                        ✨ Generate Description with Gemini
+                    </button>
+                </div>
+            </div>
+            {% else %}
+            <div style="text-align: center; color: var(--text-muted); padding: 3rem 1rem; border: 1px dashed var(--border-subtle); border-radius: var(--radius-sm);">
+                Select a product from the dropdown above to load garment metadata.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="clothify-card">
+        <div class="card-header">
+            <h3 class="card-title">2. AI Copywriting Workbench</h3>
+        </div>
+        <div class="card-body">
+            <div id="ai-generation-status" style="display: none; text-align: center; padding: 2rem;">
+                <div style="font-size: 1.1rem; color: #818cf8; margin-bottom: 0.5rem;">Connecting to Gemini 1.5...</div>
+                <div style="color: var(--text-muted); font-size: 0.85rem;">Synthesizing styling context, fabric details, and fashion tone.</div>
+            </div>
+
+            <div id="ai-result-container" {% if not selected_product %}style="display: none;"{% endif %}>
+                <input type="hidden" id="ai-draft-id" value="">
+
+                <div class="form-group">
+                    <label class="form-label" style="display: flex; justify-content: space-between;">
+                        <span>Gemini Generated Copy (Editable)</span>
+                        <span style="font-size: 0.75rem; color: var(--warning);">Approval Required Before Publishing</span>
+                    </label>
+                    <textarea id="ai-editable-description" class="form-control" rows="12" style="line-height: 1.6; font-size: 0.9rem;" placeholder="Click 'Generate with Gemini' to draft a luxury description..."></textarea>
+                </div>
+
+                <div style="display: flex; gap: 0.75rem; margin-top: 1rem;">
+                    <button type="button" class="btn btn-success" onclick="handleAiApproval('approve')" style="flex: 1;">
+                        ✓ Approve & Publish to Product
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="handleAiApproval('reject')">
+                        ✕ Reject
+                    </button>
+                </div>
+            </div>
+
+            {% if not selected_product %}
+            <div style="text-align: center; color: var(--text-muted); padding: 4rem 1rem;">
+                Load a product to activate the Gemini copywriting workbench.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="clothify-card">
+    <div class="card-header">
+        <h3 class="card-title">Recent AI Description Drafts & Approvals</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="clothify-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Status</th>
+                    <th>Generated Copy Snapshot</th>
+                    <th>Created</th>
+                    <th>Reviewed By</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for draft in drafts %}
+                <tr>
+                    <td><strong>{{ draft.product.name }}</strong></td>
+                    <td>
+                        <span class="status-badge status-{{ draft.status }}">{{ draft.get_status_display }}</span>
+                    </td>
+                    <td style="max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.82rem; color: var(--text-secondary);">
+                        {{ draft.generated_content }}
+                    </td>
+                    <td style="font-size: 0.78rem; color: var(--text-muted);">{{ draft.created_at|date:"M d, H:i" }}</td>
+                    <td style="font-size: 0.8rem; color: var(--text-muted);">{{ draft.reviewed_by.username|default:"Pending" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                        No description drafts generated yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

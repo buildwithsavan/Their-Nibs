@@ -1,0 +1,332 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Here to Help – Customer Service & FAQs | Their Nibs{% endblock %}
+
+{% block extra_css %}
+<style>
+  .help-page-container {
+    max-width: 1040px;
+    margin: 40px auto 90px;
+    padding: 0 24px;
+    font-family: var(--font-body, 'Poppins', sans-serif);
+    color: #1d1d1b;
+  }
+  .help-breadcrumbs {
+    font-size: 13px;
+    color: #71717a;
+    margin-bottom: 24px;
+  }
+  .help-breadcrumbs a {
+    color: #1d1d1b;
+    text-decoration: none;
+  }
+  .help-breadcrumbs a:hover {
+    text-decoration: underline;
+  }
+  .help-hero {
+    text-align: center;
+    margin-bottom: 52px;
+  }
+  .help-hero-badge {
+    font-size: 12.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #8b5e3c;
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: inline-block;
+  }
+  .help-hero h1 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    font-size: 2.8rem;
+    font-weight: 400;
+    margin: 0 0 14px;
+    color: #111111;
+  }
+  .help-hero p {
+    font-size: 16px;
+    color: #555555;
+    max-width: 640px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .help-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 64px;
+  }
+  .help-topic-card {
+    background: #faf8f5;
+    border: 1px solid #ede8e1;
+    border-radius: 6px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none;
+    color: inherit;
+  }
+  .help-topic-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    border-color: #d8d0c5;
+  }
+  .help-topic-icon {
+    font-size: 32px;
+    margin-bottom: 16px;
+  }
+  .help-topic-card h3 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    font-size: 1.35rem;
+    margin: 0 0 8px;
+    color: #111111;
+  }
+  .help-topic-card p {
+    font-size: 14px;
+    line-height: 1.55;
+    color: #555555;
+    flex: 1;
+    margin: 0 0 16px;
+  }
+  .help-topic-link {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #1d1d1b;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .faq-section {
+    border-top: 1px solid #e5e5e5;
+    padding-top: 48px;
+  }
+  .faq-section h2 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    font-size: 2.2rem;
+    text-align: center;
+    margin: 0 0 8px;
+    color: #111111;
+  }
+  .faq-section .faq-sub {
+    text-align: center;
+    font-size: 15px;
+    color: #666666;
+    margin-bottom: 36px;
+  }
+
+  .faq-accordion-item {
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    margin-bottom: 14px;
+    background: #ffffff;
+    overflow: hidden;
+  }
+  .faq-question-btn {
+    width: 100%;
+    padding: 18px 24px;
+    background: none;
+    border: none;
+    text-align: left;
+    font-family: inherit;
+    font-size: 15.5px;
+    font-weight: 500;
+    color: #111111;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.15s ease;
+  }
+  .faq-question-btn:hover {
+    background: #faf8f5;
+  }
+  .faq-chevron {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.25s ease;
+  }
+  .faq-accordion-item.active .faq-chevron {
+    transform: rotate(180deg);
+  }
+  .faq-answer {
+    padding: 0 24px 20px;
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: #4a4a4a;
+    display: none;
+    border-top: 1px solid #f2f2f2;
+    background: #fafaf9;
+  }
+  .faq-accordion-item.active .faq-answer {
+    display: block;
+  }
+
+  .need-help-banner {
+    background: #faf8f5;
+    border: 1px solid #ede8e1;
+    border-radius: 8px;
+    padding: 36px;
+    text-align: center;
+    margin-top: 56px;
+  }
+  .need-help-banner h3 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    font-size: 1.6rem;
+    margin: 0 0 10px;
+  }
+  .need-help-banner p {
+    font-size: 15px;
+    color: #555555;
+    margin: 0 0 20px;
+  }
+  .btn-contact-help {
+    display: inline-block;
+    padding: 12px 30px;
+    background: #1d1d1b;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 3px;
+    transition: background 0.2s ease;
+  }
+  .btn-contact-help:hover {
+    background: #333333;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="help-page-container">
+  <div class="help-breadcrumbs">
+    <a href="{% url 'homepage' %}">Home</a> &rsaquo; <span>Here to Help</span>
+  </div>
+
+  <div class="help-hero">
+    <span class="help-hero-badge">Customer Support &bull; Help Hub</span>
+    <h1>Here to Help</h1>
+    <p>Everything you need to know about deliveries, returns, size fittings, and our signature British nightwear.</p>
+  </div>
+
+  <div class="help-cards-grid">
+
+    <a href="{% url 'delivery_returns' %}" class="help-topic-card">
+      <div class="help-topic-icon">📦</div>
+      <h3>Delivery &amp; Returns</h3>
+      <p>Standard &amp; Next Day UK shipping rates, free delivery thresholds, international transit, and our 28-day return policy.</p>
+      <span class="help-topic-link">View Delivery Information &rarr;</span>
+    </a>
+
+    <a href="{% url 'refund_policy' %}" class="help-topic-card">
+      <div class="help-topic-icon">🔄</div>
+      <h3>Refund Policy</h3>
+      <p>Easy returns procedure, refunds timeline, exchange requests, and instructions for unworn items with tags attached.</p>
+      <span class="help-topic-link">Read Refund Policy &rarr;</span>
+    </a>
+
+    <a href="{% url 'size_guides' %}" class="help-topic-card">
+      <div class="help-topic-icon">📏</div>
+      <h3>Size Guides</h3>
+      <p>Measurement charts for Womens Traditional, Womens Oversized, Mens Pyjamas, and Kids Pyjamas up to 13 years old.</p>
+      <span class="help-topic-link">Explore Size Charts &rarr;</span>
+    </a>
+
+    <a href="{% url 'their_nibs_stores' %}" class="help-topic-card">
+      <div class="help-topic-icon">🏬</div>
+      <h3>Their Nibs Stores</h3>
+      <p>Visit our Kensal Rise boutique, 14 John Lewis locations, or discover our independent stockists across the UK.</p>
+      <span class="help-topic-link">Find a Store Near You &rarr;</span>
+    </a>
+
+    <a href="{% url 'terms_conditions' %}" class="help-topic-card">
+      <div class="help-topic-icon">📋</div>
+      <h3>Terms &amp; Conditions</h3>
+      <p>Our complete terms of purchase, order confirmation, pricing policies, promotional codes, and consumer rights.</p>
+      <span class="help-topic-link">Review Terms &rarr;</span>
+    </a>
+
+    <a href="{% url 'privacy_policy' %}" class="help-topic-card">
+      <div class="help-topic-icon">🔒</div>
+      <h3>Privacy &amp; Data</h3>
+      <p>How we protect your personal information, cookie preferences, and full GDPR compliance standards.</p>
+      <span class="help-topic-link">View Privacy Notice &rarr;</span>
+    </a>
+  </div>
+
+  <section class="faq-section">
+    <h2>Frequently Asked Questions</h2>
+    <p class="faq-sub">Quick answers to our most popular inquiries.</p>
+
+    <div class="faq-accordion-item">
+      <button class="faq-question-btn" onclick="toggleFaq(this)">
+        <span>How much does UK delivery cost?</span>
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="faq-answer">
+        Standard UK Delivery is £3.95 (delivered within 3–5 working days via Royal Mail Tracked). Delivery is completely <strong>FREE on all UK orders over £60</strong>. We also offer UK Next Working Day delivery for £6.95 on orders placed before 1pm Monday to Thursday.
+      </div>
+    </div>
+
+    <div class="faq-accordion-item">
+      <button class="faq-question-btn" onclick="toggleFaq(this)">
+        <span>What is your return policy?</span>
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="faq-answer">
+        We want you to love your pyjamas! You have <strong>28 days</strong> from receiving your order to return any unworn, unwashed items with original tags and packaging attached for a full refund or exchange.
+      </div>
+    </div>
+
+    <div class="faq-accordion-item">
+      <button class="faq-question-btn" onclick="toggleFaq(this)">
+        <span>How should I wash and care for my Their Nibs pyjamas?</span>
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="faq-answer">
+        We recommend machine washing inside out on a gentle 30°C cycle with similar colours. Avoid bleach and tumble drying to preserve the softness of the cotton and vibrant colours of our hand-drawn prints. Iron on a cool setting if desired.
+      </div>
+    </div>
+
+    <div class="faq-accordion-item">
+      <button class="faq-question-btn" onclick="toggleFaq(this)">
+        <span>Do you donate to charity?</span>
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="faq-answer">
+        Yes! We proudly donate <strong>20% of all profits from our Kids and Tweens collection</strong> to our nominated children’s charity (Coram), directly aiding vulnerable youth across the UK.
+      </div>
+    </div>
+
+    <div class="faq-accordion-item">
+      <button class="faq-question-btn" onclick="toggleFaq(this)">
+        <span>Where can I visit you in person?</span>
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="faq-answer">
+        You can visit our flagship store in London at <strong>103 Chamberlayne Road, Kensal Rise, NW10 3NS</strong> (open Wednesday to Saturday 10am-6pm, Sunday 12noon-4pm), as well as 14 John Lewis departments nationwide.
+      </div>
+    </div>
+  </section>
+
+  <div class="need-help-banner">
+    <h3>Can’t find what you’re looking for?</h3>
+    <p>Our customer service team is on hand Monday to Friday to help with any query.</p>
+    <a href="{% url 'contact_us' %}" class="btn-contact-help">Contact Customer Care</a>
+  </div>
+</div>
+
+<script>
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-accordion-item');
+    const wasActive = item.classList.contains('active');
+    document.querySelectorAll('.faq-accordion-item').forEach(el => el.classList.remove('active'));
+    if (!wasActive) {
+      item.classList.add('active');
+    }
+  }
+</script>
+{% endblock %}

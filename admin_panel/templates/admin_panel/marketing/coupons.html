@@ -1,0 +1,97 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Coupon Management{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Promotional Coupons & Codes</h1>
+        <p class="page-subtitle">Configure percentage discounts, cart value thresholds, and category-level promos.</p>
+    </div>
+    <div class="page-actions">
+        <a href="/admin-panel/coupons/add/" class="btn btn-primary">
+            <span>+ Create Coupon</span>
+        </a>
+    </div>
+</div>
+
+<form method="GET" class="filter-bar">
+    <div class="search-input">
+        <input type="text" name="q" value="{{ current_q }}" class="form-control" placeholder="Search coupon code...">
+    </div>
+    <div style="min-width: 140px;">
+        <select name="status" class="form-select" onchange="this.form.submit()">
+            <option value="">All Coupons</option>
+            <option value="active" {% if current_status == 'active' %}selected{% endif %}>Active</option>
+            <option value="inactive" {% if current_status == 'inactive' %}selected{% endif %}>Inactive</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
+    <a href="/admin-panel/coupons/" class="btn btn-secondary btn-sm">Reset</a>
+</form>
+
+<div class="clothify-card">
+    <div class="card-header">
+        <h3 class="card-title">Configured Coupon Codes</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="clothify-table">
+            <thead>
+                <tr>
+                    <th>Code & Description</th>
+                    <th>Discount</th>
+                    <th>Min Spend / Max Cap</th>
+                    <th>Validity Window</th>
+                    <th>Redemptions</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cp in coupons %}
+                <tr>
+                    <td>
+                        <strong style="color: #fff; font-size: 0.95rem; font-family: monospace; letter-spacing: 0.05em;">{{ cp.code }}</strong>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">{{ cp.description|default:"No description" }}</div>
+                    </td>
+                    <td>
+                        <strong style="color: #818cf8;">
+                            {% if cp.discount_type == 'percentage' %}{{ cp.discount_value }}% OFF{% else %}₹{{ cp.discount_value }} OFF{% endif %}
+                        </strong>
+                    </td>
+                    <td>
+                        <div>Min: ₹{{ cp.min_order_amount }}</div>
+                        {% if cp.max_discount %}
+                        <div style="font-size:0.75rem; color:var(--text-muted);">Cap: ₹{{ cp.max_discount }}</div>
+                        {% endif %}
+                    </td>
+                    <td style="font-size: 0.8rem; color: var(--text-secondary);">
+                        {{ cp.start_date|date:"M d, Y" }} &rarr; {{ cp.end_date|date:"M d, Y" }}
+                    </td>
+                    <td>
+                        <strong>{{ cp.used_count }}</strong> / {{ cp.usage_limit }} used
+                    </td>
+                    <td>
+                        {% if cp.is_valid %}
+                        <span class="status-badge status-active">Active</span>
+                        {% else %}
+                        <span class="status-badge status-cancelled">Inactive / Expired</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: right;">
+                        <a href="/admin-panel/coupons/{{ cp.id }}/edit/" class="btn btn-secondary btn-sm">Edit</a>
+                        <a href="/admin-panel/coupons/{{ cp.id }}/delete/" class="btn btn-danger btn-sm" data-confirm="Delete coupon '{{ cp.code }}'?">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                        No coupons found. Create your first promotional code above.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

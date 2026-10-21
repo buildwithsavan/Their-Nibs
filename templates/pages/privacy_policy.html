@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Privacy Policy – Their Nibs{% endblock %}
+
+{% block extra_css %}
+<style>
+  .policy-container {
+    max-width: 1120px;
+    margin: 40px auto 90px;
+    padding: 0 24px;
+    font-family: var(--font-body, 'Poppins', sans-serif);
+    color: #1d1d1b;
+  }
+  .policy-breadcrumbs {
+    font-size: 13px;
+    color: #71717a;
+    margin-bottom: 24px;
+  }
+  .policy-breadcrumbs a {
+    color: #1d1d1b;
+    text-decoration: none;
+  }
+  .policy-breadcrumbs a:hover {
+    text-decoration: underline;
+  }
+  .policy-layout {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .policy-content h1 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    font-size: 2.5rem;
+    font-weight: 400;
+    margin: 0 0 16px;
+    color: #111111;
+  }
+  .policy-content .intro-lead {
+    font-size: 16px;
+    line-height: 1.7;
+    color: #555555;
+    margin-bottom: 32px;
+    border-bottom: 1px solid #e5e5e5;
+    padding-bottom: 24px;
+  }
+  .policy-content h2 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    font-size: 1.5rem;
+    margin: 32px 0 12px;
+    color: #111111;
+  }
+  .policy-content p,
+  .policy-content li {
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: #444444;
+  }
+  .policy-content ul {
+    padding-left: 20px;
+    margin-bottom: 20px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="policy-container">
+  <div class="policy-breadcrumbs">
+    <a href="{% url 'homepage' %}">Home</a> &rsaquo; <a href="{% url 'here_to_help' %}">Here to Help</a> &rsaquo; <span>Privacy Policy</span>
+  </div>
+
+  <div class="policy-layout">
+
+    <div class="policy-content">
+      <h1>Privacy Policy</h1>
+      <p class="intro-lead">
+        Their Nibs is committed to protecting and respecting your personal privacy in accordance with the UK General Data Protection Regulation (UK GDPR) and Data Protection Act 2018.
+      </p>
+
+      <h2>1. Information We Collect</h2>
+      <p>When you visit our store or make a purchase, we collect the following necessary information:</p>
+      <ul>
+        <li><strong>Identity &amp; Contact:</strong> Name, delivery address, billing address, email address, and telephone number.</li>
+        <li><strong>Order &amp; Transaction:</strong> Payment method details, purchased items, order dates, and invoice records.</li>
+        <li><strong>Technical Information:</strong> IP address, browser type, device information, and browsing behaviour via cookies.</li>
+      </ul>
+
+      <h2>2. How We Use Your Data</h2>
+      <p>We use your personal data to:</p>
+      <ul>
+        <li>Process and dispatch your pyjama orders, track deliveries, and handle returns.</li>
+        <li>Provide dedicated customer support and notify you of order progress.</li>
+        <li>Send our email newsletter regarding exclusive releases and behind-the-scenes stories (only with your explicit opt-in consent).</li>
+      </ul>
+
+      <h2>3. Data Security &amp; Sharing</h2>
+      <p>
+        We will never sell or rent your personal information to third parties. We only share essential data with vetted service partners required to fulfill your order (e.g. Royal Mail, courier delivery partners, and encrypted payment processors).
+      </p>
+
+      <h2>4. Your Legal Rights</h2>
+      <p>Under UK data protection law, you have the right to:</p>
+      <ul>
+        <li>Request access to the personal data we hold about you.</li>
+        <li>Request correction of any incomplete or inaccurate data.</li>
+        <li>Request erasure of your personal data ("right to be forgotten").</li>
+        <li>Withdraw your marketing newsletter consent at any time by clicking "unsubscribe".</li>
+      </ul>
+
+      <h2>5. Contact Our Privacy Team</h2>
+      <p>
+        If you have any questions about this Privacy Policy or your personal information, please contact us at <a href="mailto:privacy@their-nibs.com" style="color: #111; font-weight: 500;">privacy@their-nibs.com</a> or write to Their Nibs, 103 Chamberlayne Road, London, NW10 3NS.
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

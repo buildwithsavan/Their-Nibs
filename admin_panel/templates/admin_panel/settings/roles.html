@@ -1,0 +1,102 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Admin Roles & Permissions{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Admin Staff Roles & Departmental Access</h1>
+        <p class="page-subtitle">Configure granular access control for Catalog, Orders, Marketing, Content/AI, and Super Admins.</p>
+    </div>
+</div>
+
+<div class="clothify-card">
+    <div class="card-header">
+        <h3 class="card-title">Staff Members & Delegated Roles</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="clothify-table">
+            <thead>
+                <tr>
+                    <th>Staff User</th>
+                    <th>Email</th>
+                    <th>Current Role</th>
+                    <th>Superuser Flag</th>
+                    <th>Change Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for staff in staff_users %}
+                <tr>
+                    <td>
+                        <strong style="color: #fff;">{{ staff.get_full_name|default:staff.username }}</strong>
+                        <div style="font-size:0.75rem; color:var(--text-muted);">@{{ staff.username }}</div>
+                    </td>
+                    <td>{{ staff.email|default:"No email" }}</td>
+                    <td>
+                        <span class="status-badge status-info">
+                            {{ staff.profile.get_role_display }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if staff.is_superuser %}
+                        <span class="status-badge status-active">Full Superuser</span>
+                        {% else %}
+                        <span style="color: var(--text-muted); font-size: 0.8rem;">Standard Staff</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form method="POST" style="display: flex; gap: 0.5rem; align-items: center;">
+                            {% csrf_token %}
+                            <input type="hidden" name="user_id" value="{{ staff.id }}">
+                            <select name="role" class="form-select" style="width: auto; padding: 0.35rem 0.65rem; font-size: 0.82rem;">
+                                {% for r_val, r_label in role_choices %}
+                                <option value="{{ r_val }}" {% if staff.profile.role == r_val %}selected{% endif %}>{{ r_label }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn btn-secondary btn-sm">Update Role</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                        No staff members configured.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="clothify-card">
+    <div class="card-header">
+        <h3 class="card-title">Role Permission Matrix Reference</h3>
+    </div>
+    <div class="card-body">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; font-size: 0.85rem;">
+            <div style="padding: 1rem; background: rgba(0,0,0,0.2); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                <strong style="color: #818cf8; display: block; margin-bottom: 0.4rem;">Super Admin</strong>
+                <p style="color: var(--text-secondary);">Full administrative control across all domains, store settings, and staff role assignments.</p>
+            </div>
+            <div style="padding: 1rem; background: rgba(0,0,0,0.2); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                <strong style="color: #10b981; display: block; margin-bottom: 0.4rem;">Catalog Admin</strong>
+                <p style="color: var(--text-secondary);">Products, categories, brands, variants, seasons, occasions, and warehouse inventory management.</p>
+            </div>
+            <div style="padding: 1rem; background: rgba(0,0,0,0.2); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                <strong style="color: #0ea5e9; display: block; margin-bottom: 0.4rem;">Order Admin</strong>
+                <p style="color: var(--text-secondary);">Fulfillment status, customer shipments, payment records, return claims, and refunds.</p>
+            </div>
+            <div style="padding: 1rem; background: rgba(0,0,0,0.2); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                <strong style="color: #f59e0b; display: block; margin-bottom: 0.4rem;">Marketing Admin</strong>
+                <p style="color: var(--text-secondary);">Promotional coupons, gift certificates, discount rules, and campaign performance.</p>
+            </div>
+            <div style="padding: 1rem; background: rgba(0,0,0,0.2); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                <strong style="color: #a855f7; display: block; margin-bottom: 0.4rem;">Content / AI Admin</strong>
+                <p style="color: var(--text-secondary);">Customer reviews, Gemini AI product descriptions, tag generation, and assistant logs.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

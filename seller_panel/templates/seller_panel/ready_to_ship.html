@@ -1,0 +1,467 @@
+{% extends 'seller_panel/base.html' %}
+
+{% block title %}Ready to Ship{% endblock %}
+{% block page_heading %}Orders &amp; Fulfillment — Ready to Ship{% endblock %}
+
+{% block content %}
+<style>
+
+    .rts-modal-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 1050;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+    .rts-modal-backdrop.show {
+        display: flex;
+    }
+    .rts-modal-dialog {
+        background: #ffffff;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 540px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+        animation: rtsSlideIn 0.22s ease-out;
+    }
+    @keyframes rtsSlideIn {
+        from { transform: translateY(-16px) scale(0.98); opacity: 0; }
+        to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .shipping-label-sheet {
+        background: #ffffff;
+        border: 2px solid #000000;
+        padding: 18px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+        color: #000000;
+        max-width: 480px;
+        margin: 0 auto;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+    }
+    .label-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid #000000;
+        padding-bottom: 8px;
+        margin-bottom: 10px;
+    }
+    .label-barcode-svg {
+        width: 100%;
+        height: 52px;
+        margin: 8px 0;
+    }
+
+    .rts-toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: #111111;
+        color: #ffffff;
+        border-radius: 8px;
+        padding: 14px 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        z-index: 99999;
+        transform: translateY(100px);
+        opacity: 0;
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+        max-width: 440px;
+        font-size: 0.88rem;
+    }
+    .rts-toast.show {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    @media print {
+        body * {
+            visibility: hidden !important;
+        }
+        #printableShippingLabel, #printableShippingLabel * {
+            visibility: visible !important;
+        }
+        #printableShippingLabel {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 20px !important;
+            border: 2px solid #000000 !important;
+        }
+        .no-print {
+            display: none !important;
+        }
+    }
+</style>
+
+<div style="margin-bottom: 1.25rem;">
+    <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; margin: 0 0 0.5rem 0; color: var(--primary); font-weight: 700;">
+        Packed &amp; Ready to Ship Orders
+    </h2>
+    <span style="font-size: 0.88rem; color: var(--text-muted); display: block;">
+        Orders packed by your boutique team awaiting courier pickup and shipping manifest generation.
+    </span>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+    <div class="clothify-card" style="padding: 1rem 1.25rem; background: #ffffff;">
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted);">Ready to Dispatch</div>
+        <div class="seller-card-value" style="color: var(--primary, #111111); margin-top: 4px;">
+            <span id="readyDispatchCount">{{ total_ready_count }}</span> <span class="seller-card-unit">Units</span>
+        </div>
+    </div>
+    <div class="clothify-card" style="padding: 1rem 1.25rem; background: #ffffff;">
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted);">Scheduled Pickups</div>
+        <div class="seller-card-value" style="color: #0284c7; margin-top: 4px;">
+            <span id="scheduledPickupCount">{{ pickups_scheduled }}</span> <span class="seller-card-unit">Courier Pickups</span>
+        </div>
+    </div>
+    <div class="clothify-card" style="padding: 1rem 1.25rem; background: #ffffff;">
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted);">Manifests Ready</div>
+        <div class="seller-card-value" style="color: #16a34a; margin-top: 4px;">
+            <span id="manifestsReadyCount">{{ manifests_generated }}</span> <span class="seller-card-unit">Generated</span>
+        </div>
+    </div>
+</div>
+
+<div class="clothify-card" style="padding: 0; overflow: hidden;">
+    <div style="overflow-x: auto;">
+        <table class="clothify-table" style="width: 100%; font-size: 0.88rem; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #faf6f0; border-bottom: 1px solid var(--seller-border, #e5e7eb);">
+                    <th style="padding: 11px 14px; text-align: left; font-weight: 700;">ORDER REF</th>
+                    <th style="padding: 11px 14px; text-align: left; font-weight: 700;">CUSTOMER &amp; DELIVERY ADDRESS</th>
+                    <th style="padding: 11px 14px; text-align: left; font-weight: 700;">PACKED ITEM &amp; SKU</th>
+                    <th style="padding: 11px 14px; text-align: center; font-weight: 700;">PACKED TIME</th>
+                    <th style="padding: 11px 14px; text-align: left; font-weight: 700;">COURIER &amp; AWB</th>
+                    <th style="padding: 11px 14px; text-align: right; font-weight: 700;">AMOUNT (₹)</th>
+                    <th style="padding: 11px 14px; text-align: right; font-weight: 700;">ACTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if ready_orders %}
+                    {% for o in ready_orders %}
+                    <tr id="rts-row-{{ forloop.counter }}" style="border-bottom: 1px solid #f1f5f9; transition: background-color 0.15s ease;">
+                        <td style="padding: 12px 14px; font-weight: 700; color: #111111;">
+                            {{ o.order_number }}
+                        </td>
+                        <td style="padding: 12px 14px;">
+                            <div style="font-weight: 600; color: #1e293b;">{{ o.customer }}</div>
+                            <div style="font-size: 0.78rem; color: #64748b; max-width: 250px;">{{ o.address }}</div>
+                        </td>
+                        <td style="padding: 12px 14px;">
+                            <div style="font-weight: 600; color: #334155;">{{ o.items }}</div>
+                            <code style="font-size: 0.78rem; color: var(--primary); background: #f8fafc; padding: 2px 6px; border-radius: 4px;">{{ o.sku }}</code>
+                        </td>
+                        <td style="padding: 12px 14px; text-align: center; font-size: 0.82rem; color: #475569;">
+                            {{ o.packed_time }}
+                        </td>
+                        <td style="padding: 12px 14px;">
+                            <div style="font-weight: 600; color: #1e293b;">{{ o.courier }}</div>
+                            <span class="badge bg-light text-dark border" style="font-size: 0.76rem; font-family: monospace; letter-spacing: 0.04em;">{{ o.awb }}</span>
+                        </td>
+                        <td style="padding: 12px 14px; text-align: right; font-weight: 700; color: #111111;">
+                            ₹{{ o.amount|floatformat:2 }}
+                        </td>
+                        <td style="padding: 12px 14px; text-align: right;">
+                            <div id="action-cell-{{ forloop.counter }}" style="display: flex; gap: 6px; justify-content: flex-end; align-items: center;">
+                                <a href="/seller-panel/orders/track/{{ o.order_number|cut:'#' }}/" class="btn btn-outline-secondary btn-sm" style="font-size: 0.8rem; padding: 5px 9px; font-weight: 600; text-decoration: none;" title="Track Order 5 Stages">
+                                    <i class="bi bi-geo-alt"></i> Track
+                                </a>
+                                <button type="button" class="btn btn-primary btn-sm" style="font-size: 0.8rem; padding: 5px 12px; font-weight: 700; background-color: #111111; border-color: #111111;"
+                                        onclick="openDispatchModal('{{ o.order_number|escapejs }}', '{{ o.courier|escapejs }}', '{{ o.awb|escapejs }}', '{{ o.customer|escapejs }}', '{{ o.items|escapejs }}', 'rts-row-{{ forloop.counter }}', 'action-cell-{{ forloop.counter }}')">
+                                    <i class="bi bi-truck"></i> Dispatch Courier
+                                </button>
+                                <button type="button" class="btn btn-secondary btn-sm" style="font-size: 0.8rem; padding: 5px 10px; font-weight: 600;"
+                                        onclick="openShippingLabelModal('{{ o.order_number|escapejs }}', '{{ o.courier|escapejs }}', '{{ o.awb|escapejs }}', '{{ o.customer|escapejs }}', '{{ o.address|escapejs }}', '{{ o.items|escapejs }}', '{{ o.sku|escapejs }}', '{{ o.amount|floatformat:2 }}')">
+                                    <i class="bi bi-printer"></i> Label
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">
+                            No orders currently packed and ready to ship.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="dispatchCourierModal" class="rts-modal-backdrop">
+    <div class="rts-modal-dialog">
+        <div style="padding: 1.1rem 1.4rem; background: #faf6f0; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; margin: 0; color: #111111; font-weight: 700;">
+                    Courier Handover &amp; Dispatch Confirmation
+                </h3>
+                <span style="font-size: 0.8rem; color: #64748b;">Confirm handover to assigned logistics partner</span>
+            </div>
+            <button type="button" onclick="closeDispatchModal()" style="background: none; border: none; font-size: 1.4rem; color: #64748b; cursor: pointer;">&times;</button>
+        </div>
+        <div style="padding: 1.35rem 1.4rem;">
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 1.25rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                    <span style="font-size: 0.82rem; color: #64748b;">Order Reference:</span>
+                    <strong style="color: #111111;" id="modalDispatchOrderRef">--</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                    <span style="font-size: 0.82rem; color: #64748b;">Assigned Courier:</span>
+                    <strong style="color: #0369a1;" id="modalDispatchCourier">--</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                    <span style="font-size: 0.82rem; color: #64748b;">AWB Tracking Code:</span>
+                    <code style="font-size: 0.85rem; font-weight: 700; color: #111111; background: #ffffff; padding: 2px 6px; border: 1px solid #cbd5e1; border-radius: 4px;" id="modalDispatchAwb">--</code>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="font-size: 0.82rem; color: #64748b;">Customer:</span>
+                    <span style="font-weight: 600; color: #334155;" id="modalDispatchCustomer">--</span>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: flex; align-items: flex-start; gap: 8px; font-size: 0.85rem; color: #334155; cursor: pointer;">
+                    <input type="checkbox" id="dispatchVerifyCheckbox" checked style="margin-top: 3px; accent-color: #111111;">
+                    <span>I confirm courier pickup executive has scanned the parcel barcode and verified the outer security seal.</span>
+                </label>
+            </div>
+
+            <div style="font-size: 0.8rem; color: #64748b; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 6px; padding: 8px 12px;">
+                <i class="bi bi-info-circle-fill text-warning"></i> Confirming will mark this order as <strong>Dispatched &amp; In-Transit</strong> and notify the customer with live tracking updates.
+            </div>
+        </div>
+        <div style="padding: 1rem 1.4rem; background: #faf6f0; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 8px;">
+            <button type="button" onclick="closeDispatchModal()" class="btn btn-secondary" style="padding: 7px 16px; font-size: 0.88rem;">Cancel</button>
+            <button type="button" onclick="confirmDispatchAction()" class="btn btn-primary" style="padding: 7px 22px; font-size: 0.88rem; font-weight: 700; background-color: #111111; border-color: #111111;">
+                Confirm Handover &amp; Dispatch
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="shippingLabelModal" class="rts-modal-backdrop">
+    <div class="rts-modal-dialog" style="max-width: 520px;">
+        <div class="no-print" style="padding: 1rem 1.4rem; background: #faf6f0; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; margin: 0; color: #111111; font-weight: 700;">
+                    Official Shipping &amp; Courier AWB Label
+                </h3>
+                <span style="font-size: 0.78rem; color: #64748b;">Ready-to-print carrier thermal label</span>
+            </div>
+            <button type="button" onclick="closeShippingLabelModal()" style="background: none; border: none; font-size: 1.4rem; color: #64748b; cursor: pointer;">&times;</button>
+        </div>
+
+        <div style="padding: 1.25rem; background: #f8fafc; max-height: 72vh; overflow-y: auto;">
+            <div id="printableShippingLabel" class="shipping-label-sheet">
+
+                <div class="label-header">
+                    <div>
+                        <div style="font-size: 1.15rem; font-weight: 900; letter-spacing: 0.05em; text-transform: uppercase;" id="lblCourierName">BLUEDART EXPRESS</div>
+                        <div style="font-size: 0.72rem; font-weight: 700; color: #333333;">SURFACE &amp; AIR DOMESTIC PRIORITY</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="border: 2px solid #000000; padding: 3px 8px; font-weight: 900; font-size: 0.85rem; letter-spacing: 0.05em;">PREPAID</span>
+                        <div style="font-size: 0.68rem; margin-top: 3px; font-weight: 700;">STANDARD LUXURY</div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin: 8px 0 12px 0;">
+                    <svg class="label-barcode-svg" viewBox="0 0 260 50" preserveAspectRatio="none">
+
+                        <rect x="0" y="0" width="3" height="50" fill="#000"/>
+                        <rect x="5" y="0" width="2" height="50" fill="#000"/>
+                        <rect x="10" y="0" width="4" height="50" fill="#000"/>
+                        <rect x="16" y="0" width="2" height="50" fill="#000"/>
+                        <rect x="20" y="0" width="5" height="50" fill="#000"/>
+                        <rect x="28" y="0" width="2" height="50" fill="#000"/>
+                        <rect x="33" y="0" width="4" height="50" fill="#000"/>
+                        <rect x="40" y="0" width="3" height="50" fill="#000"/>
+                        <rect x="45" y="0" width="5" height="50" fill="#000"/>
+                        <rect x="53" y="0" width="2" height="50" fill="#000"/>
+                        <rect x="58" y="0" width="4" height="50" fill="#000"/>
+                        <rect x="65" y="0" width="3" height="50" fill="#000"/>
+                        <rect x="71" y="0" width="5" height="50" fill="#000"/>
+                        <rect x="79" y="0" width="2" height="50" fill="#000"/>
+                        <rect x="84" y="0" width="4" height="50" fill="#000"/>
+                        <rect x="91" y="0" width="3" height="50" fill="#000"/>
+                        <rect x="97" y="0" width="5" height="50" fill="#000"/>
+                        <rect x="105" y="0" width="2" height="50" fill="#000"/>
+                        <rect x="110" y="0" width="4" height="50" fill="#000"/>
+                        <rect x="117" y="0" width="3" height="50" fill="#000"/>
+                        <rect x="123" y="0" width="5" height="50" fill="#000"/>
+                        <rect x="131" y="0" width="2" height="50" fill="#000"/>
+                        <rect x="136" y="0" width="4" height="50" fill="#000"/>
+                        <rect x="143" y="0" width="3" height="50" fill="#000"/>
+                        <rect x="149" y="0" width="5" height="50" fill="#000"/>
+                        <rect x="157" y="0" width="2" height="50" fill="#000"/>
+                        <rect x="162" y="0" width="4" height="50" fill="#000"/>
+                        <rect x="169" y="0" width="3" height="50" fill="#000"/>
+                        <rect x="175" y="0" width="5" height="50" fill="#000"/>
+                        <rect x="183" y="0" width="2" height="50" fill="#000"/>
+                        <rect x="188" y="0" width="4" height="50" fill="#000"/>
+                        <rect x="195" y="0" width="3" height="50" fill="#000"/>
+                        <rect x="201" y="0" width="5" height="50" fill="#000"/>
+                        <rect x="209" y="0" width="2" height="50" fill="#000"/>
+                        <rect x="214" y="0" width="4" height="50" fill="#000"/>
+                        <rect x="221" y="0" width="3" height="50" fill="#000"/>
+                        <rect x="227" y="0" width="5" height="50" fill="#000"/>
+                        <rect x="235" y="0" width="2" height="50" fill="#000"/>
+                        <rect x="240" y="0" width="4" height="50" fill="#000"/>
+                        <rect x="247" y="0" width="3" height="50" fill="#000"/>
+                        <rect x="253" y="0" width="4" height="50" fill="#000"/>
+                    </svg>
+                    <div style="font-family: monospace; font-size: 0.95rem; font-weight: 700; letter-spacing: 0.12em;" id="lblAwbCode">AWB: BD-98234105</div>
+                </div>
+
+                <div style="border: 2px solid #000000; padding: 10px; margin-bottom: 10px;">
+                    <div style="font-size: 0.7rem; font-weight: 900; text-transform: uppercase; margin-bottom: 2px;">DELIVER TO (CONSIGNEE):</div>
+                    <div style="font-size: 1.05rem; font-weight: 800;" id="lblCustomerName">Priya Sharma</div>
+                    <div style="font-size: 0.84rem; line-height: 1.35; margin-top: 2px;" id="lblCustomerAddress">402 Sunrise Heights, Bandra West, Mumbai - 400050</div>
+                    <div style="font-size: 0.78rem; font-weight: 700; margin-top: 4px;">CONTACT: +91 98200 XXXXX</div>
+                </div>
+
+                <div style="border: 1px solid #000000; padding: 8px; margin-bottom: 10px; font-size: 0.75rem;">
+                    <strong style="text-transform: uppercase;">SHIPPER / RETURN TO:</strong><br>
+                    THEIR NIBS LUXURY SLEEPWEAR BOUTIQUE ATELIER<br>
+                    Unit 14, High Street Luxury Fashion Hub, Mumbai 400013<br>
+                    GSTIN: 27AABCT8921M1ZT &bull; Care: boutique@theirnibs.com
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.78rem; border-top: 1px dashed #000000; padding-top: 8px;">
+                    <div>
+                        <strong>ORDER #:</strong> <span id="lblOrderRef">#TN-10245</span><br>
+                        <strong>WEIGHT:</strong> 0.48 KG<br>
+                        <strong>DATE:</strong> 17 Oct 2026
+                    </div>
+                    <div style="text-align: right;">
+                        <strong>ITEM:</strong> <span id="lblItemName">Celestial Star Set</span><br>
+                        <strong>SKU:</strong> <span id="lblItemSku">TN-SLP-102-M</span><br>
+                        <strong>VALUE:</strong> ₹<span id="lblOrderAmount">1,899.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="no-print" style="padding: 1rem 1.4rem; background: #faf6f0; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+            <button type="button" onclick="closeShippingLabelModal()" class="btn btn-secondary" style="padding: 7px 16px; font-size: 0.88rem;">Close</button>
+            <div style="display: flex; gap: 8px;">
+                <button type="button" onclick="window.print()" class="btn btn-primary" style="padding: 7px 20px; font-size: 0.88rem; font-weight: 700; background-color: #111111; border-color: #111111;">
+                    <i class="bi bi-printer-fill"></i> Print Shipping Label
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="rtsToast" class="rts-toast">
+    <div style="width: 28px; height: 28px; border-radius: 50%; background: #16a34a; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <i class="bi bi-check-lg" style="color: #ffffff; font-size: 1rem;"></i>
+    </div>
+    <div id="rtsToastMessage" style="flex: 1;">Order successfully dispatched to courier!</div>
+</div>
+
+<script>
+    let activeDispatchRowId = null;
+    let activeActionCellId = null;
+    let activeOrderNum = null;
+    let activeCourierName = null;
+
+    function openDispatchModal(orderRef, courier, awb, customer, items, rowId, cellId) {
+        activeOrderNum = orderRef;
+        activeCourierName = courier;
+        activeDispatchRowId = rowId;
+        activeActionCellId = cellId;
+
+        document.getElementById('modalDispatchOrderRef').textContent = orderRef;
+        document.getElementById('modalDispatchCourier').textContent = courier;
+        document.getElementById('modalDispatchAwb').textContent = awb;
+        document.getElementById('modalDispatchCustomer').textContent = customer;
+
+        document.getElementById('dispatchCourierModal').classList.add('show');
+    }
+
+    function closeDispatchModal() {
+        document.getElementById('dispatchCourierModal').classList.remove('show');
+    }
+
+    function confirmDispatchAction() {
+        closeDispatchModal();
+
+        if (activeActionCellId) {
+            const cell = document.getElementById(activeActionCellId);
+            if (cell) {
+                cell.innerHTML = `
+                    <span style="display: inline-flex; align-items: center; gap: 5px; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; border-radius: 6px; padding: 5px 12px; font-weight: 700; font-size: 0.78rem;">
+                        <i class="bi bi-check-circle-fill text-success"></i> Dispatched to ${activeCourierName}
+                    </span>
+                `;
+            }
+        }
+
+        const readyElem = document.getElementById('readyDispatchCount');
+        if (readyElem) {
+            let current = parseInt(readyElem.textContent, 10);
+            if (current > 0) readyElem.textContent = current - 1;
+        }
+
+        showToast(`✓ Order ${activeOrderNum} handed over to ${activeCourierName}! Manifest updated and tracking is now Live.`);
+    }
+
+    function openShippingLabelModal(orderRef, courier, awb, customer, address, items, sku, amount) {
+        document.getElementById('lblCourierName').textContent = courier.toUpperCase();
+        document.getElementById('lblAwbCode').textContent = 'AWB: ' + awb;
+        document.getElementById('lblCustomerName').textContent = customer;
+        document.getElementById('lblCustomerAddress').textContent = address;
+        document.getElementById('lblOrderRef').textContent = orderRef;
+        document.getElementById('lblItemName').textContent = items;
+        document.getElementById('lblItemSku').textContent = sku;
+        document.getElementById('lblOrderAmount').textContent = amount;
+
+        document.getElementById('shippingLabelModal').classList.add('show');
+    }
+
+    function closeShippingLabelModal() {
+        document.getElementById('shippingLabelModal').classList.remove('show');
+    }
+
+    function showToast(message) {
+        const toast = document.getElementById('rtsToast');
+        const msgElem = document.getElementById('rtsToastMessage');
+        if (toast && msgElem) {
+            msgElem.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4500);
+        }
+    }
+
+    document.querySelectorAll('.rts-modal-backdrop').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('show');
+            }
+        });
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.rts-modal-backdrop').forEach(m => m.classList.remove('show'));
+        }
+    });
+</script>
+{% endblock %}

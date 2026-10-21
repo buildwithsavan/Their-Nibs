@@ -1,0 +1,281 @@
+{% extends 'seller_panel/base.html' %}
+
+{% block title %}Product Variants{% endblock %}
+{% block page_heading %}Catalog — Product Variants Management{% endblock %}
+
+{% block content %}
+<style>
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 38px;
+        height: 20px;
+        vertical-align: middle;
+        margin: 0;
+    }
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #cbd5e1;
+        transition: .2s ease-in-out;
+    }
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 14px;
+        width: 14px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .2s ease-in-out;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    input:checked + .slider {
+        background-color: #2b5329;
+    }
+    input:checked + .slider:before {
+        transform: translateX(18px);
+    }
+    .slider.round {
+        border-radius: 20px;
+    }
+    .slider.round:before {
+        border-radius: 50%;
+    }
+
+    .variant-table th {
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #475569;
+        background-color: #f8fafc;
+        padding: 8px 12px;
+        border-bottom: 2px solid #e2e8f0;
+    }
+    .variant-table td {
+        padding: 6px 12px;
+        vertical-align: middle;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .variant-table tr:hover {
+        background-color: #f8fafc;
+    }
+
+    .variant-input {
+        height: 30px !important;
+        padding: 2px 8px !important;
+        font-size: 0.84rem !important;
+        border-radius: 4px !important;
+    }
+    .variant-addon {
+        height: 30px !important;
+        padding: 2px 8px !important;
+        font-size: 0.84rem !important;
+        background-color: #f8fafc !important;
+    }
+</style>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+    <div>
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.65rem; margin: 0; color: var(--primary); font-weight: 700;">
+            Product Variant Specifications &amp; Pricing
+        </h2>
+        <span style="font-size: 0.85rem; color: var(--text-muted);">
+            Manage size-based pricing in Indian Rupee (₹), SKU codes, inventory stock levels, and store visibility.
+        </span>
+    </div>
+</div>
+
+<div class="clothify-card" style="margin-bottom: 1rem; padding: 0.85rem 1rem; background: #ffffff;">
+    <form method="GET" action="/seller-panel/products/variants/" style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end;">
+        <div style="flex: 1; min-width: 220px;">
+            <label style="font-size: 0.78rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; display: block;">
+                Search Seller Products
+            </label>
+            <input type="text" name="q" value="{{ current_q|default:'' }}" class="form-control variant-input" placeholder="Search product by name or SKU..." style="width: 100%;">
+        </div>
+
+        <div style="flex: 1.5; min-width: 260px;">
+            <label style="font-size: 0.78rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; display: block;">
+                Select Product from My Catalog
+            </label>
+            <select name="product_id" onchange="this.form.submit()" class="form-select variant-input" style="width: 100%; font-weight: 500;">
+                {% if seller_products %}
+                    {% for p in seller_products %}
+                        <option value="{{ p.id }}" {% if selected_product and selected_product.id == p.id %}selected{% endif %}>
+                            {{ p.name }} (SKU: {{ p.sku }}) — ₹{{ p.price }}
+                        </option>
+                    {% endfor %}
+                {% else %}
+                    <option value="">No products found in your catalog</option>
+                {% endif %}
+            </select>
+        </div>
+
+        <div style="display: flex; gap: 6px;">
+            <button type="submit" class="btn btn-primary" style="padding: 4px 14px; font-size: 0.84rem; height: 30px; display: flex; align-items: center; gap: 4px;">
+                <i class="bi bi-search"></i> Load Product
+            </button>
+            {% if current_q %}
+                <a href="/seller-panel/products/variants/" class="btn btn-secondary" style="padding: 4px 12px; font-size: 0.84rem; height: 30px; display: flex; align-items: center;">Reset</a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+{% if selected_product %}
+
+    <div class="clothify-card" style="margin-bottom: 1rem; padding: 0.75rem 1rem; background: #faf6f0;  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <img src="{{ selected_product.image_url }}" alt="{{ selected_product.name }}" style="width: 44px; height: 44px; object-fit: cover; border-radius: 4px; border: 1px solid #e2e8f0;">
+            <div>
+                <h4 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; color: var(--primary); font-weight: 700;">
+                    {{ selected_product.name }}
+                </h4>
+                <div style="font-size: 0.82rem; color: #64748b; margin-top: 1px;">
+                    <strong>Base SKU:</strong> <code style="color: var(--primary); font-size: 0.8rem;">{{ selected_product.sku }}</code> |
+                    <strong>Color:</strong> {{ selected_product.color|default:"Standard" }} |
+                    <strong>Size Options:</strong> {{ selected_product.size|default:"All Sizes" }}
+                </div>
+            </div>
+        </div>
+        <div style="text-align: right;">
+            <div style="font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600;">Base Retail Price</div>
+            <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary); font-family: 'Cormorant Garamond', serif;">
+                ₹{{ selected_product.price }}
+            </div>
+        </div>
+    </div>
+
+    <form method="POST" action="/seller-panel/products/variants/">
+        {% csrf_token %}
+        <input type="hidden" name="product_id" value="{{ selected_product.id }}">
+
+        <div class="clothify-card" style="padding: 0; overflow: hidden; margin-bottom: 1rem;">
+            <div style="overflow-x: auto;">
+                <table class="table variant-table" style="width: 100%; margin-bottom: 0; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th style="width: 36px; text-align: center;">
+                                <input type="checkbox" id="selectAllVariants" class="form-check-input" style="cursor: pointer; margin-top: 0;">
+                            </th>
+                            <th>Color</th>
+                            <th>Size</th>
+                            <th>
+                                SKU
+                                <i class="bi bi-info-circle-fill text-muted ms-1" style="font-size: 0.75rem;" title="Unique Stock Keeping Unit barcode code for size variant"></i>
+                            </th>
+                            <th>Price (₹)</th>
+                            <th>Inventory</th>
+                            <th>
+                                Visible
+                                <i class="bi bi-info-circle-fill text-muted ms-1" style="font-size: 0.75rem;" title="Enable or disable customer purchasing for this variant"></i>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if variants %}
+                            {% for var in variants %}
+                                <tr>
+                                    <td style="text-align: center;">
+                                        <input type="checkbox" class="var-select-cb form-check-input" style="cursor: pointer; margin-top: 0;">
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: {% if var.color|lower == 'black' %}#000000{% elif var.color|lower == 'gold' %}#d4af37{% elif var.color|lower == 'white' %}#ffffff; border: 1px solid #ccc{% else %}#be185d{% endif %};"></span>
+                                            <span style="font-weight: 600; color: #1e293b; font-size: 0.85rem;">{{ var.color }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark border" style="font-size: 0.8rem; font-weight: 600; padding: 3px 8px; border-radius: 4px;">
+                                            {{ var.size }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <input type="text" name="sku_{{ var.id }}" value="{{ var.sku }}" class="form-control variant-input" style="max-width: 190px; font-family: monospace;" required>
+                                    </td>
+                                    <td>
+                                        <div class="input-group input-group-sm" style="max-width: 125px;">
+                                            <span class="input-group-text variant-addon fw-bold" style="color: #334155;">₹</span>
+                                            <input type="number" step="0.01" name="price_{{ var.id }}" value="{{ var.price }}" class="form-control variant-input fw-semibold" required>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="stock_{{ var.id }}" value="{{ var.stock }}" class="form-control variant-input fw-semibold" style="max-width: 85px;" min="0" required>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <span class="visible-text-{{ var.id }}" style="font-weight: 600; font-size: 0.82rem; min-width: 24px; color: {% if var.is_available %}#16a34a{% else %}#94a3b8{% endif %};">
+                                                {% if var.is_available %}Yes{% else %}No{% endif %}
+                                            </span>
+                                            <label class="switch">
+                                                <input type="checkbox" name="visible_{{ var.id }}" value="on" {% if var.is_available %}checked{% endif %} onchange="toggleVisibleText({{ var.id }}, this.checked)">
+                                                <span class="slider round"></span>
+                                            </label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center py-3 text-muted" style="font-size: 0.85rem;">
+                                    No variants found for this product.
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="padding: 0.75rem 1rem; background: #ffffff; border-top: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+                <button type="submit" class="btn btn-primary" style="padding: 6px 18px; font-weight: 600; font-size: 0.88rem; display: flex; align-items: center; gap: 6px;">
+                    <i class="bi bi-save2-fill"></i> Save Variant Updates
+                </button>
+                <a href="#" style="color: #64748b; font-size: 0.85rem; text-decoration: none; font-weight: 500;" onclick="alert('For assistance with product variant management or bulk size uploads, please contact seller support.'); return false;">
+                    Need Help?
+                </a>
+            </div>
+        </div>
+    </form>
+{% else %}
+    <div class="clothify-card" style="padding: 2.5rem; text-align: center; background: #ffffff;">
+        <i class="bi bi-box-seam" style="font-size: 2.5rem; color: #cbd5e1; display: block; margin-bottom: 0.75rem;"></i>
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: var(--primary);">No Product Selected</h3>
+        <p style="color: var(--text-muted); max-width: 450px; margin: 0 auto 1.25rem; font-size: 0.88rem;">
+            Please select a product from your catalog using the dropdown search above to view and update its size variants, Indian Rupee (₹) pricing, and inventory stock.
+        </p>
+        <a href="/seller-panel/products/add/" class="btn btn-primary" style="padding: 6px 16px; font-size: 0.88rem;">+ Add New Garment Product</a>
+    </div>
+{% endif %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectAllCb = document.getElementById('selectAllVariants');
+        if (selectAllCb) {
+            selectAllCb.addEventListener('change', function() {
+                const rowCbs = document.querySelectorAll('.var-select-cb');
+                rowCbs.forEach(cb => cb.checked = selectAllCb.checked);
+            });
+        }
+    });
+
+    function toggleVisibleText(varId, isChecked) {
+        const labelEl = document.querySelector('.visible-text-' + varId);
+        if (labelEl) {
+            labelEl.textContent = isChecked ? 'Yes' : 'No';
+            labelEl.style.color = isChecked ? '#16a34a' : '#94a3b8';
+        }
+    }
+</script>
+{% endblock %}

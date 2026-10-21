@@ -1,0 +1,2967 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% block collection_meta_title %}{{ collection_title|default:'New In' }} &ndash; THEIR NIBS{% endblock %}{% endblock %}
+
+{% block extra_css %}
+<style>
+
+  :root {
+    --tn-charcoal: #1d1d1b;
+    --tn-cream-bg: #faeee5;
+    --tn-border: #e8e8e8;
+    --tn-text-muted: #64748b;
+    --tn-peach-accent: #f1c0ad;
+    --font-heading: 'Instrument Serif', 'Playfair Display', Georgia, serif;
+    --font-body: 'Poppins', sans-serif;
+  }
+
+  .theirnibs-collection-wrap {
+    background-color: #ffffff;
+    min-height: 85vh;
+    position: relative;
+  }
+
+  .tn-breadcrumbs {
+    max-width: 1480px;
+    margin: 0 auto;
+    padding: 16px 36px 6px 36px;
+    font-size: 0.8rem;
+    color: #888888;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tn-breadcrumbs a {
+    color: #555555;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .tn-breadcrumbs a:hover {
+    color: var(--tn-charcoal);
+    text-decoration: underline;
+  }
+
+  .tn-breadcrumbs .crumb-sep {
+    color: #cccccc;
+    font-size: 0.75rem;
+  }
+
+  .tn-breadcrumbs .crumb-current {
+    color: var(--tn-charcoal);
+    font-weight: 600;
+  }
+
+  .collection-header {
+    max-width: 1480px;
+    margin: 14px auto 22px auto;
+    padding: 0 36px;
+    box-sizing: border-box;
+  }
+
+  .collection-header__banner {
+    background-color: #faeee5; 
+    border-radius: 8px;
+    padding: 38px 46px 32px 46px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-sizing: border-box;
+  }
+
+  .collection-header__top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 32px;
+  }
+
+  .collection-header__title {
+    font-family: var(--font-heading);
+    font-size: 3.15rem;
+    font-weight: 400;
+    line-height: 1.05;
+    color: var(--tn-charcoal);
+    margin: 0;
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+  }
+
+  .collection-header__description {
+    font-family: var(--font-body);
+    font-size: 0.94rem;
+    line-height: 1.58;
+    color: #1d1d1b;
+    margin: 0;
+    max-width: 490px;
+    font-weight: 400;
+    text-align: right;
+  }
+
+  .collection-header__bottom-row {
+    margin-top: 36px;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .collection-header__links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .collection-header__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 14px;
+    background: transparent;
+    color: var(--tn-charcoal);
+    border: 1px solid #e5bdaf; 
+    border-radius: 2px;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 400;
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    transition: all 0.2s ease;
+  }
+
+  .collection-header__link:hover {
+    background-color: #f3dfd5;
+    border-color: #d89f8d;
+    color: #000000;
+  }
+
+  .collection-header__link.active {
+    background-color: #edd3c7;
+    border-color: #cb8b77;
+    font-weight: 600;
+  }
+
+  .stiletto-filter-bar {
+    max-width: 1480px;
+    margin: 0 auto;
+    padding: 0 36px;
+    background: #ffffff;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 100;
+  }
+
+  .stiletto-filter-bar__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #eeeeee;
+  }
+
+  .stiletto-filter-bar__top-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .btn-filter-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    color: var(--tn-charcoal);
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 6px 0;
+    transition: color 0.15s ease;
+  }
+
+  .btn-filter-toggle:hover {
+    color: #000000;
+  }
+
+  .btn-filter-toggle .filter-icon-svg {
+    width: 17px;
+    height: 17px;
+    color: var(--tn-charcoal);
+  }
+
+  .btn-filter-toggle .toggle-chevron {
+    transition: transform 0.25s ease;
+    width: 10px;
+    height: 10px;
+  }
+
+  .btn-filter-toggle.is-collapsed .toggle-chevron {
+    transform: rotate(180deg);
+  }
+
+  .stiletto-results-count {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: #71717a;
+    font-weight: 400;
+  }
+
+  .stiletto-sort-wrap {
+    position: relative;
+  }
+
+  .stiletto-sort-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: none;
+    color: var(--tn-charcoal);
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 6px 0;
+  }
+
+  .stiletto-sort-btn:hover {
+    color: #000000;
+  }
+
+  .stiletto-sort-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    min-width: 220px;
+    z-index: 1000;
+    padding: 8px 0;
+    display: none;
+  }
+
+  .stiletto-sort-menu.is-open {
+    display: block;
+  }
+
+  .stiletto-sort-option {
+    display: flex;
+    align-items: center;
+    padding: 8px 18px;
+    font-size: 0.84rem;
+    color: #333333;
+    text-decoration: none;
+    transition: background-color 0.15s ease;
+    cursor: pointer;
+  }
+
+  .stiletto-sort-option:hover {
+    background-color: #f7f7f7;
+    color: #000000;
+  }
+
+  .stiletto-sort-option.is-active {
+    font-weight: 600;
+    color: #000000;
+    background-color: #fcf6f3;
+  }
+
+  .stiletto-filter-bar__facets-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 0 18px 0;
+    flex-wrap: wrap;
+    transition: max-height 0.3s ease, opacity 0.25s ease, padding 0.25s ease;
+    overflow: visible;
+    max-height: 200px;
+    opacity: 1;
+  }
+
+  .stiletto-filter-bar__facets-row.is-hidden {
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .stiletto-facet-dropdown {
+    position: relative;
+  }
+
+  .stiletto-facet-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #ffffff;
+    border: 1px solid #d4d4d8;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--tn-charcoal);
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+
+  .stiletto-facet-btn:hover {
+    border-color: #1d1d1b;
+  }
+
+  .stiletto-facet-btn.is-open {
+    border-color: #1d1d1b;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .stiletto-facet-btn.has-selection {
+    border-color: #1d1d1b;
+    font-weight: 600;
+    background-color: #fafafa;
+  }
+
+  .stiletto-facet-btn .facet-chevron {
+    transition: transform 0.2s ease;
+    width: 10px;
+    height: 10px;
+  }
+
+  .stiletto-facet-btn.is-open .facet-chevron {
+    transform: rotate(180deg);
+  }
+
+  .stiletto-facet-panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    background: #ffffff;
+    border: 1px solid #e4e4e7;
+    border-radius: 4px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.14);
+    min-width: 250px;
+    max-width: 320px;
+    max-height: 380px;
+    overflow-y: auto;
+    z-index: 1010;
+    padding: 16px;
+    display: none;
+  }
+
+  .stiletto-facet-panel.is-open {
+    display: block;
+  }
+
+  .stiletto-facet-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f1f1f1;
+    font-size: 0.78rem;
+    color: #71717a;
+  }
+
+  .stiletto-facet-clear {
+    color: #e57e5d;
+    text-decoration: underline;
+    background: none;
+    border: none;
+    font-size: 0.78rem;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .stiletto-facet-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .stiletto-facet-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.88rem;
+    color: #1d1d1b;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 6px 0;
+    transition: color 0.15s ease;
+  }
+
+  .stiletto-facet-item:hover {
+    color: #000000;
+  }
+
+  .stiletto-facet-item.is-selected {
+    font-weight: 500;
+    color: #000000;
+  }
+
+  .stiletto-facet-checkbox-box {
+    width: 17px;
+    height: 17px;
+    border: 1.2px solid #52525b;
+    border-radius: 2px;
+    background: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    transition: all 0.15s ease;
+  }
+
+  .stiletto-facet-item.is-selected .stiletto-facet-checkbox-box {
+    border-color: #1d1d1b;
+  }
+
+  .stiletto-facet-checkbox-svg {
+    display: none;
+    width: 11px;
+    height: 11px;
+    stroke: #1d1d1b;
+    stroke-width: 2.5;
+  }
+
+  .stiletto-facet-item.is-selected .stiletto-facet-checkbox-svg {
+    display: block;
+  }
+
+  .stiletto-facet-name {
+    flex: 1;
+    font-size: 0.88rem;
+  }
+
+  .stiletto-facet-count {
+    color: #71717a;
+    font-size: 0.84rem;
+    margin-left: 6px;
+    font-weight: 400;
+  }
+
+  .stiletto-color-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .stiletto-color-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.84rem;
+    color: #374151;
+    text-decoration: none;
+    padding: 3px 0;
+  }
+
+  .stiletto-color-item:hover {
+    color: #000000;
+  }
+
+  .stiletto-color-item.is-selected {
+    font-weight: 600;
+    color: #000000;
+  }
+
+  .stiletto-color-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.18);
+    display: inline-block;
+  }
+
+  .stiletto-active-filters {
+    max-width: 1480px;
+    margin: 0 auto;
+    padding: 0 36px 16px 36px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    box-sizing: border-box;
+  }
+
+  .stiletto-active-filters__label {
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #71717a;
+    margin-right: 4px;
+  }
+
+  .stiletto-filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background: #f4f4f5;
+    border: 1px solid #e4e4e7;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 500;
+    color: var(--tn-charcoal);
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+
+  .stiletto-filter-chip:hover {
+    background: #e4e4e7;
+    border-color: var(--tn-charcoal);
+  }
+
+  .stiletto-filter-chip__remove {
+    font-size: 0.95rem;
+    line-height: 1;
+    color: #71717a;
+  }
+
+  .stiletto-active-clear-all {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #b91c1c;
+    text-decoration: underline;
+    margin-left: 8px;
+    cursor: pointer;
+  }
+
+  .stiletto-catalog-wrap {
+    max-width: 1480px;
+    margin: 0 auto;
+    padding: 8px 36px 80px 36px;
+    box-sizing: border-box;
+  }
+
+  .stiletto-product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 36px 22px;
+  }
+
+  .stiletto-product-card {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: #ffffff;
+  }
+
+  .stiletto-product-media {
+    position: relative;
+    width: 100%;
+    padding-top: 133.33%; 
+    overflow: hidden;
+    background-color: #f7f5f2;
+    border-radius: 4px;
+  }
+
+  .stiletto-product-media img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    transition: transform 0.45s ease;
+  }
+
+  .stiletto-product-card:hover .stiletto-product-media img {
+    transform: scale(1.035);
+  }
+
+  .stiletto-product-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #ffffff;
+    color: #1d1d1b;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 2px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .stiletto-product-badge.out-of-stock-badge {
+    background: #1d1d1b;
+    color: #ffffff;
+    letter-spacing: 0.08em;
+  }
+
+  .card-quick-sizes {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    z-index: 5;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(4px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+  }
+
+  .stiletto-product-card:hover .card-quick-sizes {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .card-size-pill {
+    background: #ffffff;
+    color: #1d1d1b;
+    border: 1px solid #d4d4d8;
+    border-radius: 2px;
+    padding: 3px 6px;
+    font-size: 0.69rem;
+    font-weight: 500;
+    line-height: 1.15;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    font-family: var(--font-body, 'Poppins', sans-serif);
+    transition: all 0.15s ease;
+  }
+
+  .card-size-pill:hover {
+    background: #1d1d1b;
+    color: #ffffff;
+    border-color: #1d1d1b;
+    transform: translateY(-1px);
+  }
+
+  .stiletto-product-wishlist {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.85);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #2b2b2b;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    transition: all 0.2s ease;
+    z-index: 2;
+  }
+
+  .stiletto-product-wishlist:hover {
+    background: #ffffff;
+    color: #e47e56;
+    transform: scale(1.1);
+  }
+
+  .stiletto-product-wishlist.active svg {
+    fill: #e47e56;
+    stroke: #e47e56;
+  }
+
+  .stiletto-product-info {
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stiletto-product-title {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 400;
+    line-height: 1.32;
+    color: #1d1d1b;
+    margin: 0 0 8px 0;
+  }
+
+  .stiletto-product-title a {
+    color: #1d1d1b;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .stiletto-product-title a:hover {
+    text-decoration: underline;
+  }
+
+  .stiletto-product-bottom-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .stiletto-product-price {
+    font-family: var(--font-body);
+    font-size: 0.92rem;
+    color: #4a4a4a;
+    font-weight: 400;
+  }
+
+  .btn-quick-bag {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #1d1d1b;
+    padding: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.18s ease, color 0.18s ease;
+  }
+
+  .btn-quick-bag:hover {
+    transform: scale(1.18);
+    color: #e57e5d;
+  }
+
+  .stiletto-collab-card {
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: #1a1a1a;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    padding-top: 133.33%; 
+  }
+
+  .stiletto-collab-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    transition: transform 0.5s ease;
+  }
+
+  .stiletto-collab-card:hover .stiletto-collab-bg {
+    transform: scale(1.04);
+  }
+
+  .stiletto-collab-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.25) 55%, rgba(0,0,0,0.6) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    box-sizing: border-box;
+  }
+
+  .stiletto-collab-logo {
+    max-width: 82%;
+    max-height: 130px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.45));
+  }
+
+  .floating-chat-bubble {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    width: 44px;
+    height: 44px;
+    background-color: #f1c0ad;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+    cursor: pointer;
+    z-index: 999;
+    border: none;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+  }
+
+  .floating-chat-bubble:hover {
+    transform: scale(1.08);
+    background-color: #e5ab96;
+  }
+
+  .floating-chat-bubble svg {
+    width: 20px;
+    height: 20px;
+    fill: #1d1d1b;
+  }
+
+  .floating-discount-badge {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 66px;
+    height: 66px;
+    background-color: #f3c4b3;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    z-index: 999;
+    text-align: center;
+    padding: 6px;
+    box-sizing: border-box;
+    font-family: var(--font-heading);
+    color: #1d1d1b;
+    line-height: 1.05;
+    transition: transform 0.2s ease;
+    text-decoration: none;
+  }
+
+  .floating-discount-badge:hover {
+    transform: scale(1.06);
+  }
+
+  .floating-discount-badge .badge-line1 {
+    font-size: 0.85rem;
+    font-style: italic;
+  }
+
+  .floating-discount-badge .badge-line2 {
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+
+  .tn-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.65);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;
+    opacity: 0;
+    transition: opacity 0.22s ease;
+    backdrop-filter: blur(2px);
+    padding: 16px;
+    box-sizing: border-box;
+  }
+
+  .tn-modal-backdrop.is-visible {
+    display: flex;
+    opacity: 1;
+  }
+
+  .tn-add-to-list-card {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 470px;
+    border-radius: 8px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    padding: 20px 22px 24px 22px;
+    box-sizing: border-box;
+    position: relative;
+    max-height: 92vh;
+    overflow-y: auto;
+    transform: scale(0.96);
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .tn-modal-backdrop.is-visible .tn-add-to-list-card {
+    transform: scale(1);
+  }
+
+  .tn-add-to-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f1f1f1;
+    margin-bottom: 16px;
+  }
+
+  .tn-add-to-list-title {
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #1d1d1b;
+    margin: 0;
+  }
+
+  .tn-add-to-list-close {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background-color: #52525b;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: background-color 0.15s ease, transform 0.15s ease;
+  }
+
+  .tn-add-to-list-close:hover {
+    background-color: #18181b;
+    transform: scale(1.08);
+  }
+
+  .tn-add-to-list-close svg {
+    width: 12px;
+    height: 12px;
+    stroke: currentColor;
+    stroke-width: 2.2;
+  }
+
+  .tn-modal-gallery-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 18px;
+    position: relative;
+  }
+
+  .tn-modal-gallery-track {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    flex: 1;
+    padding: 2px 0;
+  }
+
+  .tn-modal-gallery-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tn-modal-gallery-item {
+    width: calc(25% - 6px);
+    aspect-ratio: 3 / 4;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: #f7f5f2;
+    flex-shrink: 0;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+  }
+
+  .tn-modal-gallery-item:hover,
+  .tn-modal-gallery-item.is-selected {
+    border-color: #1d1d1b;
+  }
+
+  .tn-modal-gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .tn-modal-arrow-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #71717a;
+    width: 18px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    flex-shrink: 0;
+    font-size: 0.75rem;
+    transition: color 0.15s ease;
+  }
+
+  .tn-modal-arrow-btn:hover {
+    color: #000000;
+  }
+
+  .tn-modal-product-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .tn-modal-product-title {
+    font-family: var(--font-body);
+    font-size: 1.02rem;
+    font-weight: 500;
+    color: #1d1d1b;
+    line-height: 1.35;
+    margin: 0;
+    max-width: 320px;
+  }
+
+  .tn-modal-price-col {
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .tn-modal-currency {
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #1d1d1b;
+    line-height: 1.1;
+  }
+
+  .tn-modal-price-val {
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: #1d1d1b;
+    line-height: 1.25;
+  }
+
+  .tn-modal-option-label {
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #1d1d1b;
+    margin: 0 0 8px 0;
+    display: block;
+  }
+
+  .tn-modal-option-label.is-color-label {
+    font-size: 0.76rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 14px;
+  }
+
+  .tn-modal-sizes-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  .tn-modal-size-btn {
+    background: #ffffff;
+    border: 1px solid #d4d4d8;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #1d1d1b;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .tn-modal-size-btn:hover {
+    border-color: #1d1d1b;
+  }
+
+  .tn-modal-size-btn.is-active {
+    background-color: #2b2b2b;
+    border-color: #2b2b2b;
+    color: #ffffff;
+    font-weight: 600;
+  }
+
+  .tn-modal-color-pill {
+    display: inline-block;
+    background: #ffffff;
+    border: 1px solid #d4d4d8;
+    border-radius: 4px;
+    padding: 6px 16px;
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #1d1d1b;
+  }
+
+  .tn-modal-action-btn {
+    width: 100%;
+    margin-top: 24px;
+    padding: 13px 0;
+    background-color: #2e2e2e;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: not-allowed;
+    text-align: center;
+    transition: background-color 0.2s ease, transform 0.15s ease;
+  }
+
+  .tn-modal-action-btn.is-ready {
+    background-color: #2b2b2b;
+    cursor: pointer;
+  }
+
+  .tn-modal-action-btn.is-ready:hover {
+    background-color: #181818;
+    transform: translateY(-1px);
+  }
+
+  .tn-wishlist-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    z-index: 999999;
+    display: none;
+    align-items: center;
+    background-color: #ffffff;
+    border: 1px solid #e4e4e7;
+    border-radius: 6px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+    transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    box-sizing: border-box;
+  }
+
+  .tn-wishlist-toast.is-visible {
+    display: flex;
+    animation: slideUpToast 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes slideUpToast {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .tn-wishlist-toast.is-compact {
+    padding: 8px 16px 8px 10px;
+    gap: 10px;
+    cursor: pointer;
+  }
+
+  .tn-wishlist-toast.is-compact .toast-expanded-body {
+    display: none;
+  }
+
+  .tn-wishlist-toast.is-compact .toast-compact-body {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .tn-wishlist-toast.is-expanded {
+    padding: 10px 16px 10px 12px;
+    gap: 14px;
+    max-width: 380px;
+  }
+
+  .tn-wishlist-toast.is-expanded .toast-compact-body {
+    display: none;
+  }
+
+  .tn-wishlist-toast.is-expanded .toast-expanded-body {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+  }
+
+  .toast-thumb-img {
+    width: 34px;
+    height: 40px;
+    border-radius: 4px;
+    object-fit: cover;
+    background-color: #f7f5f2;
+    flex-shrink: 0;
+  }
+
+  .toast-saved-text {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #1d1d1b;
+    white-space: nowrap;
+  }
+
+  .toast-product-name {
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 500;
+    line-height: 1.3;
+    color: #1d1d1b;
+    margin: 0;
+    flex: 1;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .btn-toast-view {
+    background-color: #000000;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 20px;
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background-color 0.15s ease;
+  }
+
+  .btn-toast-view:hover {
+    background-color: #27272a;
+  }
+
+  .toast-close-x {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #18181b;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    line-height: 1;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+
+  .quick-shop-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(2px);
+    z-index: 10006;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.22s ease;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .quick-shop-backdrop.is-visible {
+    display: flex;
+    opacity: 1;
+  }
+
+  .quick-shop-card {
+    position: relative;
+    background: #ffffff;
+    max-width: 890px;
+    width: 100%;
+    max-height: 90vh;
+    display: grid;
+    grid-template-columns: 46% 54%;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.32);
+    overflow: hidden;
+    border-radius: 3px;
+    transform: scale(0.96);
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .quick-shop-backdrop.is-visible .quick-shop-card {
+    transform: scale(1);
+  }
+
+  .quick-shop-close-btn {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 1.7rem;
+    line-height: 1;
+    color: #64748b;
+    cursor: pointer;
+    z-index: 10;
+    padding: 4px;
+    transition: color 0.15s ease;
+  }
+
+  .quick-shop-close-btn:hover {
+    color: #000000;
+  }
+
+  .quick-shop-media {
+    background: #f7f5f2;
+    position: relative;
+    overflow: hidden;
+    min-height: 480px;
+  }
+
+  .quick-shop-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+  }
+
+  .quick-shop-details {
+    padding: 32px 36px 28px 36px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+
+  .quick-shop-new-badge {
+    font-family: var(--font-body, 'Poppins', sans-serif);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    color: #1d1d1b;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: inline-block;
+  }
+
+  .quick-shop-title {
+    font-family: var(--font-heading, 'Playfair Display', Georgia, serif);
+    font-size: 1.62rem;
+    font-weight: 400;
+    line-height: 1.22;
+    color: #1d1d1b;
+    margin: 0 0 6px 0;
+  }
+
+  .quick-shop-subline {
+    font-size: 0.74rem;
+    color: #64748b;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .quick-shop-brand {
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #1d1d1b;
+    font-size: 0.72rem;
+  }
+
+  .quick-shop-sku {
+    color: #71717a;
+    letter-spacing: 0.02em;
+  }
+
+  .quick-shop-price {
+    font-family: var(--font-body, 'Poppins', sans-serif);
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: #1d1d1b;
+    margin-bottom: 6px;
+  }
+
+  .quick-shop-pdp-link {
+    font-size: 0.82rem;
+    color: #1d1d1b;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    display: inline-block;
+    margin-bottom: 16px;
+    transition: color 0.15s ease;
+  }
+
+  .quick-shop-pdp-link:hover {
+    color: #64748b;
+  }
+
+  .quick-shop-divider {
+    border-top: 1px solid #ebebeb;
+    margin-bottom: 16px;
+  }
+
+  .quick-shop-size-label {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #1d1d1b;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .quick-shop-sizes-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .quick-shop-size-pill {
+    border: 1px solid #c7c7c7;
+    background: #ffffff;
+    color: #1d1d1b;
+    padding: 7px 13px;
+    font-size: 0.8rem;
+    border-radius: 2px;
+    cursor: pointer;
+    font-family: var(--font-body, 'Poppins', sans-serif);
+    transition: all 0.15s ease;
+  }
+
+  .quick-shop-size-pill:hover {
+    border-color: #1d1d1b;
+  }
+
+  .quick-shop-size-pill.is-active {
+    border-color: #1d1d1b;
+    outline: 1.5px solid #1d1d1b;
+    font-weight: 600;
+    background: #fafafa;
+  }
+
+  .quick-shop-stock-alert {
+    font-size: 0.8rem;
+    color: #d97706; 
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+
+  .quick-shop-description {
+    font-size: 0.84rem;
+    color: #374151;
+    line-height: 1.6;
+    margin-bottom: 22px;
+  }
+
+  .quick-shop-description p {
+    margin: 0 0 10px 0;
+  }
+
+  .quick-shop-submit-btn {
+    width: 100%;
+    padding: 13px 20px;
+    font-family: var(--font-body, 'Poppins', sans-serif);
+    font-size: 0.92rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.22s ease, transform 0.12s ease;
+    margin-top: auto;
+
+    background-color: #f5baa7;
+    color: #ffffff;
+  }
+
+  .quick-shop-submit-btn:hover {
+    opacity: 0.92;
+  }
+
+  .quick-shop-submit-btn.is-ready {
+    background-color: #d86d48; 
+    color: #ffffff;
+  }
+
+  @media (max-width: 768px) {
+    .quick-shop-backdrop {
+      padding: 12px 10px;
+      align-items: center;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .quick-shop-card {
+      display: flex !important;
+      flex-direction: column !important;
+      grid-template-columns: 1fr !important;
+      width: 100% !important;
+      max-width: 480px !important;
+      max-height: 88vh !important;
+      max-height: 88dvh !important;
+      overflow-y: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      overscroll-behavior: contain !important;
+      border-radius: 8px !important;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35) !important;
+      position: relative !important;
+    }
+
+    .quick-shop-close-btn {
+      position: sticky !important;
+      top: 10px !important;
+      right: 10px !important;
+      align-self: flex-end !important;
+      margin-bottom: -36px !important;
+      width: 34px !important;
+      height: 34px !important;
+      border-radius: 50% !important;
+      background: rgba(255, 255, 255, 0.94) !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      color: #1d1d1b !important;
+      font-size: 1.4rem !important;
+      line-height: 1 !important;
+      z-index: 50 !important;
+      cursor: pointer !important;
+    }
+
+    .quick-shop-media {
+      flex-shrink: 0 !important;
+      width: 100% !important;
+      height: 250px !important;
+      min-height: 250px !important;
+      max-height: 250px !important;
+      background: #f7f5f2 !important;
+    }
+
+    .quick-shop-media img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      object-position: center top !important;
+    }
+
+    .quick-shop-details {
+      flex: 1 0 auto !important;
+      overflow-y: visible !important;
+      padding: 18px 16px 28px 16px !important;
+      box-sizing: border-box !important;
+    }
+
+    .quick-shop-title {
+      font-size: 1.35rem !important;
+      line-height: 1.25 !important;
+      margin-bottom: 6px !important;
+    }
+
+    .quick-shop-sizes-grid {
+      gap: 6px !important;
+      margin-bottom: 12px !important;
+    }
+
+    .quick-shop-size-pill {
+      padding: 8px 12px !important;
+      font-size: 0.8rem !important;
+    }
+
+    .quick-shop-description {
+      font-size: 0.82rem !important;
+      line-height: 1.5 !important;
+      margin-bottom: 16px !important;
+    }
+
+    .quick-shop-submit-btn {
+      width: 100% !important;
+      padding: 13px 20px !important;
+      font-size: 0.95rem !important;
+      margin-top: 14px !important;
+      flex-shrink: 0 !important;
+    }
+  }
+
+  @media (max-width: 1200px) {
+    .stiletto-product-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 992px) {
+    .collection-header {
+      padding: 0 20px;
+    }
+    .collection-header__banner {
+      padding: 28px 24px 24px 24px;
+    }
+    .collection-header__top-row {
+      flex-direction: column;
+      gap: 16px;
+    }
+    .collection-header__description {
+      text-align: left;
+      max-width: 100%;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .stiletto-filter-bar {
+      padding: 0 16px;
+    }
+    .stiletto-catalog-wrap {
+      padding: 10px 16px 60px 16px;
+    }
+    .stiletto-product-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px 12px;
+    }
+    .stiletto-filter-bar__facets-row {
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      padding-bottom: 12px;
+    }
+    .stiletto-facet-btn {
+      white-space: nowrap;
+    }
+    .collection-header {
+      padding: 0 16px;
+      margin: 10px auto 16px auto;
+    }
+    .collection-header__banner {
+      padding: 22px 18px;
+      border-radius: 6px;
+    }
+    .collection-header__title {
+      font-size: 2.3rem;
+    }
+    .collection-header__description {
+      font-size: 0.88rem;
+      text-align: left;
+    }
+    .collection-header__bottom-row {
+      margin-top: 20px;
+    }
+    .collection-header__links {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+    }
+    .collection-header__link {
+      width: 100%;
+      box-sizing: border-box;
+      justify-content: flex-start;
+    }
+  }
+
+  .collection-features-bar {
+    background-color: #ffffff;
+    padding: 50px 24px;
+    margin-top: 55px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .collection-features-inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    box-sizing: border-box;
+  }
+
+  .collection-feature-item,
+  .collection-feature-card {
+    background-color: #faf5f0;
+    border: 1px solid rgba(242, 193, 174, 0.65);
+    border-radius: 8px;
+    padding: 34px 22px 30px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    box-sizing: border-box;
+  }
+
+  .collection-feature-item:hover,
+  .collection-feature-card:hover {
+    background-color: #ffffff;
+    border-color: #e47e56;
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(228, 126, 86, 0.14);
+  }
+
+  .collection-feature-icon-circle {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background-color: #faeee5;
+    border: 1px solid rgba(228, 126, 86, 0.35);
+    color: #c85a32;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    transition: transform 0.25s ease, background-color 0.25s ease, color 0.25s ease;
+  }
+
+  .collection-feature-item:hover .collection-feature-icon-circle,
+  .collection-feature-card:hover .collection-feature-icon-circle {
+    transform: scale(1.08);
+    background-color: #f7dacb;
+    color: #1d1d1b;
+  }
+
+  .collection-feature-title {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #1d1d1b;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  .collection-feature-sub {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 0.85rem;
+    font-weight: 400;
+    line-height: 1.45;
+    color: #64748b;
+    margin: 0;
+    max-width: 250px;
+  }
+
+  @media (max-width: 992px) {
+    .collection-features-inner {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .collection-features-bar {
+      padding: 35px 16px;
+      margin-top: 35px;
+    }
+    .collection-features-inner {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .collection-feature-item,
+    .collection-feature-card {
+      padding: 28px 18px 24px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="theirnibs-collection-wrap">
+
+  <nav class="tn-breadcrumbs" aria-label="Breadcrumb">
+    <a href="{% url 'homepage' %}">Home</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <a href="{% url 'homepage' %}#womens">Collections</a>
+    <span class="crumb-sep">&rsaquo;</span>
+    <span class="crumb-current">{{ collection_title|default:"New In" }}</span>
+  </nav>
+
+  {% block collection_banner %}
+
+  <section class="collection-header">
+    <div class="collection-header__banner">
+
+      <div class="collection-header__top-row">
+        <h1 class="collection-header__title">{{ collection_title|default:"New In" }}</h1>
+        <p class="collection-header__description">
+          {{ collection_desc|default:"Explore our latest sleepwear arrivals, featuring beautifully designed long pyjamas, short pyjamas, and our bestselling oversized pyjamas in dreamy hand-drawn prints." }}
+        </p>
+      </div>
+    </div>
+  </section>
+  {% endblock %}
+
+  <div class="stiletto-filter-bar" id="stilettoFilterBar">
+
+    <div class="stiletto-filter-bar__top">
+      <div class="stiletto-filter-bar__top-left">
+
+        <button type="button" class="btn-filter-toggle" id="filterToggleBtn" onclick="toggleFilterBar()">
+          <svg class="filter-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M2.302 16.751h3.394m16 0H11.583" stroke-width="1.4" stroke-miterlimit="6.667" stroke-linecap="square" stroke-linejoin="round"/>
+            <path d="M8.606 19.66a2.91 2.91 0 1 0 0-5.818 2.91 2.91 0 0 0 0 5.818z" stroke-width="1.4" stroke-miterlimit="10" stroke-linecap="round"/>
+            <path d="M2.302 8.024h10.182m9.212 0h-3.394" stroke-width="1.4" stroke-miterlimit="6.667" stroke-linecap="square" stroke-linejoin="round"/>
+            <path d="M15.394 10.933a2.91 2.91 0 1 0 0-5.818 2.91 2.91 0 0 0 0 5.818z" stroke-width="1.4" stroke-miterlimit="10" stroke-linecap="round"/>
+          </svg>
+          <span id="filterToggleText">Hide filters</span>
+          <svg class="toggle-chevron" id="filterToggleChevron" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M1.875 16.563 12 6.438 22.125 16.563" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <span class="stiletto-results-count">
+          {{ total_count }} Results
+        </span>
+      </div>
+
+      <div class="stiletto-sort-wrap">
+        <button type="button" class="stiletto-sort-btn" id="sortToggleBtn" onclick="toggleSortMenu(event)">
+          <span>Sort: {{ sort_display_name }}</span>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M1.875 7.438 12 17.563 22.125 7.438" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="stiletto-sort-menu" id="sortDropdownMenu">
+          <a href="javascript:void(0)" onclick="applySort('manual')" class="stiletto-sort-option {% if sort_param == 'manual' or sort_param == 'featured' %}is-active{% endif %}">Featured</a>
+          <a href="javascript:void(0)" onclick="applySort('best-selling')" class="stiletto-sort-option {% if sort_param == 'best-selling' %}is-active{% endif %}">Best selling</a>
+          <a href="javascript:void(0)" onclick="applySort('title-ascending')" class="stiletto-sort-option {% if sort_param == 'title-ascending' or sort_param == 'name-asc' %}is-active{% endif %}">Alphabetically, A-Z</a>
+          <a href="javascript:void(0)" onclick="applySort('title-descending')" class="stiletto-sort-option {% if sort_param == 'title-descending' or sort_param == 'name-desc' %}is-active{% endif %}">Alphabetically, Z-A</a>
+          <a href="javascript:void(0)" onclick="applySort('price-ascending')" class="stiletto-sort-option {% if sort_param == 'price-ascending' or sort_param == 'price-low' %}is-active{% endif %}">Price, low to high</a>
+          <a href="javascript:void(0)" onclick="applySort('price-descending')" class="stiletto-sort-option {% if sort_param == 'price-descending' or sort_param == 'price-high' %}is-active{% endif %}">Price, high to low</a>
+          <a href="javascript:void(0)" onclick="applySort('created-descending')" class="stiletto-sort-option {% if sort_param == 'created-descending' or sort_param == 'newest' %}is-active{% endif %}">Date, new to old</a>
+          <a href="javascript:void(0)" onclick="applySort('created-ascending')" class="stiletto-sort-option {% if sort_param == 'created-ascending' or sort_param == 'oldest' %}is-active{% endif %}">Date, old to new</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="stiletto-filter-bar__facets-row" id="stilettoFilterFacets">
+
+      <div class="stiletto-facet-dropdown">
+        <button type="button" class="stiletto-facet-btn {% if style_param %}has-selection{% endif %}" onclick="toggleFacet('styleDropdownPanel', this, event)">
+          <span>Style</span>
+          <svg class="facet-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M1.875 7.438 12 17.563 22.125 7.438" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="stiletto-facet-panel" id="styleDropdownPanel">
+          <div class="stiletto-facet-panel-header">
+            <span>{% if style_param %}1 selected{% else %}0 selected{% endif %}</span>
+            {% if style_param %}
+            <a href="?{% for k,v in request.GET.items %}{% if k != 'style' %}{{ k }}={{ v }}&{% endif %}{% endfor %}" class="stiletto-facet-clear">Clear</a>
+            {% endif %}
+          </div>
+          <ul class="stiletto-facet-list">
+            {% for st in style_facets %}
+            <li>
+              <a href="?{% for k,v in request.GET.items %}{% if k != 'style' %}{{ k }}={{ v }}&{% endif %}{% endfor %}{% if style_param != st.slug %}style={{ st.slug }}{% endif %}" 
+                 class="stiletto-facet-item {% if style_param == st.slug %}is-selected{% endif %}">
+                <span class="stiletto-facet-checkbox-box">
+                  <svg class="stiletto-facet-checkbox-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"/></svg>
+                </span>
+                <span class="stiletto-facet-name">{{ st.name }}</span>
+                <span class="stiletto-facet-count">({{ st.count }})</span>
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+
+      <div class="stiletto-facet-dropdown">
+        <button type="button" class="stiletto-facet-btn {% if size_param %}has-selection{% endif %}" onclick="toggleFacet('sizeDropdownPanel', this, event)">
+          <span>Size</span>
+          <svg class="facet-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M1.875 7.438 12 17.563 22.125 7.438" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="stiletto-facet-panel" id="sizeDropdownPanel">
+          <div class="stiletto-facet-panel-header">
+            <span>{% if size_param %}1 selected{% else %}0 selected{% endif %}</span>
+            {% if size_param %}
+            <a href="?{% for k,v in request.GET.items %}{% if k != 'size' %}{{ k }}={{ v }}&{% endif %}{% endfor %}" class="stiletto-facet-clear">Clear</a>
+            {% endif %}
+          </div>
+          <ul class="stiletto-facet-list">
+            {% for sz in size_facets %}
+            <li>
+              <a href="?{% for k,v in request.GET.items %}{% if k != 'size' %}{{ k }}={{ v }}&{% endif %}{% endfor %}{% if size_param != sz.code %}size={{ sz.code }}{% endif %}" 
+                 class="stiletto-facet-item {% if size_param == sz.code %}is-selected{% endif %}">
+                <span class="stiletto-facet-checkbox-box">
+                  <svg class="stiletto-facet-checkbox-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"/></svg>
+                </span>
+                <span class="stiletto-facet-name">{{ sz.name }}</span>
+                <span class="stiletto-facet-count">({{ sz.count }})</span>
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+
+      <div class="stiletto-facet-dropdown">
+        <button type="button" class="stiletto-facet-btn {% if fabric_param %}has-selection{% endif %}" onclick="toggleFacet('fabricDropdownPanel', this, event)">
+          <span>Fabric</span>
+          <svg class="facet-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M1.875 7.438 12 17.563 22.125 7.438" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="stiletto-facet-panel" id="fabricDropdownPanel">
+          <div class="stiletto-facet-panel-header">
+            <span>{% if fabric_param %}1 selected{% else %}0 selected{% endif %}</span>
+            {% if fabric_param %}
+            <a href="?{% for k,v in request.GET.items %}{% if k != 'fabric' %}{{ k }}={{ v }}&{% endif %}{% endfor %}" class="stiletto-facet-clear">Clear</a>
+            {% endif %}
+          </div>
+          <ul class="stiletto-facet-list">
+            {% for fb in fabric_facets %}
+            <li>
+              <a href="?{% for k,v in request.GET.items %}{% if k != 'fabric' %}{{ k }}={{ v }}&{% endif %}{% endfor %}{% if fabric_param != fb.name %}fabric={{ fb.name|urlencode }}{% endif %}" 
+                 class="stiletto-facet-item {% if fabric_param == fb.name %}is-selected{% endif %}">
+                <span class="stiletto-facet-checkbox-box">
+                  <svg class="stiletto-facet-checkbox-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"/></svg>
+                </span>
+                <span class="stiletto-facet-name">{{ fb.name }}</span>
+                <span class="stiletto-facet-count">({{ fb.count }})</span>
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+
+      <div class="stiletto-facet-dropdown">
+        <button type="button" class="stiletto-facet-btn {% if color_param %}has-selection{% endif %}" onclick="toggleFacet('colorDropdownPanel', this, event)">
+          <span>Colour</span>
+          <svg class="facet-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M1.875 7.438 12 17.563 22.125 7.438" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="stiletto-facet-panel" id="colorDropdownPanel">
+          <div class="stiletto-facet-panel-header">
+            <span>{% if color_param %}1 selected{% else %}0 selected{% endif %}</span>
+            {% if color_param %}
+            <a href="?{% for k,v in request.GET.items %}{% if k != 'color' %}{{ k }}={{ v }}&{% endif %}{% endfor %}" class="stiletto-facet-clear">Clear</a>
+            {% endif %}
+          </div>
+          <div class="stiletto-color-grid">
+            {% for col in color_facets %}
+            <a href="?{% for k,v in request.GET.items %}{% if k != 'color' %}{{ k }}={{ v }}&{% endif %}{% endfor %}{% if color_param != col.name %}color={{ col.name|urlencode }}{% endif %}" 
+               class="stiletto-color-item {% if color_param == col.name %}is-selected{% endif %}">
+              <span class="stiletto-color-dot" style="background-color: {{ col.hex }};"></span>
+              <span>{{ col.name }}</span>
+              <span class="stiletto-facet-count">({{ col.count }})</span>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="stiletto-facet-dropdown">
+        <button type="button" class="stiletto-facet-btn {% if print_param %}has-selection{% endif %}" onclick="toggleFacet('printDropdownPanel', this, event)">
+          <span>Print</span>
+          <svg class="facet-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M1.875 7.438 12 17.563 22.125 7.438" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="stiletto-facet-panel" id="printDropdownPanel">
+          <div class="stiletto-facet-panel-header">
+            <span>{% if print_param %}1 selected{% else %}0 selected{% endif %}</span>
+            {% if print_param %}
+            <a href="?{% for k,v in request.GET.items %}{% if k != 'print' %}{{ k }}={{ v }}&{% endif %}{% endfor %}" class="stiletto-facet-clear">Clear</a>
+            {% endif %}
+          </div>
+          <ul class="stiletto-facet-list">
+            {% for pr in print_facets %}
+            <li>
+              <a href="?{% for k,v in request.GET.items %}{% if k != 'print' %}{{ k }}={{ v }}&{% endif %}{% endfor %}{% if print_param != pr.name %}print={{ pr.name|urlencode }}{% endif %}" 
+                 class="stiletto-facet-item {% if print_param == pr.name %}is-selected{% endif %}">
+                <span class="stiletto-facet-checkbox-box">
+                  <svg class="stiletto-facet-checkbox-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"/></svg>
+                </span>
+                <span class="stiletto-facet-name">{{ pr.name }}</span>
+                <span class="stiletto-facet-count">({{ pr.count }})</span>
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+
+      <div class="stiletto-facet-dropdown">
+        <button type="button" class="stiletto-facet-btn {% if availability_param %}has-selection{% endif %}" onclick="toggleFacet('availDropdownPanel', this, event)">
+          <span>Availability</span>
+          <svg class="facet-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M1.875 7.438 12 17.563 22.125 7.438" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="stiletto-facet-panel" id="availDropdownPanel">
+          <div class="stiletto-facet-panel-header">
+            <span>{% if availability_param %}1 selected{% else %}0 selected{% endif %}</span>
+            {% if availability_param %}
+            <a href="?{% for k,v in request.GET.items %}{% if k != 'availability' %}{{ k }}={{ v }}&{% endif %}{% endfor %}" class="stiletto-facet-clear">Clear</a>
+            {% endif %}
+          </div>
+          <ul class="stiletto-facet-list">
+
+            <li>
+              <a href="?{% for k,v in request.GET.items %}{% if k != 'availability' %}{{ k }}={{ v }}&{% endif %}{% endfor %}{% if availability_param != 'in_stock' %}availability=in_stock{% endif %}" 
+                 class="stiletto-facet-item {% if availability_param == 'in_stock' %}is-selected{% endif %}">
+                <span class="stiletto-facet-checkbox-box">
+                  <svg class="stiletto-facet-checkbox-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"/></svg>
+                </span>
+                <span class="stiletto-facet-name">In stock</span>
+                <span class="stiletto-facet-count">({{ in_stock_count }})</span>
+              </a>
+            </li>
+
+            <li>
+              <a href="?{% for k,v in request.GET.items %}{% if k != 'availability' %}{{ k }}={{ v }}&{% endif %}{% endfor %}{% if availability_param != 'out_of_stock' %}availability=out_of_stock{% endif %}" 
+                 class="stiletto-facet-item {% if availability_param == 'out_of_stock' %}is-selected{% endif %}">
+                <span class="stiletto-facet-checkbox-box">
+                  <svg class="stiletto-facet-checkbox-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17l-5-5"/></svg>
+                </span>
+                <span class="stiletto-facet-name">Out of stock</span>
+                <span class="stiletto-facet-count">({{ out_of_stock_count }})</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  {% if active_filters_count > 0 %}
+  <div class="stiletto-active-filters">
+    <span class="stiletto-active-filters__label">Active filters:</span>
+
+    {% if style_param %}
+    <a href="?{% for k,v in request.GET.items %}{% if k != 'style' %}{{ k }}={{ v }}&{% endif %}{% endfor %}" class="stiletto-filter-chip">
+      <span>Style: {{ style_param }}</span>
+      <span class="stiletto-filter-chip__remove">&times;</span>
+    </a>
+    {% endif %}
+
+    {% if fabric_param %}
+    <a href="?{% for k,v in request.GET.items %}{% if k != 'fabric' %}{{ k }}={{ v }}&{% endif %}{% endfor %}" class="stiletto-filter-chip">
+      <span>Fabric: {{ fabric_param }}</span>
+      <span class="stiletto-filter-chip__remove">&times;</span>
+    </a>
+    {% endif %}
+
+    {% if size_param %}
+    <a href="?{% for k,v in request.GET.items %}{% if k != 'size' %}{{ k }}={{ v }}&{% endif %}{% endfor %}" class="stiletto-filter-chip">
+      <span>Size: {{ size_param }}</span>
+      <span class="stiletto-filter-chip__remove">&times;</span>
+    </a>
+    {% endif %}
+
+    {% if color_param %}
+    <a href="?{% for k,v in request.GET.items %}{% if k != 'color' %}{{ k }}={{ v }}&{% endif %}{% endfor %}" class="stiletto-filter-chip">
+      <span>Colour: {{ color_param }}</span>
+      <span class="stiletto-filter-chip__remove">&times;</span>
+    </a>
+    {% endif %}
+
+    {% if print_param %}
+    <a href="?{% for k,v in request.GET.items %}{% if k != 'print' %}{{ k }}={{ v }}&{% endif %}{% endfor %}" class="stiletto-filter-chip">
+      <span>Print: {{ print_param }}</span>
+      <span class="stiletto-filter-chip__remove">&times;</span>
+    </a>
+    {% endif %}
+
+    {% if availability_param %}
+    <a href="?{% for k,v in request.GET.items %}{% if k != 'availability' %}{{ k }}={{ v }}&{% endif %}{% endfor %}" class="stiletto-filter-chip">
+      <span>In Stock Only</span>
+      <span class="stiletto-filter-chip__remove">&times;</span>
+    </a>
+    {% endif %}
+
+    <a href="{{ request.path }}" class="stiletto-active-clear-all">Clear all</a>
+  </div>
+  {% endif %}
+
+  <main class="stiletto-catalog-wrap">
+    {% if products %}
+    <div class="stiletto-product-grid" id="collectionGrid">
+      {% for product in products %}
+
+      <article class="stiletto-product-card" id="product-{{ product.sku }}">
+        <div class="stiletto-product-media">
+          <span class="stiletto-product-badge {% if product.stock <= 0 or product.status == 'out_of_stock' %}out-of-stock-badge{% endif %}">{% if product.stock <= 0 or product.status == 'out_of_stock' %}OUT OF STOCK{% else %}{{ product.badge|default:"NEW" }}{% endif %}</span>
+
+          {% if product.stock > 0 and product.status != 'out_of_stock' %}
+          <div class="card-quick-sizes" aria-label="Quick size select for {{ product.name }}"
+               data-name="{{ product.name|escape }}"
+               data-price="{{ product.final_price }}"
+               data-image="{{ product.image_url }}"
+               data-slug="{{ product.slug }}"
+               data-color="{{ product.color|default:'Black'|escape }}">
+            <button type="button" class="card-size-pill" data-size="XS" onclick="handleCardSizeClick(this, event)">XS</button>
+            <button type="button" class="card-size-pill" data-size="S" onclick="handleCardSizeClick(this, event)">S</button>
+            <button type="button" class="card-size-pill" data-size="M" onclick="handleCardSizeClick(this, event)">M</button>
+            <button type="button" class="card-size-pill" data-size="L" onclick="handleCardSizeClick(this, event)">L</button>
+            <button type="button" class="card-size-pill" data-size="XL" onclick="handleCardSizeClick(this, event)">XL</button>
+            <button type="button" class="card-size-pill" data-size="XXL" onclick="handleCardSizeClick(this, event)">XXL</button>
+            <button type="button" class="card-size-pill" data-size="3XL" onclick="handleCardSizeClick(this, event)">3XL</button>
+          </div>
+          {% endif %}
+
+          <button type="button" class="stiletto-product-wishlist" aria-label="Save {{ product.name }} to wishlist" 
+                  id="wishlist-btn-{{ product.id }}"
+                  data-product-id="{{ product.id }}"
+                  data-name="{{ product.name|escape }}"
+                  data-price="{{ product.final_price }}"
+                  data-image="{{ product.image_url }}"
+                  data-color="{{ product.color|default:'Cream'|escape }}"
+                  data-slug="{{ product.slug }}"
+                  data-gallery="[{% for img in product.images.all %}&quot;{{ img.image_url }}&quot;{% if not forloop.last %},{% endif %}{% empty %}&quot;{{ product.image_url }}&quot;{% endfor %}]"
+                  onclick="openAddToListModal(this, event)">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </button>
+
+          <a href="{% url 'product_detail_plural' product.slug %}" aria-label="{{ product.name }}">
+            <img src="{{ product.image_url }}" 
+                 alt="{{ product.name }}" 
+                 loading="lazy"
+                 onerror="this.onerror=null; this.src='/static/images/products/womens-duck-egg-wisteria.png';">
+          </a>
+        </div>
+
+        <div class="stiletto-product-info">
+          <h4 class="stiletto-product-title">
+            <a href="{% url 'product_detail_plural' product.slug %}">{{ product.name }}</a>
+          </h4>
+
+          <div class="stiletto-product-bottom-row">
+            <span class="stiletto-product-price">₹{{ product.final_price }}</span>
+
+            <button type="button" class="btn-quick-bag" aria-label="Quick View {{ product.name }}"
+                    data-name="{{ product.name|escape }}"
+                    data-sku="{{ product.sku|default:'LDGVPKAU00XS' }}"
+                    data-price="{{ product.final_price }}"
+                    data-image="{{ product.image_url }}"
+                    data-slug="{{ product.slug }}"
+                    data-color="{{ product.color|default:'Black'|escape }}"
+                    data-stock="{% if product.status == 'out_of_stock' or product.stock <= 0 %}0{% else %}{{ product.stock }}{% endif %}"
+                    data-desc="{{ product.description|escape|default:'Wrap yourself in a little everyday luxury with our signature sleepwear. Made from beautifully soft fabric with playful finishing touches, perfect for slow mornings and lounging in style.' }}"
+                    data-detail-url="{% url 'product_detail_plural' product.slug %}"
+                    onclick="openQuickShopModal(this, event)">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <path d="M16 10a4 4 0 0 1-8 0"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      {% if forloop.counter == 3 %}
+        {% if is_mens %}
+
+        <a href="{% url 'collection_detail' 'mens-pyjamas' %}" class="stiletto-collab-card" aria-label="Their Nibs Mens Luxury Sleepwear">
+          <img src="{% static 'images/products/theirnibs_mens_editorial_banner.png' %}" alt="Their Nibs Mens Luxury Sleepwear" class="stiletto-collab-bg">
+        </a>
+        {% elif show_editorial_banner %}
+
+        <a href="{% url 'collection_detail' 'new-in-1' %}" class="stiletto-collab-card" aria-label="Their Nibs Luxury Sleepwear">
+          <img src="{% static 'images/products/theirnibs_editorial_banner.png' %}" alt="Their Nibs Luxury Sleepwear" class="stiletto-collab-bg">
+        </a>
+        {% endif %}
+      {% endif %}
+
+      {% endfor %}
+    </div>
+
+    {% else %}
+
+    <div style="text-align: center; padding: 60px 20px; background: #fbf9f6; border-radius: 4px; border: 1px dashed #d4d4d8;">
+      <h3 style="font-family: var(--font-heading); font-size: 2.2rem; color: var(--tn-charcoal); margin: 0 0 10px 0;">No sleepwear found</h3>
+      <p style="color: #71717a; margin-bottom: 20px; font-size: 0.95rem;">We couldn't find any products matching your current filter selection.</p>
+      <a href="{{ request.path }}" class="collection-header__link" style="display: inline-block;">
+        Clear Filters
+      </a>
+    </div>
+    {% endif %}
+  </main>
+
+    <section class="collection-features-bar" aria-label="Their Nibs Guarantees and Services">
+      <div class="collection-features-inner">
+
+        <div class="collection-feature-item">
+          <div class="collection-feature-icon-circle" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="3" width="15" height="13"/>
+              <polygon points="16 8 20 8 23 11 23 16 16 16 8"/>
+              <circle cx="5.5" cy="18.5" r="2.5"/>
+              <circle cx="18.5" cy="18.5" r="2.5"/>
+              <line x1="5" y1="9" x2="11" y2="9"/>
+              <polyline points="9 6 12 9 9 12"/>
+            </svg>
+          </div>
+          <h3 class="collection-feature-title">Easy Returns</h3>
+          <p class="collection-feature-sub">30-day no quibble guarantee</p>
+        </div>
+
+        <div class="collection-feature-item">
+          <div class="collection-feature-icon-circle" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+          </div>
+          <h3 class="collection-feature-title">Worldwide Shipping</h3>
+          <p class="collection-feature-sub">Receive your order around 3-5 days after shipment</p>
+        </div>
+
+        <div class="collection-feature-item">
+          <div class="collection-feature-icon-circle" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22v-6"/>
+              <path d="M7.5 12a4.5 4.5 0 0 1 9 0 4.5 4.5 0 0 1 4.5 4.5c0 2.5-2 4.5-4.5 4.5H7.5C5 21 3 19 3 16.5A4.5 4.5 0 0 1 7.5 12z"/>
+              <path d="M12 12a3 3 0 0 1 3-3c0-2-1.5-3-3-3s-3 1-3 3a3 3 0 0 1 3 3z"/>
+            </svg>
+          </div>
+          <h3 class="collection-feature-title">Premium Quality</h3>
+          <p class="collection-feature-sub">Made with love, using high-quality premium materials</p>
+        </div>
+
+        <div class="collection-feature-item">
+          <div class="collection-feature-icon-circle" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/>
+              <line x1="8" y1="8" x2="16" y2="8"/>
+              <line x1="8" y1="12" x2="16" y2="12"/>
+              <line x1="8" y1="16" x2="13" y2="16"/>
+            </svg>
+          </div>
+          <h3 class="collection-feature-title">Buy Now, Pay Later</h3>
+          <p class="collection-feature-sub">Instalments with 0% interest and no extra charges through Klarna</p>
+        </div>
+      </div>
+    </section>
+
+  <button class="floating-chat-bubble" aria-label="Chat with Customer Care" onclick="toggleChatDrawer()">
+    <svg viewBox="0 0 24 24">
+      <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+    </svg>
+  </button>
+
+  <a href="#newsletter" class="floating-discount-badge" aria-label="Enjoy 10% Off">
+    <span class="badge-line1">Enjoy</span>
+    <span class="badge-line2">10% Off</span>
+  </a>
+
+  <div class="tn-modal-backdrop" id="addToListModalBackdrop" onclick="handleBackdropClick(event)">
+    <div class="tn-add-to-list-card" role="dialog" aria-modal="true" aria-labelledby="modalProductTitle">
+
+      <div class="tn-add-to-list-header">
+        <h3 class="tn-add-to-list-title">Add To List</h3>
+        <button type="button" class="tn-add-to-list-close" onclick="closeAddToListModal()" aria-label="Close dialog">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="tn-modal-gallery-wrap">
+        <button type="button" class="tn-modal-arrow-btn" onclick="scrollModalGallery(-1)" aria-label="Previous image">&#9664;</button>
+        <div class="tn-modal-gallery-track" id="modalGalleryTrack">
+
+        </div>
+        <button type="button" class="tn-modal-arrow-btn" onclick="scrollModalGallery(1)" aria-label="Next image">&#9654;</button>
+      </div>
+
+      <div class="tn-modal-product-row">
+        <h4 class="tn-modal-product-title" id="modalProductTitle">Product Title</h4>
+        <div class="tn-modal-price-col">
+          <div class="tn-modal-currency">₹</div>
+          <div class="tn-modal-price-val" id="modalProductPrice">0.00</div>
+        </div>
+      </div>
+
+      <label class="tn-modal-option-label">Size</label>
+      <div class="tn-modal-sizes-grid" id="modalSizesGrid">
+        <button type="button" class="tn-modal-size-btn" onclick="selectVariantSize(this, 'XS / 8')">XS / 8</button>
+        <button type="button" class="tn-modal-size-btn" onclick="selectVariantSize(this, 'S / 10')">S / 10</button>
+        <button type="button" class="tn-modal-size-btn" onclick="selectVariantSize(this, 'M / 12')">M / 12</button>
+        <button type="button" class="tn-modal-size-btn" onclick="selectVariantSize(this, 'L / 14-16')">L / 14-16</button>
+        <button type="button" class="tn-modal-size-btn" onclick="selectVariantSize(this, 'XL / 18-20')">XL / 18-20</button>
+        <button type="button" class="tn-modal-size-btn" onclick="selectVariantSize(this, 'XXL / 20-22')">XXL / 20-22</button>
+        <button type="button" class="tn-modal-size-btn" onclick="selectVariantSize(this, '3XL / 22-24')">3XL / 22-24</button>
+      </div>
+
+      <label class="tn-modal-option-label is-color-label">COLOR</label>
+      <div>
+        <span class="tn-modal-color-pill" id="modalProductColor">Cream</span>
+      </div>
+
+      <button type="button" class="tn-modal-action-btn" id="modalActionBtn" onclick="submitAddToList()">
+        Select a variant
+      </button>
+
+    </div>
+  </div>
+
+  <div class="quick-shop-backdrop" id="quickShopModalBackdrop" onclick="handleQuickShopBackdrop(event)">
+    <div class="quick-shop-card" role="dialog" aria-modal="true" aria-labelledby="quickShopTitle">
+      <button type="button" class="quick-shop-close-btn" onclick="closeQuickShopModal()" aria-label="Close dialog">&times;</button>
+
+      <div class="quick-shop-media">
+        <img id="quickShopImage" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" alt="Product Photo" onerror="this.onerror=null; this.src='/static/images/products/womens-duck-egg-wisteria.png';">
+      </div>
+
+      <div class="quick-shop-details">
+        <div>
+          <span class="quick-shop-new-badge">NEW</span>
+        </div>
+
+        <h2 class="quick-shop-title" id="quickShopTitle">Product Title</h2>
+        <div class="quick-shop-subline">
+          <span class="quick-shop-brand">THEIR NIBS</span>
+          <span class="quick-shop-sku" id="quickShopSku">SKU: LDGVPKAU00XS</span>
+        </div>
+
+        <div class="quick-shop-price" id="quickShopPrice">₹0.00</div>
+
+        <a href="#" class="quick-shop-pdp-link" id="quickShopPdpLink" onclick="triggerPdpFromModal(event)">View product details &rarr;</a>
+
+        <div class="quick-shop-divider"></div>
+
+        <label class="quick-shop-size-label">Size:</label>
+        <div class="quick-shop-sizes-grid" id="quickShopSizesGrid">
+          <button type="button" class="quick-shop-size-pill" onclick="selectQuickShopSize(this, 'XS | 8')">XS | 8</button>
+          <button type="button" class="quick-shop-size-pill" onclick="selectQuickShopSize(this, 'S | 10')">S | 10</button>
+          <button type="button" class="quick-shop-size-pill" onclick="selectQuickShopSize(this, 'M | 12')">M | 12</button>
+          <button type="button" class="quick-shop-size-pill" onclick="selectQuickShopSize(this, 'L | 14-16')">L | 14-16</button>
+          <button type="button" class="quick-shop-size-pill" onclick="selectQuickShopSize(this, 'XL | 18-20')">XL | 18-20</button>
+          <button type="button" class="quick-shop-size-pill" onclick="selectQuickShopSize(this, 'XXL | 20-22')">XXL | 20-22</button>
+          <button type="button" class="quick-shop-size-pill" onclick="selectQuickShopSize(this, '3XL | 22-24')">3XL | 22-24</button>
+        </div>
+
+        <div class="quick-shop-stock-alert" id="quickShopStockAlert">Only 6 left. Order soon!</div>
+
+        <div class="quick-shop-description" id="quickShopDesc">
+          <p>Wrap yourself in a little everyday luxury with our signature sleepwear. Crafted with premium comfort and elegance in mind.</p>
+        </div>
+
+        <button type="button" class="quick-shop-submit-btn" id="quickShopActionBtn" onclick="submitQuickShopAction()">
+          Select Size
+        </button>
+
+        <div class="quick-shop-notify-success" id="quickShopNotifySuccess" style="display: none; margin-top: 15px;">
+          <div style="padding: 12px 14px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 4px; color: #166534; font-size: 0.88rem; font-weight: 500; display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span>You will be notified once the product is available</span>
+          </div>
+          <button type="button" class="quick-shop-submit-btn" onclick="closeQuickShopModal()" style="background: #1d1d1b; color: #fff;">
+            Continue Shopping
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tn-wishlist-toast is-expanded" id="wishlistToast" onclick="toggleToastMode(event)">
+    <button type="button" class="toast-close-x" onclick="dismissToast(event)" aria-label="Dismiss">&times;</button>
+
+    <a href="{% url 'customer_wishlist' %}" class="toast-compact-body" title="Click to view wishlist" onclick="event.stopPropagation();" style="text-decoration: none; color: inherit;">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" alt="Saved product" class="toast-thumb-img" id="toastThumbCompact">
+      <span class="toast-saved-text">Item Saved</span>
+    </a>
+
+    <div class="toast-expanded-body">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" alt="Saved product" class="toast-thumb-img" id="toastThumbExpanded">
+      <p class="toast-product-name" id="toastProductName">Product Title</p>
+      <a href="{% url 'customer_wishlist' %}" class="btn-toast-view" id="toastViewBtn" onclick="event.stopPropagation();">
+        View
+      </a>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Hide & Show Filter Bar Toggle Functionality (Exact match to screenshot)
+  function toggleFilterBar() {
+    const facetsRow = document.getElementById('stilettoFilterFacets');
+    const toggleBtn = document.getElementById('filterToggleBtn');
+    const toggleText = document.getElementById('filterToggleText');
+
+    if (!facetsRow || !toggleBtn) return;
+
+    const isHidden = facetsRow.classList.toggle('is-hidden');
+    toggleBtn.classList.toggle('is-collapsed', isHidden);
+
+    if (toggleText) {
+      toggleText.textContent = isHidden ? 'Show filters' : 'Hide filters';
+    }
+
+    // Close any open facet dropdowns when hiding
+    if (isHidden) {
+      closeAllFacetDropdowns();
+    }
+  }
+
+  // Individual Horizontal Facet Dropdowns
+  function toggleFacet(panelId, btn, event) {
+    if (event) event.stopPropagation();
+    const targetPanel = document.getElementById(panelId);
+    if (!targetPanel) return;
+
+    const isAlreadyOpen = targetPanel.classList.contains('is-open');
+
+    // Close other open panels
+    closeAllFacetDropdowns();
+    closeSortMenu();
+
+    if (!isAlreadyOpen) {
+      targetPanel.classList.add('is-open');
+      if (btn) btn.classList.add('is-open');
+    }
+  }
+
+  function closeAllFacetDropdowns() {
+    document.querySelectorAll('.stiletto-facet-panel.is-open').forEach(p => p.classList.remove('is-open'));
+    document.querySelectorAll('.stiletto-facet-btn.is-open').forEach(b => b.classList.remove('is-open'));
+  }
+
+  // Sort Menu Toggle
+  function toggleSortMenu(event) {
+    if (event) event.stopPropagation();
+    closeAllFacetDropdowns();
+    const menu = document.getElementById('sortDropdownMenu');
+    if (menu) menu.classList.toggle('is-open');
+  }
+
+  function closeSortMenu() {
+    const menu = document.getElementById('sortDropdownMenu');
+    if (menu) menu.classList.remove('is-open');
+  }
+
+  // Apply sorting while preserving existing GET filters
+  function applySort(val) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('sort', val);
+    window.location.href = url.toString();
+  }
+
+  // Close dropdowns on outside click
+  window.addEventListener('click', function(e) {
+    if (!e.target.closest('.stiletto-facet-dropdown')) {
+      closeAllFacetDropdowns();
+    }
+    if (!e.target.closest('.stiletto-sort-wrap')) {
+      closeSortMenu();
+    }
+  });
+
+  /* ========================================================
+     AUTHENTIC WISHLIST & ADD TO LIST MODAL (Screenshots 2 & 3)
+     ======================================================== */
+  let currentModalProduct = null;
+  let selectedVariantSize = null;
+  let toastTimer = null;
+
+  function openAddToListModal(btn, event) {
+    if (event) event.stopPropagation();
+
+    const productId = btn.getAttribute('data-product-id');
+    const name = btn.getAttribute('data-name') || 'Their Nibs Sleepwear';
+
+    // If item is already in wishlist, clicking toggles and removes it from wishlist
+    if (btn.classList.contains('active')) {
+      btn.classList.remove('active');
+      const svg = btn.querySelector('svg');
+      if (svg) {
+        svg.setAttribute('fill', 'none');
+        svg.style.stroke = 'currentColor';
+      }
+      try {
+        let wishlist = JSON.parse(localStorage.getItem('tn_wishlist') || '[]');
+        wishlist = wishlist.filter(x => String(x.id) !== String(productId));
+        localStorage.setItem('tn_wishlist', JSON.stringify(wishlist));
+      } catch(e) {}
+      dismissToast(event);
+      showToast('Removed ' + name + ' from your wishlist.');
+      return;
+    }
+
+    const price = btn.getAttribute('data-price') || '0.00';
+    const image = btn.getAttribute('data-image') || '';
+    const color = btn.getAttribute('data-color') || 'Cream';
+    const slug = btn.getAttribute('data-slug') || '';
+
+    let gallery = [];
+    try {
+      gallery = JSON.parse(btn.getAttribute('data-gallery') || '[]');
+    } catch(e) {
+      gallery = [image, image, image, image];
+    }
+    if (!gallery || gallery.length === 0) {
+      gallery = [image, image, image, image];
+    }
+    while (gallery.length < 4) {
+      gallery.push(gallery[0] || image);
+    }
+
+    currentModalProduct = {
+      id: productId,
+      name: name,
+      price: price,
+      image: image,
+      color: color,
+      slug: slug,
+      gallery: gallery,
+      triggerBtn: btn
+    };
+
+    // Reset selection
+    selectedVariantSize = null;
+
+    // Populate modal fields
+    const titleEl = document.getElementById('modalProductTitle');
+    const priceEl = document.getElementById('modalProductPrice');
+    const colorEl = document.getElementById('modalProductColor');
+
+    if (titleEl) titleEl.textContent = name;
+    if (priceEl) priceEl.textContent = parseFloat(price).toFixed(2);
+    if (colorEl) colorEl.textContent = color;
+
+    // Reset size buttons
+    document.querySelectorAll('.tn-modal-size-btn').forEach(b => b.classList.remove('is-active'));
+
+    // Reset action button to 'Select a variant' (Screenshot 2)
+    const actionBtn = document.getElementById('modalActionBtn');
+    if (actionBtn) {
+      actionBtn.textContent = 'Select a variant';
+      actionBtn.classList.remove('is-ready');
+    }
+
+    // Populate carousel thumbnails
+    const track = document.getElementById('modalGalleryTrack');
+    if (track) {
+      track.innerHTML = '';
+      gallery.slice(0, 4).forEach((imgUrl, idx) => {
+        const item = document.createElement('div');
+        item.className = 'tn-modal-gallery-item' + (idx === 0 ? ' is-selected' : '');
+        item.innerHTML = `<img src="${imgUrl}" alt="${name}" onerror="this.onerror=null; this.src='${image}';">`;
+        item.onclick = function() {
+          document.querySelectorAll('.tn-modal-gallery-item').forEach(i => i.classList.remove('is-selected'));
+          item.classList.add('is-selected');
+        };
+        track.appendChild(item);
+      });
+      track.scrollLeft = 0;
+    }
+
+    // Show modal
+    const modalBackdrop = document.getElementById('addToListModalBackdrop');
+    if (modalBackdrop) modalBackdrop.classList.add('is-visible');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeAddToListModal() {
+    const modalBackdrop = document.getElementById('addToListModalBackdrop');
+    if (modalBackdrop) modalBackdrop.classList.remove('is-visible');
+    document.body.style.overflow = '';
+  }
+
+  function handleBackdropClick(event) {
+    if (event.target === document.getElementById('addToListModalBackdrop')) {
+      closeAddToListModal();
+    }
+  }
+
+  function scrollModalGallery(direction) {
+    const track = document.getElementById('modalGalleryTrack');
+    if (track) {
+      track.scrollBy({ left: direction * 120, behavior: 'smooth' });
+    }
+  }
+
+  function selectVariantSize(btn, sizeVal) {
+    document.querySelectorAll('.tn-modal-size-btn').forEach(b => b.classList.remove('is-active'));
+    btn.classList.add('is-active');
+    selectedVariantSize = sizeVal;
+
+    // Flip button to 'Add To List' (Screenshot 3)
+    const actionBtn = document.getElementById('modalActionBtn');
+    if (actionBtn) {
+      actionBtn.textContent = 'Add To List';
+      actionBtn.classList.add('is-ready');
+    }
+  }
+
+  function submitAddToList() {
+    if (!selectedVariantSize) {
+      const actionBtn = document.getElementById('modalActionBtn');
+      if (actionBtn) {
+        actionBtn.style.transform = 'translateX(4px)';
+        setTimeout(() => actionBtn.style.transform = 'translateX(-4px)', 80);
+        setTimeout(() => actionBtn.style.transform = 'none', 160);
+      }
+      return;
+    }
+
+    if (!currentModalProduct) return;
+
+    // Save to localStorage wishlist
+    const item = {
+      id: currentModalProduct.id,
+      name: currentModalProduct.name,
+      price: currentModalProduct.price,
+      image: currentModalProduct.image,
+      color: currentModalProduct.color,
+      size: selectedVariantSize,
+      slug: currentModalProduct.slug,
+      savedAt: new Date().toISOString()
+    };
+
+    let wishlist = [];
+    try {
+      wishlist = JSON.parse(localStorage.getItem('tn_wishlist') || '[]');
+    } catch(e) {
+      wishlist = [];
+    }
+    // Update or prepend
+    wishlist = wishlist.filter(x => String(x.id) !== String(item.id));
+    wishlist.unshift(item);
+    try {
+      localStorage.setItem('tn_wishlist', JSON.stringify(wishlist));
+    } catch(e) {}
+
+    // Fill heart icon on the card
+    if (currentModalProduct.triggerBtn) {
+      currentModalProduct.triggerBtn.classList.add('active');
+      const svg = currentModalProduct.triggerBtn.querySelector('svg');
+      if (svg) {
+        svg.setAttribute('fill', '#e47e56');
+        svg.style.stroke = '#e47e56';
+      }
+    }
+
+    // Close modal
+    closeAddToListModal();
+
+    // Trigger bottom-left notification toggle (Screenshots 4 & 5)
+    showWishlistToast(item);
+  }
+
+  /* ========================================================
+     BOTTOM-LEFT WISHLIST NOTIFICATION (Screenshots 4 & 5)
+     ======================================================== */
+  function showWishlistToast(item) {
+    const toast = document.getElementById('wishlistToast');
+    if (!toast) return;
+
+    const thumbCompact = document.getElementById('toastThumbCompact');
+    const thumbExpanded = document.getElementById('toastThumbExpanded');
+    const productName = document.getElementById('toastProductName');
+
+    if (thumbCompact) thumbCompact.src = item.image;
+    if (thumbExpanded) thumbExpanded.src = item.image;
+    if (productName) productName.textContent = item.name;
+
+    // Start with Expanded View (Screenshot 5: Thumbnail + Name + View Button)
+    toast.classList.remove('is-compact');
+    toast.classList.add('is-expanded');
+    toast.classList.add('is-visible');
+    document.body.classList.add('has-wishlist-toast');
+
+    if (toastTimer) clearTimeout(toastTimer);
+
+    // After 4 seconds, smoothly collapse to Compact View (Screenshot 4: 'Item Saved')
+    toastTimer = setTimeout(() => {
+      toast.classList.remove('is-expanded');
+      toast.classList.add('is-compact');
+    }, 4000);
+  }
+
+  function toggleToastMode(event) {
+    if (event) event.stopPropagation();
+    const toast = document.getElementById('wishlistToast');
+    if (!toast) return;
+
+    if (toastTimer) clearTimeout(toastTimer);
+
+    if (toast.classList.contains('is-compact')) {
+      toast.classList.remove('is-compact');
+      toast.classList.add('is-expanded');
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('is-expanded');
+        toast.classList.add('is-compact');
+      }, 5000);
+    } else {
+      toast.classList.remove('is-expanded');
+      toast.classList.add('is-compact');
+    }
+  }
+
+  function dismissToast(event) {
+    if (event) event.stopPropagation();
+    const toast = document.getElementById('wishlistToast');
+    if (toast) {
+      toast.classList.remove('is-visible');
+      document.body.classList.remove('has-wishlist-toast');
+    }
+    if (toastTimer) clearTimeout(toastTimer);
+  }
+
+  // Restore saved wishlist hearts on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    try {
+      const wishlist = JSON.parse(localStorage.getItem('tn_wishlist') || '[]');
+      wishlist.forEach(item => {
+        const btn = document.getElementById('wishlist-btn-' + item.id);
+        if (btn) {
+          btn.classList.add('active');
+          const svg = btn.querySelector('svg');
+          if (svg) {
+            svg.setAttribute('fill', '#e47e56');
+            svg.style.stroke = '#e47e56';
+          }
+        }
+      });
+    } catch(e) {}
+  });
+
+  /* ========================================================
+     QUICK SHOP MODAL & CARD SIZE ACTIONS (Images 1, 2, 3, 4, 5)
+     ======================================================== */
+  let currentQuickShopProduct = null;
+  let selectedQuickShopSize = null;
+
+  // Direct 1-click add from card hover size pill (Image 5 -> Image 4)
+  function handleCardSizeClick(btn, event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    const container = btn.closest('.card-quick-sizes');
+    const size = btn.getAttribute('data-size') || btn.textContent.trim();
+    const name = container ? (container.getAttribute('data-name') || '') : '';
+    const price = container ? (container.getAttribute('data-price') || '') : '';
+    const image = container ? (container.getAttribute('data-image') || '') : '';
+    const slug = container ? (container.getAttribute('data-slug') || '') : '';
+    const color = container ? (container.getAttribute('data-color') || 'Black') : 'Black';
+    addToBag(name, price, image, slug, size, color);
+  }
+
+  function quickAddCardSize(event, name, price, image, slug, size, color) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    addToBag(name, price, image, slug, size, color);
+  }
+
+  // Open Quick Shop Modal (Image 1 -> Image 2)
+  function openQuickShopModal(btn, event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    const name = btn.getAttribute('data-name') || 'Their Nibs Sleepwear';
+    const sku = btn.getAttribute('data-sku') || 'LDGVPKAU00XS';
+    const price = btn.getAttribute('data-price') || '48.00';
+    const image = btn.getAttribute('data-image') || '';
+    const slug = btn.getAttribute('data-slug') || '';
+    const color = btn.getAttribute('data-color') || 'Black';
+    const stock = parseInt(btn.getAttribute('data-stock') !== null ? btn.getAttribute('data-stock') : '6', 10);
+    const desc = btn.getAttribute('data-desc') || '';
+    const detailUrl = btn.getAttribute('data-detail-url') || '#';
+
+    currentQuickShopProduct = {
+      name: name,
+      sku: sku,
+      price: price,
+      image: image,
+      slug: slug,
+      color: color,
+      stock: stock
+    };
+
+    selectedQuickShopSize = null;
+
+    // Populate fields
+    const imgEl = document.getElementById('quickShopImage');
+    const titleEl = document.getElementById('quickShopTitle');
+    const skuEl = document.getElementById('quickShopSku');
+    const priceEl = document.getElementById('quickShopPrice');
+    const pdpLink = document.getElementById('quickShopPdpLink');
+    const stockEl = document.getElementById('quickShopStockAlert');
+    const descEl = document.getElementById('quickShopDesc');
+    const actionBtn = document.getElementById('quickShopActionBtn');
+    const notifyWrap = document.getElementById('quickShopNotifySuccess');
+
+    if (imgEl) imgEl.src = image;
+    if (titleEl) titleEl.textContent = name;
+    if (skuEl) skuEl.textContent = 'SKU: ' + sku;
+    if (priceEl) priceEl.textContent = '₹' + parseFloat(price).toFixed(2);
+    if (pdpLink) pdpLink.href = detailUrl;
+
+    if (stockEl) {
+      if (stock <= 0) {
+        stockEl.textContent = 'Currently Out of Stock';
+        stockEl.style.color = '#dc2626';
+        stockEl.style.display = 'block';
+      } else if (stock > 0 && stock <= 10) {
+        stockEl.textContent = 'Only ' + stock + ' left. Order soon!';
+        stockEl.style.color = '#f97316';
+        stockEl.style.display = 'block';
+      } else if (stock > 10) {
+        stockEl.textContent = 'In stock. Ready to ship.';
+        stockEl.style.color = '#15803d';
+        stockEl.style.display = 'block';
+      } else {
+        stockEl.textContent = 'Low stock alert.';
+        stockEl.style.color = '';
+        stockEl.style.display = 'block';
+      }
+    }
+
+    if (descEl && desc) {
+      descEl.innerHTML = '<p>' + desc.split('\n\n').join('</p><p>') + '</p>';
+    }
+
+    // Reset size pills
+    document.querySelectorAll('.quick-shop-size-pill').forEach(b => b.classList.remove('is-active'));
+
+    // Reset notify message wrap
+    if (notifyWrap) notifyWrap.style.display = 'none';
+
+    // Action button setup: 'Notify Me' when stock <= 0, else 'Select Size'
+    if (actionBtn) {
+      actionBtn.style.display = 'block';
+      if (stock <= 0) {
+        actionBtn.textContent = 'Notify Me';
+        actionBtn.classList.remove('is-ready');
+        actionBtn.classList.add('is-notify-me');
+      } else {
+        actionBtn.textContent = 'Select Size';
+        actionBtn.classList.remove('is-ready', 'is-notify-me');
+      }
+    }
+
+    // Show modal
+    const modal = document.getElementById('quickShopModalBackdrop');
+    if (modal) modal.classList.add('is-visible');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeQuickShopModal() {
+    const modal = document.getElementById('quickShopModalBackdrop');
+    if (modal) modal.classList.remove('is-visible');
+    document.body.style.overflow = '';
+  }
+
+  function handleQuickShopBackdrop(event) {
+    if (event.target === document.getElementById('quickShopModalBackdrop')) {
+      closeQuickShopModal();
+    }
+  }
+
+  // User selects size inside modal (Image 2 -> Image 3)
+  function selectQuickShopSize(btn, sizeVal) {
+    document.querySelectorAll('.quick-shop-size-pill').forEach(b => b.classList.remove('is-active'));
+    btn.classList.add('is-active');
+    selectedQuickShopSize = sizeVal.split('|')[0].trim(); // Extract 'XS', 'S', etc.
+
+    // Switch button to "Add to Bag" (Image 3)
+    const actionBtn = document.getElementById('quickShopActionBtn');
+    if (actionBtn) {
+      actionBtn.textContent = 'Add to Bag';
+      actionBtn.classList.add('is-ready');
+    }
+  }
+
+  // User clicks Action Button in Quick Shop modal
+  function submitQuickShopAction() {
+    if (currentQuickShopProduct && currentQuickShopProduct.stock <= 0) {
+      const actionBtn = document.getElementById('quickShopActionBtn');
+      const notifyWrap = document.getElementById('quickShopNotifySuccess');
+      if (actionBtn) actionBtn.style.display = 'none';
+      if (notifyWrap) notifyWrap.style.display = 'block';
+      return;
+    }
+
+    if (!selectedQuickShopSize) {
+      // Shake size options
+      const grid = document.getElementById('quickShopSizesGrid');
+      if (grid) {
+        grid.style.transform = 'translateX(4px)';
+        setTimeout(() => grid.style.transform = 'translateX(-4px)', 80);
+        setTimeout(() => grid.style.transform = 'none', 160);
+      }
+      return;
+    }
+
+    if (!currentQuickShopProduct) return;
+
+    // Add to cart
+    addToBag(
+      currentQuickShopProduct.name,
+      currentQuickShopProduct.price,
+      currentQuickShopProduct.image,
+      currentQuickShopProduct.slug,
+      selectedQuickShopSize,
+      currentQuickShopProduct.color
+    );
+
+    // Close modal (drawer will open automatically via addToBag)
+    closeQuickShopModal();
+  }
+
+  // Close modals on Escape key
+  window.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeAddToListModal();
+      closeQuickShopModal();
+    }
+  });
+
+  // Clean navigation to product detail
+  function triggerProductDetailLoader(targetUrl, event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    closeQuickShopModal();
+    window.location.href = targetUrl;
+  }
+
+  function triggerPdpFromModal(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    const pdpLink = document.getElementById('quickShopPdpLink');
+    let targetUrl = pdpLink ? pdpLink.getAttribute('href') : '';
+    if (!targetUrl || targetUrl === '#') {
+      if (currentQuickShopProduct && currentQuickShopProduct.slug) {
+        targetUrl = '/products/' + currentQuickShopProduct.slug + '/';
+      } else {
+        targetUrl = '/products/mens-midnight-whiskers-satin-pyjama-set/';
+      }
+    }
+    closeQuickShopModal();
+    window.location.href = targetUrl;
+  }
+
+</script>
+{% endblock %}

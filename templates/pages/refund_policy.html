@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Refund Policy – Their Nibs{% endblock %}
+
+{% block extra_css %}
+<style>
+  .policy-container {
+    max-width: 1120px;
+    margin: 40px auto 90px;
+    padding: 0 24px;
+    font-family: var(--font-body, 'Poppins', sans-serif);
+    color: #1d1d1b;
+  }
+  .policy-breadcrumbs {
+    font-size: 13px;
+    color: #71717a;
+    margin-bottom: 24px;
+  }
+  .policy-breadcrumbs a {
+    color: #1d1d1b;
+    text-decoration: none;
+  }
+  .policy-breadcrumbs a:hover {
+    text-decoration: underline;
+  }
+  .policy-layout {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .policy-content h1 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    font-size: 2.5rem;
+    font-weight: 400;
+    margin: 0 0 16px;
+    color: #111111;
+  }
+  .policy-content .intro-lead {
+    font-size: 16px;
+    line-height: 1.7;
+    color: #555555;
+    margin-bottom: 32px;
+    border-bottom: 1px solid #e5e5e5;
+    padding-bottom: 24px;
+  }
+  .policy-content h2 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    font-size: 1.6rem;
+    margin: 36px 0 14px;
+    color: #111111;
+  }
+  .policy-content p,
+  .policy-content li {
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: #444444;
+  }
+  .policy-content ul {
+    padding-left: 20px;
+    margin-bottom: 20px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="policy-container">
+  <div class="policy-breadcrumbs">
+    <a href="{% url 'homepage' %}">Home</a> &rsaquo; <a href="{% url 'here_to_help' %}">Here to Help</a> &rsaquo; <span>Refund Policy</span>
+  </div>
+
+  <div class="policy-layout">
+
+    <div class="policy-content">
+      <h1>Refund Policy</h1>
+      <p class="intro-lead">
+        At Their Nibs, customer happiness is at the heart of everything we do. If you are not completely satisfied with your purchase, we are pleased to offer a straightforward refund process.
+      </p>
+
+      <h2>28-Day Returns Window</h2>
+      <p>
+        You have <strong>28 calendar days</strong> from the date of delivery to return your unworn, unwashed pyjamas or sleepwear accessories for a full refund back to your original payment method.
+      </p>
+
+      <h2>Item Condition Requirements</h2>
+      <p>To qualify for a refund, returned items must:</p>
+      <ul>
+        <li>Be brand new, unworn, unwashed, and odour-free.</li>
+        <li>Have all original Their Nibs swing tags and labels firmly attached.</li>
+        <li>Be folded inside the original protective tissue packaging or presentation box.</li>
+      </ul>
+
+      <h2>Refund Processing Timeline</h2>
+      <p>
+        Once your returned parcel arrives back at our London warehouse:
+      </p>
+      <ul>
+        <li>Our quality inspection team will process the return within <strong>2 to 4 working days</strong>.</li>
+        <li>You will receive an automated confirmation email as soon as the refund is issued.</li>
+        <li>Refunds typically appear on your bank or card statement within <strong>3 to 5 business days</strong>, depending on your card issuer or payment gateway.</li>
+      </ul>
+
+      <h2>Damaged or Faulty Items</h2>
+      <p>
+        Every piece is thoroughly inspected before shipping, but if you believe you have received a faulty or damaged item, please email us right away at <a href="mailto:info@their-nibs.com" style="color: #111; font-weight: 500;">info@their-nibs.com</a> with photographs of the fault. We will arrange an immediate replacement or full refund, including return postage.
+      </p>
+
+      <h2>Sale &amp; Promotional Items</h2>
+      <p>
+        Items purchased during promotional events or archive sales are eligible for return within 14 days, unless explicitly designated as final clearance on the product page.
+      </p>
+
+      <h2>Need Help With a Return?</h2>
+      <p>
+        Our customer support team is always happy to assist with any questions. Please reach out via <a href="mailto:info@their-nibs.com" style="color: #111; font-weight: 500;">info@their-nibs.com</a> or message us on our <a href="{% url 'contact_us' %}" style="color: #111; font-weight: 500;">Contact Us page</a>.
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Product Variants Master{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Product Variants Inventory</h1>
+        <p class="page-subtitle">Track individual colorways, size combinations, and variant-specific SKU inventory.</p>
+    </div>
+</div>
+
+<div class="clothify-card">
+    <div class="card-header">
+        <h3 class="card-title">All Catalog Variants</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="clothify-table">
+            <thead>
+                <tr>
+                    <th>Variant SKU</th>
+                    <th>Base Product</th>
+                    <th>Color</th>
+                    <th>Size</th>
+                    <th>Variant Price</th>
+                    <th>Stock Units</th>
+                    <th>Status</th>
+                    <th style="white-space: nowrap; width: 150px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for v in variants %}
+                <tr>
+                    <td><strong>{{ v.sku }}</strong></td>
+                    <td>
+                        <a href="/admin-panel/products/{{ v.product.id }}/edit/">
+                            <strong>{{ v.product.name }}</strong>
+                        </a>
+                        <div style="font-size:0.75rem; color:var(--text-muted);">{{ v.product.brand.name }}</div>
+                    </td>
+                    <td>{{ v.color }}</td>
+                    <td>{{ v.size }}</td>
+                    <td><strong>₹{{ v.price }}</strong></td>
+                    <td>{{ v.stock }}</td>
+                    <td><span class="status-badge status-{{ v.stock_status|slugify }}">{{ v.stock_status }}</span></td>
+                    <td style="white-space: nowrap;">
+                        <div style="display: inline-flex; align-items: center; gap: 0.45rem;">
+                            <a href="/admin-panel/products/{{ v.product.id }}/edit/" class="btn btn-secondary btn-sm" style="padding: 0.32rem 0.68rem; font-size: 0.76rem; border-radius: 4px; text-decoration: none; white-space: nowrap;">Edit Base</a>
+                            <a href="/admin-panel/variants/{{ v.id }}/delete/" class="btn btn-danger btn-sm" data-confirm="Delete this variant?" style="padding: 0.32rem 0.68rem; font-size: 0.76rem; border-radius: 4px; text-decoration: none; white-space: nowrap;">Delete</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 2.5rem;">
+                        No variants configured yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

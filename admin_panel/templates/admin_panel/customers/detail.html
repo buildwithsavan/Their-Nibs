@@ -1,0 +1,149 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Customer: {{ profile.display_name }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <a href="/admin-panel/customers/" style="font-size: 0.82rem; color: var(--text-muted); display: inline-flex; align-items: center; gap: 0.35rem; margin-bottom: 0.5rem;">
+            ← Back to Customer Directory
+        </a>
+        <h1 class="page-title">{{ profile.display_name }}</h1>
+        <p class="page-subtitle">Member since {{ profile.created_at|date:"F d, Y" }}</p>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem;">
+
+    <div>
+        <div class="clothify-card">
+            <div class="card-body" style="text-align: center; padding: 2rem 1.5rem;">
+                <div style="width: 84px; height: 84px; border-radius: 50%; background: #0f172a; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.8rem; margin: 0 auto 1rem auto; border: 2px solid var(--border-accent); box-shadow: 0 4px 14px var(--primary-glow);">
+                    {{ profile.display_name|slice:":1"|upper|default:"U" }}
+                </div>
+                <h2 style="font-size: 1.25rem; color: var(--primary);">{{ profile.display_name }}</h2>
+                <div style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">@{{ profile.user.username }}</div>
+
+                <div style="display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+                    <span class="status-badge {% if profile.user.is_active %}status-delivered{% else %}status-cancelled{% endif %}">
+                        {{ profile.get_account_status_display }}
+                    </span>
+                    <span class="status-badge status-info">Customer</span>
+                </div>
+
+                <div style="text-align: left; padding-top: 1.5rem; border-top: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.88rem;">
+                    <div><span style="color: var(--text-muted);">Email:</span> <strong style="color: var(--primary);">{{ profile.user.email|default:"Not provided" }}</strong></div>
+                    <div><span style="color: var(--text-muted);">Phone:</span> <strong style="color: var(--primary);">{{ profile.phone|default:"Not provided" }}</strong></div>
+                    <div><span style="color: var(--text-muted);">Wallet Balance:</span> <strong style="color: #10b981;">₹{{ wallet.balance }}</strong></div>
+                    <div><span style="color: var(--text-muted);">Lifetime Spend:</span> <strong style="color: var(--primary);">₹{{ profile.total_spent }}</strong></div>
+                    <div>
+                        <span style="color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Shipping Address:</span>
+                        {% if addresses %}
+                            {% for addr in addresses %}
+                            <div style="padding: 0.65rem 0.75rem; background: #faf7f2; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); font-size: 0.82rem; line-height: 1.45; {% if not forloop.last %}margin-bottom: 0.5rem;{% endif %}">
+                                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.2rem;">
+                                    <strong style="color: var(--primary);">{{ addr.full_name }}</strong>
+                                    <span class="status-badge status-info" style="font-size: 0.62rem; padding: 0.1rem 0.4rem;">{{ addr.get_address_type_display }}</span>
+                                </div>
+                                <div style="color: var(--text-secondary);">
+                                    {{ addr.address_line1 }}{% if addr.address_line2 %}, {{ addr.address_line2 }}{% endif %}<br>
+                                    {{ addr.city }}{% if addr.state %}, {{ addr.state }}{% endif %}{% if addr.postal_code %} - {{ addr.postal_code }}{% endif %}
+                                    {% if addr.phone %}<br><span style="color: var(--text-muted); font-size: 0.76rem;">Phone: {{ addr.phone }}</span>{% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <strong style="color: var(--text-muted); font-size: 0.85rem;">Not provided</strong>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <form method="POST" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-subtle); text-align: left;">
+                    {% csrf_token %}
+                    <label class="form-label">Change Account Status</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <select name="account_status" class="form-select">
+                            <option value="active" {% if profile.account_status == 'active' %}selected{% endif %}>Active</option>
+                            <option value="suspended" {% if profile.account_status == 'suspended' %}selected{% endif %}>Suspended</option>
+                            <option value="inactive" {% if profile.account_status == 'inactive' %}selected{% endif %}>Inactive</option>
+                        </select>
+                        <button type="submit" class="btn btn-secondary btn-sm">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="clothify-card">
+            <div class="card-header">
+                <h3 class="card-title">Order History ({{ orders.count }})</h3>
+            </div>
+            <div class="table-responsive">
+                <table class="clothify-table">
+                    <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>Date</th>
+                            <th>Items</th>
+                            <th>Amount</th>
+                            <th>Payment</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ord in orders %}
+                        <tr>
+                            <td>
+                                <a href="/admin-panel/orders/{{ ord.id }}/">
+                                    <strong>{{ ord.order_number }}</strong>
+                                </a>
+                            </td>
+                            <td style="font-size: 0.8rem; color: var(--text-muted);">{{ ord.created_at|date:"M d, Y" }}</td>
+                            <td>{{ ord.total_items }}</td>
+                            <td><strong>₹{{ ord.total_amount }}</strong></td>
+                            <td>
+                                <span class="status-badge status-{{ ord.payment_status }}">
+                                    {{ ord.get_payment_method_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="status-badge status-{{ ord.status }}">{{ ord.get_status_display }}</span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                                No orders placed yet.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="clothify-card">
+            <div class="card-header">
+                <h3 class="card-title">Product Reviews Submitted ({{ reviews.count }})</h3>
+            </div>
+            <div class="card-body">
+                {% for rev in reviews %}
+                <div style="padding: 1rem; background: rgba(0,0,0,0.15); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-bottom: 0.75rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                        <strong>{{ rev.product.name }}</strong>
+                        <span style="color: #fbbf24; font-size: 0.9rem;">{{ rev.rating }} ★</span>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.35rem;">{{ rev.comment }}</p>
+                    <div style="font-size: 0.72rem; color: var(--text-muted);">
+                        Status: <span class="status-badge status-{{ rev.status }}">{{ rev.get_status_display }}</span> • {{ rev.created_at|date:"M d, Y" }}
+                    </div>
+                </div>
+                {% empty %}
+                <p style="color: var(--text-muted); font-size: 0.85rem;">No product reviews submitted.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

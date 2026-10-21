@@ -1,0 +1,384 @@
+{% extends 'seller_panel/base.html' %}
+
+{% block title %}My Inventory{% endblock %}
+{% block page_heading %}Inventory — Catalog Stock Control{% endblock %}
+
+{% block content %}
+<style>
+
+    .summary-card-clickable {
+        background: #ffffff;
+        border: 1px solid var(--border-subtle, #e2e8f0);
+        border-radius: var(--radius-md, 10px);
+        padding: 1.1rem 1.35rem;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .summary-card-clickable:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        border-color: var(--primary, #2b5329);
+    }
+
+    .custom-modal-backdrop {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(15, 23, 42, 0.55);
+        backdrop-filter: blur(3px);
+        z-index: 1050;
+        align-items: center;
+        justify-content: center;
+    }
+    .custom-modal-backdrop.show {
+        display: flex;
+    }
+    .custom-modal-dialog {
+        background: #ffffff;
+        border-radius: 10px;
+        width: 100%;
+        max-width: 520px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+        animation: modalSlideIn 0.25s ease-out;
+    }
+    @keyframes modalSlideIn {
+        from { transform: translateY(-15px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+</style>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; margin: 0; color: var(--primary); font-weight: 700;">
+            My Inventory Master
+        </h2>
+        <span style="font-size: 0.88rem; color: var(--text-muted);">
+            View, search, filter, and adjust real-time stock levels for all boutique garment listings.
+        </span>
+    </div>
+    <a href="/seller-panel/products/add/" class="btn btn-primary" style="padding: 9px 20px; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;">
+        <i class="bi bi-plus-lg"></i> + Add New Product
+    </a>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+
+    <a href="/seller-panel/inventory/?status=all" class="summary-card-clickable" >
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); letter-spacing: 0.05em;">
+            Total Listed Products
+        </div>
+        <div class="seller-card-value" style="color: var(--primary, #2b5329); margin-top: 4px;">
+            {{ total_products_count }} <span class="seller-card-unit">Items</span>
+        </div>
+        <div style="font-size: 0.78rem; color: #2b5329; font-weight: 600; margin-top: 6px; display: flex; align-items: center; gap: 4px;">
+            View All Catalog &rarr;
+        </div>
+    </a>
+
+    <a href="/seller-panel/inventory/?status=in_stock" class="summary-card-clickable" >
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); letter-spacing: 0.05em;">
+            Healthy In Stock
+        </div>
+        <div class="seller-card-value" style="color: #16a34a; margin-top: 4px;">
+            {{ healthy_count }} <span class="seller-card-unit">In Stock (&gt;10)</span>
+        </div>
+        <div style="font-size: 0.78rem; color: #16a34a; font-weight: 600; margin-top: 6px; display: flex; align-items: center; gap: 4px;">
+            Filter Healthy &rarr;
+        </div>
+    </a>
+
+    <a href="/seller-panel/inventory/low-stock/?severity=low" class="summary-card-clickable" >
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); letter-spacing: 0.05em;">
+            Low Stock Alerts
+        </div>
+        <div class="seller-card-value" style="color: #d97706; margin-top: 4px;">
+            {{ low_stock_count }} <span class="seller-card-unit">Low Units (1-10)</span>
+        </div>
+        <div style="font-size: 0.78rem; color: #d97706; font-weight: 600; margin-top: 6px; display: flex; align-items: center; gap: 4px;">
+            Open Low Stock &rarr;
+        </div>
+    </a>
+
+    <a href="/seller-panel/inventory/low-stock/?severity=out" class="summary-card-clickable" >
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); letter-spacing: 0.05em;">
+            Out of Stock
+        </div>
+        <div class="seller-card-value" style="color: #dc2626; margin-top: 4px;">
+            {{ out_of_stock_count }} <span class="seller-card-unit">0 Stock</span>
+        </div>
+        <div style="font-size: 0.78rem; color: #dc2626; font-weight: 600; margin-top: 6px; display: flex; align-items: center; gap: 4px;">
+            Replenish Now &rarr;
+        </div>
+    </a>
+</div>
+
+<div class="clothify-card" style="margin-bottom: 1.5rem; padding: 1rem 1.25rem; background: #ffffff;">
+    <form method="GET" action="/seller-panel/inventory/" style="display: flex; flex-wrap: wrap; gap: 0.85rem; align-items: flex-end;">
+        <div style="flex: 1.5; min-width: 230px;">
+            <label style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; display: block;">
+                Search Product or SKU
+            </label>
+            <input type="text" name="q" value="{{ current_q|default:'' }}" class="form-control" placeholder="Search product name, SKU or variant barcode..." style="width: 100%; height: 36px; font-size: 0.88rem;">
+        </div>
+
+        <div style="flex: 1; min-width: 170px;">
+            <label style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; display: block;">
+                Category
+            </label>
+            <select name="category" class="form-select" style="width: 100%; height: 36px; font-size: 0.88rem;">
+                <option value="">All Categories</option>
+                {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if current_category == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div style="flex: 1; min-width: 160px;">
+            <label style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; display: block;">
+                Stock Status
+            </label>
+            <select name="status" class="form-select" style="width: 100%; height: 36px; font-size: 0.88rem;">
+                <option value="all" {% if current_status == 'all' or not current_status %}selected{% endif %}>All Stock Statuses</option>
+                <option value="in_stock" {% if current_status == 'in_stock' %}selected{% endif %}>In Stock (&gt;10)</option>
+                <option value="low_stock" {% if current_status == 'low_stock' %}selected{% endif %}>Low Stock (1-10)</option>
+                <option value="out_of_stock" {% if current_status == 'out_of_stock' %}selected{% endif %}>Out of Stock (0)</option>
+            </select>
+        </div>
+
+        <div style="flex: 1; min-width: 160px;">
+            <label style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; display: block;">
+                Sort By
+            </label>
+            <select name="sort" class="form-select" style="width: 100%; height: 36px; font-size: 0.88rem;">
+                <option value="date_desc" {% if current_sort == 'date_desc' or not current_sort %}selected{% endif %}>Last Updated</option>
+                <option value="stock_asc" {% if current_sort == 'stock_asc' %}selected{% endif %}>Quantity: Low to High</option>
+                <option value="stock_desc" {% if current_sort == 'stock_desc' %}selected{% endif %}>Quantity: High to Low</option>
+                <option value="name_asc" {% if current_sort == 'name_asc' %}selected{% endif %}>Product Name: A to Z</option>
+            </select>
+        </div>
+
+        <div style="display: flex; gap: 6px; align-items: center;">
+            <button type="submit" class="btn btn-primary" style="height: 36px; padding: 0 16px; font-size: 0.88rem; font-weight: 600;">
+                <i class="bi bi-funnel"></i> Filter
+            </button>
+            {% if current_q or current_category or current_status != 'all' or current_sort != 'date_desc' %}
+                <a href="/seller-panel/inventory/" class="btn btn-secondary" style="height: 36px; padding: 0 14px; font-size: 0.88rem; display: flex; align-items: center;">Reset</a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<div class="clothify-card" style="padding: 0; overflow: hidden; margin-bottom: 1.5rem;">
+    <div style="overflow-x: auto;">
+        <table class="clothify-table" style="width: 100%; font-size: 0.88rem; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #faf6f0; border-bottom: 2px solid var(--seller-border, #e5e7eb);">
+                    <th style="padding: 11px 14px; text-align: left;">PRODUCT</th>
+                    <th style="padding: 11px 14px; text-align: left;">SKU</th>
+                    <th style="padding: 11px 14px; text-align: center;">AVAILABLE STOCK</th>
+                    <th style="padding: 11px 14px; text-align: center;">RESERVED STOCK</th>
+                    <th style="padding: 11px 14px; text-align: right;">PRICE (₹)</th>
+                    <th style="padding: 11px 14px; text-align: center;">STATUS</th>
+                    <th style="padding: 11px 14px; text-align: center;">LAST UPDATED</th>
+                    <th style="padding: 11px 14px; text-align: right;">ACTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if products %}
+                    {% for p in products %}
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+
+                        <td style="padding: 10px 14px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <img src="{{ p.image_url }}" alt="{{ p.name }}" style="width: 46px; height: 46px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0;">
+                                <div>
+                                    <div style="font-weight: 700; color: var(--primary); font-size: 0.92rem;">
+                                        {{ p.name }}
+                                    </div>
+                                    <span class="badge bg-light text-muted border" style="font-size: 0.74rem; padding: 2px 6px; margin-top: 2px;">
+                                        {{ p.category_name }}
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td style="padding: 10px 14px;">
+                            <code style="font-size: 0.82rem; color: var(--primary); font-weight: 600;">{{ p.sku }}</code>
+                        </td>
+
+                        <td style="padding: 10px 14px; text-align: center;">
+                            <span style="font-size: 1rem; font-weight: 700; color: {% if p.available_stock <= 0 %}#dc2626{% elif p.available_stock <= 10 %}#d97706{% else %}#16a34a{% endif %};">
+                                {{ p.available_stock }} units
+                            </span>
+                        </td>
+
+                        <td style="padding: 10px 14px; text-align: center;">
+                            <span style="font-size: 0.88rem; font-weight: 600; color: #64748b;">
+                                {{ p.reserved_stock }} allocated
+                            </span>
+                        </td>
+
+                        <td style="padding: 10px 14px; text-align: right; font-weight: 700; color: var(--primary);">
+                            ₹{{ p.price|floatformat:2 }}
+                        </td>
+
+                        <td style="padding: 10px 14px; text-align: center;">
+                            <span class="badge-status {{ p.badge_class }}">{{ p.status_text }}</span>
+                        </td>
+
+                        <td style="padding: 10px 14px; text-align: center; font-size: 0.8rem; color: #64748b;">
+                            {{ p.updated_at|date:"d M Y, H:i" }}
+                        </td>
+
+                        <td style="padding: 10px 14px; text-align: right;">
+                            <div style="display: flex; gap: 6px; justify-content: flex-end; align-items: center;">
+                                <button type="button" class="btn btn-primary btn-sm" style="font-size: 0.8rem; padding: 4px 10px; font-weight: 600;" 
+                                        onclick="openUpdateStockModal({{ p.id }}, '{{ p.name|escapejs }}', '{{ p.sku|escapejs }}', {{ p.available_stock }}, [
+                                            {% for v in p.variants %}{ id: {{ v.id }}, sku: '{{ v.sku|escapejs }}', color: '{{ v.color|escapejs }}', size: '{{ v.size|escapejs }}', stock: {{ v.stock }} },{% endfor %}
+                                        ])">
+                                    Update Stock
+                                </button>
+                                <a href="/seller-panel/products/variants/?product_id={{ p.id }}" class="btn btn-secondary btn-sm" style="font-size: 0.8rem; padding: 4px 8px; color: #475569;" title="View Product Variants">
+                                    <i class="bi bi-eye"></i> Details
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center py-4 text-muted">
+                            No products found matching the selected inventory search and filter criteria.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="updateStockModal" class="custom-modal-backdrop">
+    <div class="custom-modal-dialog">
+        <form method="POST" action="/seller-panel/inventory/update-stock/">
+            {% csrf_token %}
+            <input type="hidden" name="product_id" id="modal_product_id">
+            <input type="hidden" name="redirect_to" value="inventory">
+
+            <div style="padding: 1.1rem 1.4rem; border-bottom: 1px solid #e2e8f0; background: #faf6f0; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; margin: 0; color: var(--primary); font-weight: 700;" id="modal_product_title">
+                        Update Product Inventory
+                    </h3>
+                    <div style="font-size: 0.82rem; color: #64748b; margin-top: 2px;">
+                        Base SKU: <code id="modal_product_sku" style="color: var(--primary); font-weight: 600;">--</code>
+                    </div>
+                </div>
+                <button type="button" onclick="closeUpdateStockModal()" style="background: none; border: none; font-size: 1.4rem; color: #64748b; cursor: pointer;">&times;</button>
+            </div>
+
+            <div style="padding: 1.25rem 1.4rem;">
+
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 14px; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between;">
+                    <span style="font-size: 0.85rem; font-weight: 600; color: #475569;">Current Available Sellable Stock</span>
+                    <span style="font-size: 1.1rem; font-weight: 700; color: var(--primary);" id="modal_current_stock_display">0 units</span>
+                </div>
+
+                <div style="margin-bottom: 1rem;" id="variant_select_container">
+                    <label style="display: block; font-size: 0.82rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">
+                        Select Variant / Size Option
+                    </label>
+                    <select name="variant_id" id="modal_variant_id" class="form-select" style="width: 100%; font-size: 0.88rem;">
+                        <option value="base">All Variants / Base Product Stock</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-size: 0.82rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;">
+                        Adjustment Type *
+                    </label>
+                    <div style="display: flex; gap: 8px;">
+                        <label style="flex: 1; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px; text-align: center; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+                            <input type="radio" name="adjustment_type" value="add" checked style="margin-right: 4px;"> + Add Stock
+                        </label>
+                        <label style="flex: 1; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px; text-align: center; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+                            <input type="radio" name="adjustment_type" value="remove" style="margin-right: 4px;"> - Remove
+                        </label>
+                        <label style="flex: 1; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px; text-align: center; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+                            <input type="radio" name="adjustment_type" value="set" style="margin-right: 4px;"> = Set Exact
+                        </label>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-size: 0.82rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">
+                        Adjustment Quantity Units *
+                    </label>
+                    <input type="number" name="quantity" min="1" value="10" class="form-control" style="width: 100%; font-weight: 600;" required>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-size: 0.82rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">
+                        Reason for Adjustment *
+                    </label>
+                    <select name="reason" class="form-select" style="width: 100%; font-size: 0.88rem;" required>
+                        <option value="New Supplier Shipment Received">New Supplier Shipment Received</option>
+                        <option value="Physical Inventory Audit &amp; Reconciliation">Physical Inventory Audit &amp; Reconciliation</option>
+                        <option value="Damaged / Defective Stock Removal">Damaged / Defective Stock Removal</option>
+                        <option value="Customer Return Restocked">Customer Return Restocked</option>
+                        <option value="Store Showcase / Sample Allocation">Store Showcase / Sample Allocation</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.82rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">
+                        Optional Notes
+                    </label>
+                    <textarea name="notes" class="form-control" rows="2" placeholder="Add internal PO reference or audit remarks..." style="width: 100%; font-size: 0.85rem;"></textarea>
+                </div>
+            </div>
+
+            <div style="padding: 1rem 1.4rem; background: #faf6f0; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 8px;">
+                <button type="button" onclick="closeUpdateStockModal()" class="btn btn-secondary" style="padding: 7px 16px; font-size: 0.88rem;">Cancel</button>
+                <button type="submit" class="btn btn-primary" style="padding: 7px 20px; font-size: 0.88rem; font-weight: 600;">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openUpdateStockModal(productId, productName, productSku, currentStock, variants) {
+        document.getElementById('modal_product_id').value = productId;
+        document.getElementById('modal_product_title').textContent = 'Update Inventory: ' + productName;
+        document.getElementById('modal_product_sku').textContent = productSku;
+        document.getElementById('modal_current_stock_display').textContent = currentStock + ' units';
+
+        const variantSelect = document.getElementById('modal_variant_id');
+        variantSelect.innerHTML = '<option value="base">All Variants / Base Product Stock</option>';
+
+        if (variants && variants.length > 0) {
+            variants.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = v.id;
+                opt.textContent = v.color + ' / ' + v.size + ' (SKU: ' + v.sku + ') — Current Stock: ' + v.stock + ' units';
+                variantSelect.appendChild(opt);
+            });
+        }
+
+        document.getElementById('updateStockModal').classList.add('show');
+    }
+
+    function closeUpdateStockModal() {
+        document.getElementById('updateStockModal').classList.remove('show');
+    }
+
+    document.getElementById('updateStockModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeUpdateStockModal();
+        }
+    });
+</script>
+{% endblock %}

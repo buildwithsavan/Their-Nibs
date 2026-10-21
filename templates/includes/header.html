@@ -1,0 +1,953 @@
+{% load static %}
+<header class="site-header">
+  <div class="header-container">
+
+    <a href="{% url 'homepage' %}" class="brand-logo" aria-label="Their Nibs Home">
+      <div class="brand-emblem" aria-hidden="true">
+        <svg width="24" height="16" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 14L4 4L9 9L12 2L15 9L20 4L22 14H2Z"/>
+          <circle cx="12" cy="2" r="1" fill="currentColor"/>
+          <circle cx="4" cy="4" r="1" fill="currentColor"/>
+          <circle cx="20" cy="4" r="1" fill="currentColor"/>
+          <line x1="2" y1="16" x2="22" y2="16"/>
+        </svg>
+      </div>
+      <span class="brand-name">Their Nibs</span>
+    </a>
+
+    <nav class="nav-desktop" aria-label="Primary Navigation">
+
+      <div class="nav-item">
+        <a href="{% url 'collection_detail' 'halloween' %}" class="nav-link">
+          <span class="nav-label">Halloween</span>
+        </a>
+      </div>
+
+      <div class="nav-item has-dropdown has-mega-menu">
+        <a href="{% url 'collection_detail' 'new-in-1' %}" class="nav-link">
+          <span class="nav-label">Womens</span>
+          <svg class="nav-chevron" viewBox="0 0 24 24"><path d="M1.875 7.438 12 17.563 22.125 7.438"/></svg>
+        </a>
+        <div class="dropdown-menu women-mega-menu">
+          <div class="women-dropdown-grid">
+
+            <div class="women-dropdown-col col-shop">
+              <div class="women-menu-section">
+                <h4 class="women-menu-title">Shop</h4>
+                <ul class="women-menu-list">
+                  <li><a href="{% url 'collection_detail' 'new-in-1' %}" class="women-menu-item" style="font-weight: 600;">New In</a></li>
+                  <li><a href="{% url 'collection_detail' 'best-sellers' %}" class="women-menu-item">Best Sellers</a></li>
+                  <li><a href="{% url 'collection_detail' 'shop-all-pyjama-sets' %}" class="women-menu-item">Shop All Pyjama Sets</a></li>
+                  <li><a href="{% url 'collection_detail' 'gift-cards' %}" class="women-menu-item">E-Gift Card</a></li>
+                </ul>
+              </div>
+              <div class="women-menu-section section-style">
+                <h4 class="women-menu-title">Shop by Style</h4>
+                <ul class="women-menu-list">
+                  <li><a href="{% url 'collection_detail' 'traditional-long-pyjamas' %}" class="women-menu-item">Traditional Long Pyjamas</a></li>
+                  <li><a href="{% url 'collection_detail' 'oversized-pyjamas' %}" class="women-menu-item">Oversized Pyjamas</a></li>
+                  <li><a href="{% url 'collection_detail' 'short-pyjamas' %}" class="women-menu-item">Short Pyjamas</a></li>
+                  <li><a href="{% url 'collection_detail' 'capri-pyjamas' %}" class="women-menu-item">Capri Pyjamas</a></li>
+                  <li><a href="{% url 'collection_detail' 'boxy-pyjamas' %}" class="women-menu-item">Boxy Pyjamas</a></li>
+                  <li><a href="{% url 'collection_detail' 'dressing-gowns-robes' %}" class="women-menu-item">Dressing Gowns &amp; Robes</a></li>
+                  <li><a href="{% url 'collection_detail' 'nightdresses-shirts' %}" class="women-menu-item">Nightdresses &amp; Shirts</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="women-dropdown-col col-fabric">
+              <div class="women-menu-section">
+                <h4 class="women-menu-title">Shop by Fabric</h4>
+                <ul class="women-menu-list">
+                  <li><a href="{% url 'collection_detail' 'cotton' %}" class="women-menu-item">Cotton</a></li>
+                  <li><a href="{% url 'collection_detail' 'brushed-cotton' %}" class="women-menu-item">Brushed Cotton</a></li>
+                  <li><a href="{% url 'collection_detail' 'cotton-voile' %}" class="women-menu-item">Cotton Voile</a></li>
+                  <li><a href="{% url 'collection_detail' 'cotton-gauze' %}" class="women-menu-item">Cotton Gauze</a></li>
+                  <li><a href="{% url 'collection_detail' 'satin' %}" class="women-menu-item">Satin</a></li>
+                  <li><a href="{% url 'collection_detail' 'linen-blend' %}" class="women-menu-item">Linen Blend</a></li>
+                  <li><a href="{% url 'collection_detail' 'jersey' %}" class="women-menu-item">Jersey</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="women-dropdown-col col-collection">
+              <div class="women-menu-section">
+                <h4 class="women-menu-title">Shop by Collection</h4>
+                <ul class="women-menu-list">
+                  <li><a href="{% url 'collection_detail' 'christmas-pyjamas' %}" class="women-menu-item">Christmas Pyjamas</a></li>
+                  <li><a href="{% url 'collection_detail' 'matching-family' %}" class="women-menu-item">Matching Family Pyjamas</a></li>
+                  <li><a href="{% url 'collection_detail' 'animal-feather' %}" class="women-menu-item">Animal &amp; Feather Print Nightwear</a></li>
+                  <li><a href="{% url 'collection_detail' 'celestial' %}" class="women-menu-item">Celestial Print Nightwear</a></li>
+                  <li><a href="{% url 'collection_detail' 'gingham-checked' %}" class="women-menu-item">Gingham &amp; Checked Nightwear</a></li>
+                  <li><a href="{% url 'collection_detail' 'floral' %}" class="women-menu-item">Floral Nightwear</a></li>
+                  <li><a href="{% url 'collection_detail' 'striped' %}" class="women-menu-item">Striped Nightwear</a></li>
+                  <li><a href="{% url 'collection_detail' 'bridal-party' %}" class="women-menu-item">Bridal Party Pyjamas</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="women-dropdown-col col-banner">
+              <a href="{% url 'collection_detail' 'new-in-1' %}" class="women-dropdown-banner">
+                <img src="{% static 'images/women_dropdown_banner.png' %}" alt="Their Nibs Womens Pyjamas" class="women-banner-img">
+                <span class="women-banner-cta">SHOP NOW</span>
+              </a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-item has-dropdown">
+        <a href="{% url 'collection_detail' 'mens-pyjamas' %}" class="nav-link">
+          <span class="nav-label">Mens</span>
+          <svg class="nav-chevron" viewBox="0 0 24 24"><path d="M1.875 7.438 12 17.563 22.125 7.438"/></svg>
+        </a>
+        <div class="dropdown-menu mens-dropdown-menu">
+
+          <a href="{% url 'collection_detail' 'mens-pyjamas' %}" class="mens-dropdown-banner" aria-label="Shop Mens">
+            <img src="{% static 'images/mens_dropdown_banner.png' %}" alt="Shop Mens - Their Nibs" class="mens-banner-img">
+          </a>
+
+          <div class="mens-dropdown-col has-divider">
+            <a href="{% url 'collection_detail' 'mens-pyjamas' %}" class="mens-menu-link">Mens Pyjamas</a>
+          </div>
+
+          <div class="mens-dropdown-col">
+            <a href="{% url 'collection_detail' 'matching-family' %}" class="mens-menu-link">Matching Family Pyjamas</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-item has-dropdown">
+        <a href="{% url 'collection_detail' 'matching-family' %}" class="nav-link">
+          <span class="nav-label">Kids</span>
+          <svg class="nav-chevron" viewBox="0 0 24 24"><path d="M1.875 7.438 12 17.563 22.125 7.438"/></svg>
+        </a>
+        <div class="dropdown-menu kids-dropdown-menu">
+
+          <div class="kids-dropdown-col">
+            <a href="{% url 'collection_detail' 'kids-pyjamas' %}" class="kids-menu-link">Kids Pyjamas</a>
+            <a href="{% url 'collection_detail' 'tween-pyjamas' %}" class="kids-menu-link">Tween Pyjamas &amp; Nightwear</a>
+          </div>
+
+          <div class="kids-dropdown-col">
+            <a href="{% url 'collection_detail' 'matching-family' %}" class="kids-menu-link">Matching Family Pyjamas</a>
+            <a href="{% url 'collection_detail' 'kids' %}" class="kids-menu-link">All Kids &amp; Tweens</a>
+          </div>
+
+          <a href="{% url 'collection_detail' 'matching-family' %}" class="kids-dropdown-banner" aria-label="Shop Kids Collection">
+            <img src="{% static 'images/kids_dropdown_banner.png' %}" alt="Kids Collection - Their Nibs" class="kids-banner-img">
+          </a>
+        </div>
+      </div>
+
+      <div class="nav-item has-dropdown">
+        <a href="{% url 'collection_detail' 'makeup-bags' %}" class="nav-link">
+          <span class="nav-label">Accessories</span>
+          <svg class="nav-chevron" viewBox="0 0 24 24"><path d="M1.875 7.438 12 17.563 22.125 7.438"/></svg>
+        </a>
+        <div class="dropdown-menu accessories-dropdown-menu">
+          <a href="{% url 'collection_detail' 'makeup-bags' %}" class="accessories-menu-link">Make-up Bags</a>
+          <a href="{% url 'collection_detail' 'eye-masks' %}" class="accessories-menu-link">Eye Masks</a>
+          <a href="{% url 'collection_detail' 'shower-caps' %}" class="accessories-menu-link">Shower Caps</a>
+          <a href="{% url 'collection_detail' 'scrunchies' %}" class="accessories-menu-link">Scrunchies</a>
+        </div>
+      </div>
+
+      <div class="nav-item has-dropdown">
+        <a href="{% url 'collection_detail' 'gifts-for-her' %}" class="nav-link">
+          <span class="nav-label">Gifting</span>
+          <svg class="nav-chevron" viewBox="0 0 24 24"><path d="M1.875 7.438 12 17.563 22.125 7.438"/></svg>
+        </a>
+        <div class="dropdown-menu gifting-dropdown-menu">
+          <a href="{% url 'collection_detail' 'gifts-for-her' %}" class="gifting-menu-link">Gifts For Her</a>
+          <a href="{% url 'collection_detail' 'gifts-for-him' %}" class="gifting-menu-link">Gifts For Him</a>
+          <a href="{% url 'collection_detail' 'gifts-for-kids' %}" class="gifting-menu-link">Gifts For Kids</a>
+          <a href="{% url 'collection_detail' 'matching-family' %}" class="gifting-menu-link">Matching Pyjamas</a>
+          <a href="{% url 'collection_detail' 'gifts-under-1000' %}" class="gifting-menu-link">Gifts Under ₹1,000</a>
+          <a href="{% url 'collection_detail' 'gifts-under-500' %}" class="gifting-menu-link">Gifts Under ₹500</a>
+          <a href="{% url 'collection_detail' 'gifts-under-250' %}" class="gifting-menu-link">Gifts Under ₹250</a>
+          <a href="{% url 'collection_detail' 'gifts-under-150' %}" class="gifting-menu-link">Gifts under ₹150</a>
+          <a href="{% url 'collection_detail' 'gift-cards' %}" class="gifting-menu-link">E-Gift Card</a>
+        </div>
+      </div>
+
+    </nav>
+
+    <div class="header-actions">
+
+      <button class="action-btn btn-search" aria-label="Open Search" title="Search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <circle cx="11" cy="11" r="7"/>
+          <line x1="16.5" y1="16.5" x2="22" y2="22"/>
+        </svg>
+      </button>
+
+      <a href="{% url 'customer_wishlist' %}" class="action-btn" aria-label="Wishlist" title="Wishlist">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+      </a>
+
+      <a href="{% url 'checkout' %}" class="action-btn btn-cart" aria-label="Shopping Bag" title="Shopping Bag" onclick="if(typeof openCartDrawer==='function'){openCartDrawer();return false;}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>
+        <span class="cart-badge-count" id="headerCartCount" style="position: absolute; top: -3px; right: -3px; background: #f1c0ad; color: #1d1d1b; border-radius: 50%; font-size: 0.7rem; font-weight: 700; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; line-height: 1;">0</span>
+      </a>
+
+      {% if request.session.customer_logged_in or request.session.customer_id or user.is_authenticated %}
+      <a href="{% url 'customer_orders' %}" class="action-btn" aria-label="Customer Orders &amp; Profile" title="{{ request.session.customer_email|default:user.email|default:'My Account' }}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </a>
+
+      <a href="{% url 'customer_profile' %}" class="header-greeting" style="text-decoration: none; font-size: 0.88rem; font-weight: 600; color: var(--color-primary); white-space: nowrap;">
+        Hi, {{ request.session.customer_name|default:user.username|default:"Customer" }}
+      </a>
+
+      <a href="{% url 'customer_logout' %}" class="btn-logout">Log Out</a>
+
+      {% else %}
+      <a href="{% url 'customer_login' %}" class="action-btn" aria-label="Customer Login &amp; Account" title="Customer Login">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </a>
+
+      <a href="{% url 'customer_login' %}" class="btn-login">Log In</a>
+
+      <a href="{% url 'customer_register' %}" class="btn-create-account">Create Account</a>
+      {% endif %}
+
+      <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Open Navigation Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+  </div>
+
+  <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
+  <aside class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Mobile Navigation">
+    <div class="mobile-nav-header">
+      <a href="{% url 'homepage' %}" class="brand-logo" aria-label="Their Nibs Home">
+        <div class="brand-emblem">
+          <svg width="22" height="16" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M2 14L4 4L9 9L12 2L15 9L20 4L22 14H2Z"/>
+            <circle cx="12" cy="2" r="1" fill="currentColor"/>
+            <circle cx="4" cy="4" r="1" fill="currentColor"/>
+            <circle cx="20" cy="4" r="1" fill="currentColor"/>
+            <line x1="2" y1="16" x2="22" y2="16"/>
+          </svg>
+        </div>
+        <span class="brand-name">Their Nibs</span>
+      </a>
+      <button type="button" class="mobile-nav-close" id="mobileNavClose" aria-label="Close navigation">&times;</button>
+    </div>
+
+    <div class="mobile-nav-body">
+      <nav class="mobile-nav-menu">
+
+        <div class="mobile-nav-accordion">
+          <a href="{% url 'collection_detail' 'halloween' %}" class="mobile-nav-accordion-btn" style="text-decoration: none;">
+            <span>Halloween</span>
+          </a>
+        </div>
+
+        <div class="mobile-nav-accordion">
+          <button type="button" class="mobile-nav-accordion-btn">
+            <span>Womens</span>
+            <svg class="accordion-chevron" viewBox="0 0 24 24"><path d="M1.875 7.438 12 17.563 22.125 7.438"/></svg>
+          </button>
+          <div class="mobile-nav-accordion-content">
+            <div class="mobile-nav-subgroup-title">Shop</div>
+            <a href="{% url 'womens_new_in' %}" style="font-weight: 600;">New In</a>
+            <a href="{% url 'collection_detail' 'best-sellers' %}">Best Sellers</a>
+            <a href="{% url 'collection_detail' 'shop-all-pyjama-sets' %}">Shop All Pyjama Sets</a>
+            <a href="{% url 'collection_detail' 'gift-cards' %}">E-Gift Card</a>
+
+            <div class="mobile-nav-subgroup-title" style="margin-top: 10px;">Shop by Style</div>
+            <a href="{% url 'collection_detail' 'traditional-long-pyjamas' %}">Traditional Long Pyjamas</a>
+            <a href="{% url 'collection_detail' 'oversized-pyjamas' %}">Oversized Pyjamas</a>
+            <a href="{% url 'collection_detail' 'short-pyjamas' %}">Short Pyjamas</a>
+            <a href="{% url 'collection_detail' 'capri-pyjamas' %}">Capri Pyjamas</a>
+            <a href="{% url 'collection_detail' 'boxy-pyjamas' %}">Boxy Pyjamas</a>
+            <a href="{% url 'womens_new_in' %}?style=dressing-gowns-robes">Dressing Gowns &amp; Robes</a>
+            <a href="{% url 'collection_detail' 'nightdresses-shirts' %}">Nightdresses &amp; Shirts</a>
+
+            <div class="mobile-nav-subgroup-title" style="margin-top: 10px;">Shop by Fabric</div>
+            <a href="{% url 'collection_detail' 'cotton' %}">Cotton</a>
+            <a href="{% url 'collection_detail' 'brushed-cotton' %}">Brushed Cotton</a>
+            <a href="{% url 'collection_detail' 'cotton-voile' %}">Cotton Voile</a>
+            <a href="{% url 'collection_detail' 'cotton-gauze' %}">Cotton Gauze</a>
+            <a href="{% url 'collection_detail' 'satin' %}">Satin</a>
+            <a href="{% url 'collection_detail' 'linen-blend' %}">Linen Blend</a>
+            <a href="{% url 'collection_detail' 'jersey' %}">Jersey</a>
+
+            <div class="mobile-nav-subgroup-title" style="margin-top: 10px;">Shop by Collection</div>
+            <a href="{% url 'collection_detail' 'christmas-pyjamas' %}">Christmas Pyjamas</a>
+            <a href="{% url 'collection_detail' 'matching-family' %}">Matching Family Pyjamas</a>
+            <a href="{% url 'collection_detail' 'animal-feather' %}">Animal &amp; Feather Print Nightwear</a>
+            <a href="{% url 'collection_detail' 'celestial' %}">Celestial Print Nightwear</a>
+            <a href="{% url 'collection_detail' 'gingham-checked' %}">Gingham &amp; Checked Nightwear</a>
+            <a href="{% url 'collection_detail' 'floral' %}">Floral Nightwear</a>
+            <a href="{% url 'collection_detail' 'striped' %}">Striped Nightwear</a>
+            <a href="{% url 'collection_detail' 'bridal-party' %}">Bridal Party Pyjamas</a>
+          </div>
+        </div>
+
+        <div class="mobile-nav-accordion">
+          <button type="button" class="mobile-nav-accordion-btn">
+            <span>Mens</span>
+            <svg class="accordion-chevron" viewBox="0 0 24 24"><path d="M1.875 7.438 12 17.563 22.125 7.438"/></svg>
+          </button>
+          <div class="mobile-nav-accordion-content">
+            <a href="{% url 'collection_detail' 'mens-pyjamas' %}">Mens Pyjamas</a>
+            <a href="{% url 'collection_detail' 'matching-family' %}">Matching Family Pyjamas</a>
+          </div>
+        </div>
+
+        <div class="mobile-nav-accordion">
+          <button type="button" class="mobile-nav-accordion-btn">
+            <span>Kids</span>
+            <svg class="accordion-chevron" viewBox="0 0 24 24"><path d="M1.875 7.438 12 17.563 22.125 7.438"/></svg>
+          </button>
+          <div class="mobile-nav-accordion-content">
+            <a href="{% url 'collection_detail' 'kids-pyjamas' %}">Kids Pyjamas</a>
+            <a href="{% url 'collection_detail' 'tween-pyjamas' %}">Tween Pyjamas &amp; Nightwear</a>
+            <a href="{% url 'collection_detail' 'matching-family' %}">Matching Family Pyjamas</a>
+            <a href="{% url 'collection_detail' 'kids' %}">All Kids &amp; Tweens</a>
+          </div>
+        </div>
+
+        <div class="mobile-nav-accordion">
+          <button type="button" class="mobile-nav-accordion-btn">
+            <span>Accessories</span>
+            <svg class="accordion-chevron" viewBox="0 0 24 24"><path d="M1.875 7.438 12 17.563 22.125 7.438"/></svg>
+          </button>
+          <div class="mobile-nav-accordion-content">
+            <a href="{% url 'collection_detail' 'makeup-bags' %}">Make-up Bags</a>
+            <a href="{% url 'collection_detail' 'eye-masks' %}">Eye Masks</a>
+            <a href="{% url 'collection_detail' 'shower-caps' %}">Shower Caps</a>
+            <a href="{% url 'collection_detail' 'scrunchies' %}">Scrunchies</a>
+          </div>
+        </div>
+
+        <div class="mobile-nav-accordion">
+          <button type="button" class="mobile-nav-accordion-btn">
+            <span>Gifting</span>
+            <svg class="accordion-chevron" viewBox="0 0 24 24"><path d="M1.875 7.438 12 17.563 22.125 7.438"/></svg>
+          </button>
+          <div class="mobile-nav-accordion-content">
+            <a href="{% url 'collection_detail' 'gifts-for-her' %}">Gifts For Her</a>
+            <a href="{% url 'collection_detail' 'gifts-for-him' %}">Gifts For Him</a>
+            <a href="{% url 'collection_detail' 'gifts-for-kids' %}">Gifts For Kids</a>
+            <a href="{% url 'collection_detail' 'matching-family' %}">Matching Pyjamas</a>
+            <a href="{% url 'collection_detail' 'gifts-under-1000' %}">Gifts Under ₹1,000</a>
+            <a href="{% url 'collection_detail' 'gifts-under-500' %}">Gifts Under ₹500</a>
+            <a href="{% url 'collection_detail' 'gifts-under-250' %}">Gifts Under ₹250</a>
+            <a href="{% url 'collection_detail' 'gifts-under-150' %}">Gifts under ₹150</a>
+            <a href="{% url 'collection_detail' 'gift-cards' %}">E-Gift Card</a>
+          </div>
+        </div>
+      </nav>
+
+      <div class="mobile-nav-footer">
+        {% if request.session.customer_logged_in or request.session.customer_id or user.is_authenticated %}
+        <div class="mobile-user-welcome" style="margin-bottom: 12px; padding: 10px 14px; background: #fff5f2; border-radius: 6px; border: 1px solid #f2c1ae;">
+          <span style="display:block; font-size: 0.76rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Signed In As</span>
+          <strong style="color: #1d1d1b; font-size: 0.95rem;">{{ request.session.customer_name|default:user.username|default:"Customer" }}</strong>
+          {% if request.session.customer_email or user.email %}
+          <span style="display:block; font-size: 0.78rem; color: #64748b;">{{ request.session.customer_email|default:user.email }}</span>
+          {% endif %}
+        </div>
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <a href="{% url 'customer_profile' %}" class="mobile-nav-btn btn-outline" style="flex: 1; text-align: center; text-decoration: none; font-size: 0.84rem; padding: 10px 6px;">My Account</a>
+          <a href="{% url 'customer_orders' %}" class="mobile-nav-btn btn-outline" style="flex: 1; text-align: center; text-decoration: none; font-size: 0.84rem; padding: 10px 6px;">My Orders</a>
+        </div>
+        <a href="{% url 'customer_logout' %}" class="mobile-nav-btn btn-secondary" style="display: block; text-align: center; text-decoration: none; background: #b91c1c; color: #ffffff; border-color: #b91c1c; font-weight: 600;">Log Out</a>
+        {% else %}
+        <a href="{% url 'customer_login' %}" class="mobile-nav-btn btn-primary">Customer Log In</a>
+        <a href="{% url 'customer_register' %}" class="mobile-nav-btn btn-outline">Create Account</a>
+        {% endif %}
+
+        <div class="mobile-seller-link">
+          <span>Selling on Their Nibs?</span>
+          <a href="{% url 'seller_login' %}">Seller Portal &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="tn-search-modal-backdrop" id="tnSearchModalBackdrop" aria-modal="true" role="dialog" aria-label="Search Store">
+    <div class="tn-search-modal-container" id="tnSearchModalContainer">
+
+      <div class="tn-search-header">
+        <form action="{% url 'search' %}" method="GET" class="tn-search-form" id="tnHeaderSearchForm">
+          <div class="tn-search-input-wrap">
+            <svg class="tn-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="7"/>
+              <line x1="16.5" y1="16.5" x2="22" y2="22"/>
+            </svg>
+            <input 
+              type="text" 
+              name="q" 
+              id="tnHeaderSearchInput" 
+              class="tn-search-input" 
+              placeholder="Search pyjamas, silk robes, prints, or products..." 
+              autocomplete="off"
+              spellcheck="false"
+              value="{{ search_query|default:'' }}"
+            >
+            <button type="button" class="tn-search-clear-btn" id="tnSearchClearBtn" aria-label="Clear input" style="display: none;">&times;</button>
+          </div>
+          <button type="submit" class="tn-search-submit">Search</button>
+        </form>
+        <button type="button" class="tn-search-close-btn" id="tnSearchCloseBtn" aria-label="Close search">&times;</button>
+      </div>
+
+      <div class="tn-search-body" id="tnSearchResultsBody">
+        <div class="tn-search-initial-state">
+          <div class="tn-search-initial-title">POPULAR SEARCHES</div>
+          <div class="tn-search-suggestions">
+            <span class="tn-search-chip" onclick="tnFillSearch('Traditional Pyjamas')">Traditional Pyjamas</span>
+            <span class="tn-search-chip" onclick="tnFillSearch('Satin Sleepwear')">Satin Sleepwear</span>
+            <span class="tn-search-chip" onclick="tnFillSearch('Floral Prints')">Floral Prints</span>
+            <span class="tn-search-chip" onclick="tnFillSearch('Striped')">Striped</span>
+            <span class="tn-search-chip" onclick="tnFillSearch('Midnight Whiskers')">Midnight Whiskers</span>
+            <span class="tn-search-chip" onclick="tnFillSearch('Brushed Cotton')">Brushed Cotton</span>
+            <span class="tn-search-chip" onclick="tnFillSearch('Dressing Gowns')">Dressing Gowns</span>
+            <span class="tn-search-chip" onclick="tnFillSearch('Matching Family')">Matching Family</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+
+    .tn-search-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(18, 18, 18, 0.65);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      z-index: 100050;
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 70px 20px 40px;
+      opacity: 0;
+      transition: opacity 0.22s ease;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+
+    .tn-search-modal-backdrop.is-open {
+      display: flex;
+      opacity: 1;
+    }
+
+    .tn-search-modal-container {
+      background: #ffffff;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 680px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      position: relative;
+      transform: translateY(-12px) scale(0.98);
+      transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      box-sizing: border-box;
+    }
+
+    .tn-search-modal-backdrop.is-open .tn-search-modal-container {
+      transform: translateY(0) scale(1);
+    }
+
+    .tn-search-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #f0ece6;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #faf8f5;
+    }
+
+    .tn-search-form {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+    }
+
+    .tn-search-input-wrap {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: #ffffff;
+      border: 1.5px solid #e5e0d8;
+      border-radius: 8px;
+      padding: 4px 12px;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .tn-search-input-wrap:focus-within {
+      border-color: #1d1d1b;
+      box-shadow: 0 0 0 3px rgba(29, 29, 27, 0.08);
+    }
+
+    .tn-search-icon {
+      width: 20px;
+      height: 20px;
+      color: #71717a;
+      flex-shrink: 0;
+      margin-right: 8px;
+    }
+
+    .tn-search-input {
+      width: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 1rem;
+      color: #1d1d1b;
+      padding: 8px 4px;
+      line-height: 1.4;
+    }
+
+    .tn-search-input::placeholder {
+      color: #a1a1aa;
+      font-weight: 400;
+    }
+
+    .tn-search-clear-btn {
+      background: none;
+      border: none;
+      color: #9ca3af;
+      font-size: 1.4rem;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0 4px;
+      transition: color 0.15s ease;
+    }
+    .tn-search-clear-btn:hover {
+      color: #1d1d1b;
+    }
+
+    .tn-search-submit {
+      background: #1d1d1b;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 20px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      transition: background 0.18s ease;
+      white-space: nowrap;
+    }
+
+    .tn-search-submit:hover {
+      background: #c85a32;
+    }
+
+    .tn-search-close-btn {
+      background: none;
+      border: none;
+      color: #71717a;
+      font-size: 1.8rem;
+      line-height: 1;
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 6px;
+      transition: color 0.15s ease, background 0.15s ease;
+    }
+
+    .tn-search-close-btn:hover {
+      color: #1d1d1b;
+      background: #f0ece6;
+    }
+
+    .tn-search-body {
+      padding: 0;
+      max-height: 480px;
+      overflow-y: auto;
+    }
+
+    .tn-search-initial-state {
+      padding: 28px 24px 34px;
+    }
+
+    .tn-search-initial-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #8c827a;
+      margin-bottom: 14px;
+    }
+
+    .tn-search-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .tn-search-chip {
+      background: #faf4ed;
+      border: 1px solid #ebdcd0;
+      color: #1d1d1b;
+      padding: 8px 16px;
+      border-radius: 24px;
+      font-size: 0.84rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      user-select: none;
+    }
+
+    .tn-search-chip:hover {
+      background: #1d1d1b;
+      border-color: #1d1d1b;
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .tn-search-results-list {
+      list-style: none;
+      margin: 0;
+      padding: 8px 0;
+    }
+
+    .tn-search-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 24px;
+      text-decoration: none;
+      color: inherit;
+      transition: background-color 0.15s ease;
+      border-bottom: 1px solid #f6f3ee;
+    }
+
+    .tn-search-item:last-child {
+      border-bottom: none;
+    }
+
+    .tn-search-item:hover {
+      background-color: #faf5f0;
+    }
+
+    .tn-search-item-img {
+      width: 60px;
+      height: 72px;
+      object-fit: cover;
+      border-radius: 6px;
+      background: #faeee5;
+      flex-shrink: 0;
+      border: 1px solid #eee8df;
+    }
+
+    .tn-search-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .tn-search-item-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #1d1d1b;
+      margin: 0 0 4px 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tn-search-item-meta {
+      font-size: 0.8rem;
+      color: #71717a;
+      margin: 0 0 4px 0;
+    }
+
+    .tn-search-item-price-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tn-search-item-price {
+      font-size: 0.94rem;
+      font-weight: 600;
+      color: #1d1d1b;
+    }
+
+    .tn-search-item-badge-oos {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #991b1b;
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      padding: 2px 7px;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .tn-search-item-badge-instock {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: #166534;
+      background: #dcfce7;
+      padding: 2px 7px;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+    }
+
+    .tn-search-footer-link {
+      display: block;
+      text-align: center;
+      padding: 14px 20px;
+      background: #faf8f5;
+      border-top: 1px solid #f0ece6;
+      color: #1d1d1b;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .tn-search-footer-link:hover {
+      background: #faeee5;
+      color: #c85a32;
+    }
+
+    .tn-search-empty-state {
+      text-align: center;
+      padding: 44px 24px;
+      color: #71717a;
+    }
+
+    .tn-search-empty-state h4 {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 1.8rem;
+      color: #1d1d1b;
+      margin: 0 0 8px 0;
+      font-weight: 500;
+    }
+
+    .tn-search-empty-state p {
+      font-size: 0.92rem;
+      margin: 0 auto 18px;
+      max-width: 440px;
+    }
+
+    @media (max-width: 600px) {
+      .tn-search-modal-backdrop {
+        padding: 20px 10px;
+      }
+      .tn-search-header {
+        padding: 12px 14px;
+      }
+      .tn-search-submit {
+        padding: 9px 14px;
+      }
+    }
+  </style>
+
+  <script>
+    
+    (function() {
+      const modalBackdrop = document.getElementById('tnSearchModalBackdrop');
+      const searchInput = document.getElementById('tnHeaderSearchInput');
+      const searchClearBtn = document.getElementById('tnSearchClearBtn');
+      const searchResultsBody = document.getElementById('tnSearchResultsBody');
+      const searchCloseBtn = document.getElementById('tnSearchCloseBtn');
+      let searchDebounceTimer = null;
+
+      const initialContent = searchResultsBody ? searchResultsBody.innerHTML : '';
+
+      window.openSearchModal = function(e) {
+        if (e && e.preventDefault) e.preventDefault();
+        if (!modalBackdrop) return;
+        modalBackdrop.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+        if (searchInput) {
+          setTimeout(() => {
+            searchInput.focus();
+            if (searchInput.value) {
+              searchInput.select();
+              tnTriggerLiveSearch(searchInput.value);
+            }
+          }, 60);
+        }
+      };
+
+      window.closeSearchModal = function() {
+        if (!modalBackdrop) return;
+        modalBackdrop.classList.remove('is-open');
+        document.body.style.overflow = '';
+      };
+
+      window.tnFillSearch = function(term) {
+        if (searchInput) {
+          searchInput.value = term;
+          if (searchClearBtn) searchClearBtn.style.display = 'block';
+          tnTriggerLiveSearch(term);
+          searchInput.focus();
+        }
+      };
+
+      document.querySelectorAll('.btn-search').forEach(btn => {
+        btn.addEventListener('click', window.openSearchModal);
+      });
+
+      if (searchCloseBtn) {
+        searchCloseBtn.addEventListener('click', window.closeSearchModal);
+      }
+
+      if (modalBackdrop) {
+        modalBackdrop.addEventListener('click', function(e) {
+          if (e.target === modalBackdrop) {
+            window.closeSearchModal();
+          }
+        });
+      }
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modalBackdrop && modalBackdrop.classList.contains('is-open')) {
+          window.closeSearchModal();
+        }
+      });
+
+      if (searchClearBtn && searchInput) {
+        searchClearBtn.addEventListener('click', function() {
+          searchInput.value = '';
+          searchClearBtn.style.display = 'none';
+          if (searchResultsBody) searchResultsBody.innerHTML = initialContent;
+          searchInput.focus();
+        });
+      }
+
+      if (searchInput) {
+        searchInput.addEventListener('input', function() {
+          const val = searchInput.value.trim();
+          if (searchClearBtn) {
+            searchClearBtn.style.display = val ? 'block' : 'none';
+          }
+          tnTriggerLiveSearch(val);
+        });
+      }
+
+      function escapeHtml(str) {
+        return (str || '').replace(/[&<>"']/g, function(m) {
+          return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];
+        });
+      }
+
+      function tnTriggerLiveSearch(val) {
+        clearTimeout(searchDebounceTimer);
+        const trimmed = (val || '').trim();
+
+        if (!trimmed) {
+          if (searchResultsBody) searchResultsBody.innerHTML = initialContent;
+          return;
+        }
+
+        if (searchResultsBody) {
+          searchResultsBody.innerHTML = `
+            <div style="text-align: center; padding: 34px 20px; color: #71717a;">
+              <svg style="width: 28px; height: 28px; animation: tnSpin 1s linear infinite; margin-bottom: 10px; display: block; margin: 0 auto 10px auto;" viewBox="0 0 24 24" fill="none" stroke="#c85a32" stroke-width="2">
+                <circle cx="12" cy="12" r="10" stroke-opacity="0.25"/>
+                <path d="M12 2a10 10 0 0 1 10 10" />
+              </svg>
+              Searching available sleepwear &amp; designs...
+            </div>
+            <style>@keyframes tnSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }</style>
+          `;
+        }
+
+        searchDebounceTimer = setTimeout(() => {
+          fetch('/api/search/?q=' + encodeURIComponent(trimmed))
+            .then(res => res.json())
+            .then(data => {
+              if (!searchResultsBody) return;
+
+              if (!data.results || data.results.length === 0) {
+                searchResultsBody.innerHTML = `
+                  <div class="tn-search-empty-state">
+                    <h4>No products or images found</h4>
+                    <p>We couldn't find any sleepwear matching "<strong>${escapeHtml(trimmed)}</strong>".</p>
+                    <div style="font-size: 0.8rem; font-weight: 700; color: #8c827a; letter-spacing: 0.08em; margin-bottom: 10px;">TRY POPULAR CATEGORIES</div>
+                    <div class="tn-search-suggestions">
+                      <span class="tn-search-chip" onclick="tnFillSearch('Pyjamas')">Pyjamas</span>
+                      <span class="tn-search-chip" onclick="tnFillSearch('Satin')">Satin</span>
+                      <span class="tn-search-chip" onclick="tnFillSearch('Floral')">Floral</span>
+                      <span class="tn-search-chip" onclick="tnFillSearch('Striped')">Striped</span>
+                      <span class="tn-search-chip" onclick="tnFillSearch('Midnight Whiskers')">Midnight Whiskers</span>
+                      <span class="tn-search-chip" onclick="tnFillSearch('Gingham')">Gingham</span>
+                    </div>
+                  </div>
+                `;
+              } else {
+                let html = '<ul class="tn-search-results-list">';
+                data.results.forEach(p => {
+                  const oosBadge = p.is_out_of_stock 
+                    ? '<span class="tn-search-item-badge-oos">Out of Stock</span>' 
+                    : '<span class="tn-search-item-badge-instock">In Stock</span>';
+                  const priceHtml = (p.price && p.price > p.final_price)
+                    ? `<span style="text-decoration: line-through; color: #9ca3af; font-size: 0.84rem; margin-right: 6px;">₹${p.price.toFixed(2)}</span>₹${p.final_price.toFixed(2)}`
+                    : `₹${p.final_price.toFixed(2)}`;
+
+                  html += `
+                    <li>
+                      <a href="${p.url}" class="tn-search-item">
+                        <img src="${p.image_url}" alt="${escapeHtml(p.name)}" class="tn-search-item-img" onerror="this.src='/static/images/products/touch-gift-box.png'">
+                        <div class="tn-search-item-info">
+                          <h5 class="tn-search-item-title">${escapeHtml(p.name)}</h5>
+                          <div class="tn-search-item-meta">${escapeHtml(p.category || 'Nightwear')}${p.material ? ' • ' + escapeHtml(p.material) : ''}${p.color ? ' • ' + escapeHtml(p.color) : ''}</div>
+                          <div class="tn-search-item-price-wrap">
+                            <span class="tn-search-item-price">${priceHtml}</span>
+                            ${oosBadge}
+                          </div>
+                        </div>
+                      </a>
+                    </li>
+                  `;
+                });
+                html += '</ul>';
+
+                const total = data.total_count || data.results.length;
+                html += `<a href="/search/?q=${encodeURIComponent(trimmed)}" class="tn-search-footer-link">View all ${total} results for "${escapeHtml(trimmed)}" &rarr;</a>`;
+
+                searchResultsBody.innerHTML = html;
+              }
+            })
+            .catch(err => {
+              console.error('Error fetching search results:', err);
+              if (searchResultsBody) {
+                searchResultsBody.innerHTML = `
+                  <div style="text-align: center; padding: 24px; color: #ef4444;">
+                    An error occurred while searching. <a href="/search/?q=${encodeURIComponent(trimmed)}" style="color:#1d1d1b; font-weight:600;">View results directly &rarr;</a>
+                  </div>
+                `;
+              }
+            });
+        }, 160);
+      }
+    })();
+  </script>
+</header>

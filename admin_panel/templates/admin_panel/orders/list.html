@@ -1,0 +1,145 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Order Management{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Orders & Fulfillment</h1>
+        <p class="page-subtitle">Track orders across the fulfillment pipeline from checkout to delivery and returns.</p>
+    </div>
+</div>
+
+<div style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 1rem; margin-bottom: 1rem;">
+    <a href="/admin-panel/orders/" class="btn {% if not current_status %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">
+        All ({{ status_tabs.all }})
+    </a>
+    <a href="/admin-panel/orders/?status=pending" class="btn {% if current_status == 'pending' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">
+        Pending ({{ status_tabs.pending }})
+    </a>
+    <a href="/admin-panel/orders/?status=confirmed" class="btn {% if current_status == 'confirmed' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">
+        Confirmed ({{ status_tabs.confirmed }})
+    </a>
+    <a href="/admin-panel/orders/?status=shipped" class="btn {% if current_status == 'shipped' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">
+        Shipped ({{ status_tabs.shipped }})
+    </a>
+    <a href="/admin-panel/orders/?status=delivered" class="btn {% if current_status == 'delivered' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">
+        Delivered ({{ status_tabs.delivered }})
+    </a>
+    <a href="/admin-panel/orders/?status=cancelled" class="btn {% if current_status == 'cancelled' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">
+        Cancelled ({{ status_tabs.cancelled }})
+    </a>
+    <a href="/admin-panel/orders/?status=returned" class="btn {% if current_status == 'returned' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">
+        Returned ({{ status_tabs.returned }})
+    </a>
+    <a href="/admin-panel/orders/?status=refunded" class="btn {% if current_status == 'refunded' %}btn-primary{% else %}btn-secondary{% endif %} btn-sm">
+        Refunded ({{ status_tabs.refunded }})
+    </a>
+</div>
+
+<form method="GET" class="filter-bar">
+    {% if current_status %}<input type="hidden" name="status" value="{{ current_status }}">{% endif %}
+    <div class="search-input">
+        <input type="text" name="q" value="{{ current_q }}" class="form-control" placeholder="Search order ID, recipient name, phone...">
+    </div>
+    <div style="min-width: 140px;">
+        <select name="payment_status" class="form-select" onchange="this.form.submit()">
+            <option value="">All Payment Statuses</option>
+            <option value="paid" {% if current_payment_status == 'paid' %}selected{% endif %}>Paid</option>
+            <option value="pending" {% if current_payment_status == 'pending' %}selected{% endif %}>Payment Pending</option>
+            <option value="failed" {% if current_payment_status == 'failed' %}selected{% endif %}>Failed</option>
+            <option value="refunded" {% if current_payment_status == 'refunded' %}selected{% endif %}>Refunded</option>
+        </select>
+    </div>
+    <div style="min-width: 140px;">
+        <select name="payment_method" class="form-select" onchange="this.form.submit()">
+            <option value="">All Payment Methods</option>
+            <option value="upi" {% if current_payment_method == 'upi' %}selected{% endif %}>UPI</option>
+            <option value="credit_card" {% if current_payment_method == 'credit_card' %}selected{% endif %}>Credit Card</option>
+            <option value="debit_card" {% if current_payment_method == 'debit_card' %}selected{% endif %}>Debit Card</option>
+            <option value="wallet" {% if current_payment_method == 'wallet' %}selected{% endif %}>Clothify Wallet</option>
+            <option value="cod" {% if current_payment_method == 'cod' %}selected{% endif %}>Cash on Delivery</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
+    <a href="/admin-panel/orders/" class="btn btn-secondary btn-sm">Reset</a>
+</form>
+
+<div class="clothify-card">
+    <div class="card-header">
+        <h3 class="card-title">Order Records</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="clothify-table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Date Placed</th>
+                    <th>Items</th>
+                    <th>Total Amount</th>
+                    <th>Payment Method</th>
+                    <th>Payment Status</th>
+                    <th>Order Status</th>
+                    <th style="text-align: right;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ord in orders %}
+                <tr>
+                    <td>
+                        <strong style="color: #fff; font-family: monospace;">{{ ord.order_number }}</strong>
+                    </td>
+                    <td>
+                        <strong>{{ ord.shipping_name|default:ord.user.username }}</strong>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">{{ ord.shipping_phone }}</div>
+                    </td>
+                    <td style="font-size: 0.8rem; color: var(--text-muted);">
+                        {{ ord.created_at|date:"M d, Y H:i" }}
+                    </td>
+                    <td><strong>{{ ord.total_items }}</strong> items</td>
+                    <td><strong style="color: #fff; font-size: 0.95rem;">₹{{ ord.total_amount }}</strong></td>
+                    <td>
+                        <span class="status-badge status-info">{{ ord.get_payment_method_display }}</span>
+                    </td>
+                    <td>
+                        <span class="status-badge status-{{ ord.payment_status }}">
+                            {{ ord.get_payment_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-badge status-{{ ord.status }}">{{ ord.get_status_display }}</span>
+                    </td>
+                    <td style="text-align: right;">
+                        <a href="/admin-panel/orders/{{ ord.id }}/" class="btn btn-secondary btn-sm">Details & Manage</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                        No orders found in this view.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if orders.has_other_pages %}
+    <div class="clothify-pagination">
+        <span style="font-size: 0.82rem; color: var(--text-muted);">
+            Page {{ orders.number }} of {{ orders.paginator.num_pages }}
+        </span>
+        <div class="pagination-links">
+            {% if orders.has_previous %}
+            <a href="?page={{ orders.previous_page_number }}&status={{ current_status }}&payment_status={{ current_payment_status }}&payment_method={{ current_payment_method }}&q={{ current_q }}" class="page-btn">Prev</a>
+            {% endif %}
+            <span class="page-btn active">{{ orders.number }}</span>
+            {% if orders.has_next %}
+            <a href="?page={{ orders.next_page_number }}&status={{ current_status }}&payment_status={{ current_payment_status }}&payment_method={{ current_payment_method }}&q={{ current_q }}" class="page-btn">Next</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Customer Management{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Customer Directory</h1>
+        <p class="page-subtitle">View shopper accounts, order volume, total lifetime spending, and account statuses.</p>
+    </div>
+</div>
+
+<form method="GET" class="filter-bar">
+    <div class="search-input">
+        <input type="text" name="q" value="{{ current_q }}" class="form-control" placeholder="Search by name, email, phone, or username...">
+    </div>
+    <div style="min-width: 140px;">
+        <select name="status" class="form-select" onchange="this.form.submit()">
+            <option value="">All Account Statuses</option>
+            <option value="active" {% if current_status == 'active' %}selected{% endif %}>Active</option>
+            <option value="suspended" {% if current_status == 'suspended' %}selected{% endif %}>Suspended</option>
+            <option value="inactive" {% if current_status == 'inactive' %}selected{% endif %}>Inactive</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
+    <a href="/admin-panel/customers/" class="btn btn-secondary btn-sm">Reset</a>
+</form>
+
+<div class="clothify-card">
+    <div class="card-header">
+        <h3 class="card-title">Registered Customer Accounts</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="clothify-table">
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Email Address</th>
+                    <th>Phone</th>
+                    <th>Orders</th>
+                    <th>Total Spent</th>
+                    <th>Status</th>
+                    <th>Registered</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in customers %}
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <a href="/admin-panel/customers/{{ c.id }}/" style="text-decoration: none;" title="View {{ c.display_name }}'s profile">
+                                <div style="width: 36px; height: 36px; border-radius: 50%; background: #0f172a; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.88rem; flex-shrink: 0; border: 1px solid #334155; transition: transform 0.15s ease;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+                                    {{ c.display_name|slice:":1"|upper|default:"U" }}
+                                </div>
+                            </a>
+                            <div>
+                                <a href="/admin-panel/customers/{{ c.id }}/" style="color: var(--primary); font-size: 0.92rem; font-weight: 700; text-decoration: none; display: inline-block; transition: color 0.15s ease;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--primary)'" title="View customer profile">
+                                    {{ c.display_name }}
+                                </a>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">@{{ c.username }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ c.email|default:"-" }}</td>
+                    <td>{{ c.phone|default:"-" }}</td>
+                    <td><strong>{{ c.orders_count }}</strong> orders</td>
+                    <td><strong style="color: #10b981;">₹{{ c.total_spent|floatformat:2 }}</strong></td>
+                    <td>
+                        <span class="status-badge {% if c.is_active %}status-delivered{% else %}status-cancelled{% endif %}">
+                            {{ c.get_account_status_display }}
+                        </span>
+                    </td>
+                    <td style="font-size: 0.8rem; color: var(--text-muted);">{{ c.date_joined|date:"M d, Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                        No customers found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if customers.has_other_pages %}
+    <div class="clothify-pagination">
+        <span style="font-size: 0.82rem; color: var(--text-muted);">
+            Page {{ customers.number }} of {{ customers.paginator.num_pages }}
+        </span>
+        <div class="pagination-links">
+            {% if customers.has_previous %}
+            <a href="?page={{ customers.previous_page_number }}&q={{ current_q }}&status={{ current_status }}" class="page-btn">Prev</a>
+            {% endif %}
+            <span class="page-btn active">{{ customers.number }}</span>
+            {% if customers.has_next %}
+            <a href="?page={{ customers.next_page_number }}&q={{ current_q }}&status={{ current_status }}" class="page-btn">Next</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

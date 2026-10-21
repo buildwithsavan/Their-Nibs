@@ -1,0 +1,1647 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Their Nibs &ndash; Luxury Sleepwear, Loungewear &amp; Pyjamas{% endblock %}</title>
+
+  <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg?v=crown2026">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/images/favicon-32.png?v=crown2026">
+  <link rel="icon" type="image/png" sizes="192x192" href="/static/images/favicon-192.png?v=crown2026">
+  <link rel="apple-touch-icon" href="/static/images/favicon.png?v=crown2026">
+  <link rel="shortcut icon" type="image/x-icon" href="/static/images/favicon.ico?v=crown2026">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'css/homepage.css' %}?v=20261013-megamenu-perfect-v4">
+  <link rel="stylesheet" href="{% static 'css/preloader.css' %}?v=20261012-loader10s">
+
+  <style id="women-megamenu-inline-styles">
+    .site-header {
+      position: sticky !important;
+      top: 0 !important;
+      z-index: 9999 !important;
+    }
+    .header-container {
+      position: relative !important;
+    }
+    .nav-desktop {
+      position: static !important;
+      height: 100% !important;
+    }
+    .nav-desktop .nav-item.has-mega-menu,
+    .nav-item.has-mega-menu,
+    .nav-item.has-dropdown.has-mega-menu {
+      position: static !important;
+      height: 100% !important;
+      display: flex !important;
+      align-items: center !important;
+    }
+    .nav-item.has-mega-menu .nav-link {
+      height: 100% !important;
+      display: inline-flex !important;
+      align-items: center !important;
+    }
+    .nav-item.has-mega-menu .women-mega-menu {
+      position: absolute !important;
+      top: 100% !important;
+      left: 50% !important;
+      right: auto !important;
+      width: calc(100% - 60px) !important;
+      max-width: 1400px !important;
+      transform: translateX(-50%) translateY(6px) !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border-radius: 3px !important;
+      background-color: #ffffff !important;
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.12) !important;
+      border: 1px solid #e5e5e5 !important;
+      border-top: none !important;
+      overflow: visible !important;
+      z-index: 10000 !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s !important;
+    }
+    .nav-item.has-mega-menu .women-mega-menu::before {
+      content: '' !important;
+      position: absolute !important;
+      top: -45px !important;
+      left: 0 !important;
+      right: 0 !important;
+      height: 50px !important;
+      display: block !important;
+      background: transparent !important;
+      pointer-events: auto !important;
+      z-index: 9999 !important;
+    }
+    .nav-item.has-mega-menu:hover .women-mega-menu,
+    .nav-item.has-mega-menu:focus-within .women-mega-menu,
+    .nav-item.has-mega-menu.active .women-mega-menu,
+    .nav-item.has-mega-menu.is-open .women-mega-menu {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      transform: translateX(-50%) translateY(0) !important;
+    }
+    .nav-item.has-mega-menu:hover .nav-chevron,
+    .nav-item.has-mega-menu:focus-within .nav-chevron,
+    .nav-item.has-mega-menu.active .nav-chevron,
+    .nav-item.has-mega-menu.is-open .nav-chevron {
+      transform: rotate(180deg) !important;
+    }
+    .nav-item.has-mega-menu:hover .nav-link,
+    .nav-item.has-mega-menu:focus-within .nav-link,
+    .nav-item.has-mega-menu.active .nav-link,
+    .nav-item.has-mega-menu.is-open .nav-link {
+      text-decoration: underline !important;
+      text-underline-offset: 6px !important;
+      text-decoration-thickness: 1.5px !important;
+      color: #000000 !important;
+    }
+    .women-dropdown-grid {
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      align-items: stretch !important;
+      justify-content: space-between !important;
+      width: 100% !important;
+      background-color: #ffffff !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      box-sizing: border-box !important;
+      border-radius: 3px !important;
+      overflow: hidden !important;
+    }
+    .women-menu-item,
+    .women-menu-list a,
+    .women-dropdown-banner {
+      position: relative !important;
+      z-index: 10001 !important;
+      pointer-events: auto !important;
+      cursor: pointer !important;
+    }
+    .women-dropdown-col {
+      display: flex !important;
+      flex-direction: column !important;
+      box-sizing: border-box !important;
+    }
+    .women-dropdown-col.col-shop {
+      flex: 1.15 1 0 !important;
+      padding: 28px 24px 30px 32px !important;
+      border-right: 1px solid #ebebeb !important;
+    }
+    .women-dropdown-col.col-fabric {
+      flex: 1 1 0 !important;
+      padding: 28px 24px 30px 28px !important;
+      border-right: 1px solid #ebebeb !important;
+    }
+    .women-dropdown-col.col-collection {
+      flex: 1.35 1 0 !important;
+      padding: 28px 24px 30px 28px !important;
+    }
+    .women-dropdown-col.col-banner {
+      flex: 1.5 0 310px !important;
+      width: 320px !important;
+      min-width: 280px !important;
+      max-width: 380px !important;
+      position: relative !important;
+      overflow: hidden !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      display: flex !important;
+      align-items: stretch !important;
+      background-color: #f7f3ef !important;
+    }
+    .women-dropdown-banner {
+      position: relative !important;
+      display: flex !important;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 380px !important;
+      text-decoration: none !important;
+      overflow: hidden !important;
+    }
+    .women-banner-img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      object-position: center top !important;
+      display: block !important;
+      transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+    }
+    .women-dropdown-banner:hover .women-banner-img {
+      transform: scale(1.03) !important;
+    }
+    .women-banner-cta {
+      position: absolute !important;
+      bottom: 22px !important;
+      left: 20px !important;
+      background-color: #f1c0ad !important;
+      color: #1e1e1e !important;
+      font-family: var(--font-body, 'Poppins', sans-serif) !important;
+      font-size: 0.76rem !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.08em !important;
+      padding: 8px 18px !important;
+      text-transform: uppercase !important;
+      border-radius: 2px !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
+      transition: background-color 0.2s ease, transform 0.2s ease !important;
+      pointer-events: none !important;
+      line-height: 1.2 !important;
+      display: inline-block !important;
+    }
+    .women-dropdown-banner:hover .women-banner-cta {
+      background-color: #e5ab96 !important;
+      transform: translateY(-1px) !important;
+    }
+    .women-menu-section.section-style {
+      margin-top: 24px !important;
+    }
+    .women-menu-title {
+      font-family: var(--font-body, 'Poppins', sans-serif) !important;
+      font-size: 1.02rem !important;
+      font-weight: 600 !important;
+      color: #1d1d1f !important;
+      margin: 0 0 12px 0 !important;
+      padding: 0 !important;
+      letter-spacing: -0.01em !important;
+      line-height: 1.3 !important;
+    }
+    .women-menu-list {
+      list-style: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 7px !important;
+    }
+    .women-menu-item {
+      display: inline-block !important;
+      font-family: var(--font-body, 'Poppins', sans-serif) !important;
+      font-size: 0.88rem !important;
+      font-weight: 400 !important;
+      color: #4b5563 !important;
+      text-decoration: none !important;
+      line-height: 1.35 !important;
+      transition: color 0.15s ease !important;
+      max-width: 230px !important;
+      white-space: normal !important;
+    }
+    .women-menu-item:hover {
+      color: #000000 !important;
+      text-decoration: underline !important;
+      text-underline-offset: 3px !important;
+    }
+
+    .nav-item.has-dropdown:not(.has-mega-menu) {
+      position: relative !important;
+    }
+    .nav-desktop .nav-item.has-mega-menu,
+    .nav-item.has-mega-menu,
+    .nav-item.has-dropdown.has-mega-menu {
+      position: static !important;
+    }
+    .mens-dropdown-menu::before,
+    .kids-dropdown-menu::before,
+    .accessories-dropdown-menu::before,
+    .gifting-dropdown-menu::before {
+      content: '' !important;
+      position: absolute !important;
+      top: -24px !important;
+      left: 0 !important;
+      right: 0 !important;
+      height: 24px !important;
+      display: block !important;
+    }
+
+    .mens-dropdown-menu {
+      position: absolute !important;
+      top: 100% !important;
+      left: 50% !important;
+      transform: translateX(-38%) translateY(6px) !important;
+      background-color: #ffffff !important;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.12) !important;
+      border: 1px solid #e5e5e5 !important;
+      border-radius: 3px !important;
+      padding: 0 !important;
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: stretch !important;
+      z-index: 9999 !important;
+      overflow: hidden !important;
+      white-space: nowrap !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s !important;
+    }
+    .nav-item:hover .mens-dropdown-menu,
+    .nav-item.active .mens-dropdown-menu,
+    .nav-item:focus-within .mens-dropdown-menu {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      transform: translateX(-38%) translateY(0) !important;
+    }
+    .mens-dropdown-banner {
+      display: block !important;
+      width: 295px !important;
+      height: 168px !important;
+      flex-shrink: 0 !important;
+      overflow: hidden !important;
+      position: relative !important;
+      background-color: #1a1a1a !important;
+      text-decoration: none !important;
+    }
+    .mens-banner-img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      display: block !important;
+      transition: transform 0.4s ease !important;
+    }
+    .mens-dropdown-banner:hover .mens-banner-img {
+      transform: scale(1.03) !important;
+    }
+    .mens-dropdown-col {
+      padding: 28px 36px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: flex-start !important;
+      min-width: 175px !important;
+      box-sizing: border-box !important;
+    }
+    .mens-dropdown-col.has-divider {
+      border-right: 1px solid #ebebeb !important;
+    }
+    .mens-menu-link {
+      font-family: var(--font-body, 'Poppins', sans-serif) !important;
+      font-size: 15px !important;
+      font-weight: 500 !important;
+      color: #1d1d1b !important;
+      text-decoration: none !important;
+      white-space: nowrap !important;
+      line-height: 1.4 !important;
+      transition: color 0.15s ease !important;
+    }
+    .mens-menu-link:hover {
+      color: #000000 !important;
+      text-decoration: underline !important;
+      text-underline-offset: 4px !important;
+    }
+
+    .kids-dropdown-menu {
+      position: absolute !important;
+      top: 100% !important;
+      left: 50% !important;
+      transform: translateX(-50%) translateY(6px) !important;
+      background-color: #ffffff !important;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.12) !important;
+      border: 1px solid #e5e5e5 !important;
+      border-radius: 3px !important;
+      padding: 0 !important;
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: stretch !important;
+      z-index: 9999 !important;
+      overflow: hidden !important;
+      white-space: nowrap !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s !important;
+    }
+    .nav-item:hover .kids-dropdown-menu,
+    .nav-item.active .kids-dropdown-menu,
+    .nav-item:focus-within .kids-dropdown-menu {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      transform: translateX(-50%) translateY(0) !important;
+    }
+    .kids-dropdown-col {
+      padding: 28px 36px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: flex-start !important;
+      gap: 16px !important;
+      min-width: 210px !important;
+      box-sizing: border-box !important;
+      border-right: 1px solid #ebebeb !important;
+    }
+    .kids-menu-link {
+      font-family: var(--font-body, 'Poppins', sans-serif) !important;
+      font-size: 15px !important;
+      font-weight: 500 !important;
+      color: #1d1d1b !important;
+      text-decoration: none !important;
+      white-space: nowrap !important;
+      line-height: 1.4 !important;
+      transition: color 0.15s ease !important;
+    }
+    .kids-menu-link:hover {
+      color: #000000 !important;
+      text-decoration: underline !important;
+      text-underline-offset: 4px !important;
+    }
+    .kids-dropdown-banner {
+      display: block !important;
+      width: 299px !important;
+      height: 170px !important;
+      flex-shrink: 0 !important;
+      overflow: hidden !important;
+      position: relative !important;
+      background-color: #f7f3ef !important;
+      text-decoration: none !important;
+    }
+    .kids-banner-img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      display: block !important;
+      transition: transform 0.4s ease !important;
+    }
+    .kids-dropdown-banner:hover .kids-banner-img {
+      transform: scale(1.03) !important;
+    }
+
+    .accessories-dropdown-menu {
+      position: absolute !important;
+      top: 100% !important;
+      left: 0 !important;
+      transform: translateY(6px) !important;
+      background-color: #ffffff !important;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.1) !important;
+      border: 1px solid #e8e8e8 !important;
+      border-radius: 3px !important;
+      padding: 20px 24px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 12px !important;
+      min-width: 200px !important;
+      z-index: 9999 !important;
+      white-space: nowrap !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s !important;
+    }
+    .nav-item:hover .accessories-dropdown-menu,
+    .nav-item.active .accessories-dropdown-menu,
+    .nav-item:focus-within .accessories-dropdown-menu {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      transform: translateY(0) !important;
+    }
+    .accessories-menu-link {
+      font-family: var(--font-body, 'Poppins', sans-serif) !important;
+      font-size: 14.5px !important;
+      font-weight: 450 !important;
+      color: #1d1d1b !important;
+      text-decoration: none !important;
+      white-space: nowrap !important;
+      padding: 2px 0 !important;
+      transition: color 0.15s ease !important;
+    }
+    .accessories-menu-link:hover {
+      color: #000000 !important;
+      text-decoration: underline !important;
+      text-underline-offset: 4px !important;
+    }
+
+    .gifting-dropdown-menu {
+      position: absolute !important;
+      top: 100% !important;
+      right: 0 !important;
+      left: auto !important;
+      transform: translateY(6px) !important;
+      background-color: #ffffff !important;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.1) !important;
+      border: 1px solid #e8e8e8 !important;
+      border-radius: 3px !important;
+      padding: 20px 24px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 10px !important;
+      min-width: 215px !important;
+      z-index: 9999 !important;
+      white-space: nowrap !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s !important;
+    }
+    .nav-item:hover .gifting-dropdown-menu,
+    .nav-item.active .gifting-dropdown-menu,
+    .nav-item:focus-within .gifting-dropdown-menu {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      transform: translateY(0) !important;
+    }
+    .gifting-menu-link {
+      font-family: var(--font-body, 'Poppins', sans-serif) !important;
+      font-size: 14.5px !important;
+      font-weight: 450 !important;
+      color: #1d1d1b !important;
+      text-decoration: none !important;
+      white-space: nowrap !important;
+      padding: 2px 0 !important;
+      transition: color 0.15s ease !important;
+    }
+    .gifting-menu-link:hover {
+      color: #000000 !important;
+      text-decoration: underline !important;
+      text-underline-offset: 4px !important;
+    }
+
+    .cart-drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(3px);
+      z-index: 10001;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    .cart-drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .cart-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 420px;
+      max-width: 92vw;
+      background: #ffffff;
+      z-index: 10002;
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      box-shadow: -10px 0 35px rgba(0, 0, 0, 0.18);
+    }
+    .cart-drawer.active {
+      transform: translateX(0);
+    }
+    .cart-header {
+      padding: 18px 24px 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+    }
+    .cart-header h2 {
+      margin: 0;
+      font-family: 'Instrument Serif', 'Playfair Display', Georgia, serif;
+      font-size: 1.55rem;
+      font-weight: 400;
+      color: #1d1d1b;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: flex-start;
+      gap: 4px;
+    }
+    .cart-header h2 sup {
+      font-family: var(--font-body, 'Poppins', sans-serif);
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: #64748b;
+      top: -0.4em;
+    }
+    .cart-close-btn {
+      font-size: 1.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #64748b;
+      line-height: 1;
+      padding: 4px;
+      transition: color 0.15s ease;
+    }
+    .cart-close-btn:hover {
+      color: #1d1d1b;
+    }
+    .cart-shipping-banner {
+      background: #f4f4f5;
+      padding: 10px 20px;
+      margin: 0 20px 8px 20px;
+      border-radius: 3px;
+      font-size: 0.82rem;
+      color: #1d1d1b;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .cart-shipping-banner .shipping-box-icon {
+      font-size: 0.95rem;
+    }
+    .cart-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 24px 20px 24px;
+    }
+    .cart-empty-state {
+      text-align: center;
+      padding: 50px 20px;
+      color: #64748b;
+    }
+    .cart-item-row {
+      display: flex;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid #f1f1f1;
+    }
+    .cart-item-img {
+      width: 72px;
+      height: 94px;
+      object-fit: cover;
+      border-radius: 2px;
+      background: #f7f3ef;
+      flex-shrink: 0;
+    }
+    .cart-item-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .cart-item-title {
+      font-family: 'Instrument Serif', 'Playfair Display', Georgia, serif;
+      font-size: 1.05rem;
+      font-weight: 400;
+      color: #1d1d1b;
+      line-height: 1.25;
+      margin: 0 0 3px 0;
+    }
+    .cart-item-meta {
+      font-size: 0.78rem;
+      color: #71717a;
+      margin-bottom: 8px;
+    }
+    .cart-item-price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-top: auto;
+    }
+    .cart-item-price {
+      font-weight: 500;
+      font-size: 0.92rem;
+      color: #1d1d1b;
+    }
+    .cart-item-remove {
+      background: none;
+      border: none;
+      color: #71717a;
+      font-size: 0.76rem;
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 0;
+    }
+    .cart-item-remove:hover {
+      color: #e11d48;
+    }
+    .cart-footer {
+      padding: 18px 24px 22px 24px;
+      border-top: 1px solid #ebebeb;
+      background: #ffffff;
+    }
+    .cart-discount-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .cart-discount-input {
+      flex: 1;
+      border: 1px solid #e4e4e7;
+      border-radius: 2px;
+      padding: 9px 12px;
+      font-size: 0.84rem;
+      outline: none;
+      font-family: inherit;
+    }
+    .cart-discount-input:focus {
+      border-color: #1d1d1b;
+    }
+    .cart-discount-apply {
+      background: #ffffff;
+      border: 1px solid #f5baa7;
+      color: #e47e56;
+      padding: 8px 18px;
+      font-size: 0.84rem;
+      border-radius: 2px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s ease;
+    }
+    .cart-discount-apply:hover {
+      background: #faeee5;
+    }
+    .cart-discount-wrapper {
+      position: relative;
+      margin-bottom: 12px;
+    }
+    .coupons-trigger-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.76rem;
+      color: #2b5329;
+      font-weight: 600;
+      margin-top: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      text-decoration: underline;
+      letter-spacing: 0.02em;
+    }
+    .coupons-trigger-link:hover {
+      color: #173815;
+    }
+    .coupons-popover {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      box-shadow: 0 12px 28px -4px rgba(0,0,0,0.18), 0 6px 12px -3px rgba(0,0,0,0.1);
+      z-index: 1050;
+      max-height: 280px;
+      overflow-y: auto;
+      padding: 10px 12px;
+      animation: popoverFadeIn 0.2s ease-out;
+    }
+    @keyframes popoverFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .coupons-popover-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 7px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #334155;
+    }
+    .coupons-popover-close {
+      background: none;
+      border: none;
+      font-size: 1.15rem;
+      line-height: 1;
+      cursor: pointer;
+      color: #94a3b8;
+      padding: 0;
+    }
+    .coupons-popover-close:hover {
+      color: #1e293b;
+    }
+    .coupon-item-card {
+      background: #fafafa;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 9px 11px;
+      margin-bottom: 8px;
+      transition: all 0.15s ease;
+    }
+    .coupon-item-card:last-child {
+      margin-bottom: 0;
+    }
+    .coupon-item-card:hover {
+      border-color: #2b5329;
+      background: #f8faf8;
+    }
+    .coupon-item-card.is-applied {
+      border-color: #22c55e;
+      background: #f0fdf4;
+    }
+    .coupon-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .coupon-badge-code {
+      font-family: monospace;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      color: #0f172a;
+      background: #f1f5f9;
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px dashed #cbd5e1;
+    }
+    .coupon-badge-discount {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #15803d;
+      background: #dcfce7;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .coupon-desc-text {
+      font-size: 0.76rem;
+      color: #475569;
+      line-height: 1.35;
+      margin-bottom: 5px;
+    }
+    .coupon-card-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+      color: #64748b;
+      margin-top: 4px;
+    }
+    .coupon-apply-btn {
+      background: #2b5329;
+      color: #ffffff;
+      border: none;
+      padding: 3px 12px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: background 0.15s;
+    }
+    .coupon-apply-btn:hover {
+      background: #1b351a;
+    }
+    .coupon-apply-btn.applied {
+      background: #15803d;
+      cursor: default;
+    }
+    .applied-coupon-pill {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      padding: 6px 10px;
+      border-radius: 5px;
+      margin-top: 8px;
+      font-size: 0.78rem;
+    }
+    .applied-coupon-pill .pill-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #166534;
+      font-weight: 600;
+    }
+    .applied-coupon-pill .pill-remove-btn {
+      background: transparent;
+      border: none;
+      color: #dc2626;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
+    }
+    .coupon-min-hint {
+      font-size: 0.7rem;
+      color: #b45309;
+      font-weight: 500;
+      display: block;
+      margin-top: 2px;
+    }
+    .cart-gift-wrap-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0 14px 0;
+      border-bottom: 1px solid #f1f1f1;
+      margin-bottom: 14px;
+    }
+    .cart-gift-wrap-label {
+      font-size: 0.88rem;
+      color: #1d1d1b;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cart-gift-wrap-pill {
+      background: #f97316;
+      color: #ffffff;
+      font-size: 0.68rem;
+      padding: 2px 6px;
+      border-radius: 2px;
+      font-weight: 600;
+    }
+    .cart-gift-wrap-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: none;
+      background: #faeee5;
+      color: #1d1d1b;
+      font-size: 1.15rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      line-height: 1;
+      transition: background 0.15s ease;
+    }
+    .cart-gift-wrap-btn:hover {
+      background: #f5baa7;
+    }
+    .cart-subtotal-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      font-size: 0.95rem;
+      color: #1d1d1b;
+    }
+    .cart-subtotal-row span:first-child {
+      font-weight: 500;
+    }
+    .cart-subtotal-row span:last-child {
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .cart-checkout-btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+      background: #f1bba8;
+      color: #1d1d1b;
+      padding: 14px 20px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      letter-spacing: 0.01em;
+      transition: background-color 0.2s ease;
+      box-sizing: border-box;
+    }
+    .cart-checkout-btn:hover {
+      background: #e5ab97;
+    }
+
+    .boutique-toast {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: #1d1d1b;
+      color: #ffffff;
+      padding: 14px 22px;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      z-index: 10005;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .boutique-toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <div id="clothifyTopProgress" class="clothify-top-progress"></div>
+  <div id="clothifyPageLoader" class="clothify-preloader {% block preloader_class %}{% endblock %}">
+    <div class="preloader-content">
+      <div class="preloader-image-wrap">
+        <img src="/static/images/loader-logo.png" 
+             alt="Their Nibs" 
+             class="preloader-custom-img" 
+             onerror="this.onerror=null; this.src='/static/images/loader-logo-square.png';">
+      </div>
+      <h2 class="preloader-brand-title">Their Nibs</h2>
+      <div class="preloader-brand-subtitle">Luxury Sleepwear &amp; Loungewear</div>
+      <div class="preloader-bar-wrap">
+        <div class="preloader-bar-inner"></div>
+      </div>
+      <div class="preloader-status-text" id="preloaderStatusText">Entering Boutique...</div>
+    </div>
+  </div>
+
+  {% include 'includes/announcement_bar.html' %}
+
+  {% include 'includes/header.html' %}
+
+  <main id="main">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% include 'includes/footer.html' %}
+
+  <button class="chat-widget-btn" aria-label="Open Customer Chat" onclick="toggleChatDrawer()">
+    <svg viewBox="0 0 24 24">
+      <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-3 9H7V9h10v2zm0-3H7V6h10v2z"/>
+    </svg>
+  </button>
+
+  <div class="chat-drawer" id="chatDrawer" role="dialog" aria-modal="true" aria-label="Their Nibs Concierge">
+    <div class="chat-drawer-header">
+      <span>Their Nibs Customer Care</span>
+      <button class="chat-close-btn" aria-label="Close Chat" onclick="toggleChatDrawer()">&times;</button>
+    </div>
+    <div class="chat-drawer-body">
+      <p>Hello! Welcome to Their Nibs.</p>
+      <p style="margin-top: 8px;">Need assistance with sizes, fabrics, or our signature women's collection? We're here to help!</p>
+    </div>
+  </div>
+
+  <div class="cart-drawer-overlay" id="cartOverlay" onclick="closeCartDrawer()"></div>
+  <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping Bag">
+    <div class="cart-header">
+      <h2>Your cart <sup id="drawerCartCount">0</sup></h2>
+      <button class="cart-close-btn" onclick="closeCartDrawer()" aria-label="Close cart">&times;</button>
+    </div>
+
+    <div class="cart-shipping-banner" id="cartShippingBanner" style="display: none;">
+      <span class="shipping-box-icon">📦</span>
+      <span id="freeShippingNotice">Only ₹12.00 away from free shipping!</span>
+    </div>
+
+    <div class="cart-body" id="cartItemsList">
+      <div class="cart-empty-state">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 12px; opacity: 0.6;">
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>
+        <p>Your shopping bag is currently empty.</p>
+        <button type="button" onclick="triggerExploreNewInLoader('/collections/new-in-1/')" style="margin-top: 14px; padding: 10px 22px; background: #1d1d1b; color: #fff; border: none; border-radius: 4px; font-size: 0.85rem; font-weight: 600; cursor: pointer; letter-spacing: 0.04em;">Explore New In</button>
+      </div>
+    </div>
+
+    <div class="cart-footer" id="cartFooter" style="display: none;">
+      <div class="cart-discount-wrapper" id="cartDiscountWrapper">
+        <div class="cart-discount-row">
+          <input type="text" id="cartDiscountInput" placeholder="Discount code" class="cart-discount-input" autocomplete="off" onfocus="openCartCouponsDropdown()" onclick="openCartCouponsDropdown()">
+          <button type="button" class="cart-discount-apply" onclick="applyCartDiscount()">Apply</button>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+          <button type="button" class="coupons-trigger-link" onclick="toggleCartCouponsDropdown()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -1px;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            <span id="cartCouponsTriggerText">View available coupons</span>
+          </button>
+        </div>
+
+        <div id="cartCouponsDropdown" class="coupons-popover" style="display: none;">
+          <div class="coupons-popover-header">
+            <span>Available Seller Coupons</span>
+            <button type="button" class="coupons-popover-close" onclick="closeCartCouponsDropdown()">&times;</button>
+          </div>
+          <div id="cartCouponsList" class="coupons-popover-body">
+            <div style="text-align: center; padding: 10px; color: #64748b; font-size: 0.78rem;">Loading available coupons...</div>
+          </div>
+        </div>
+
+        <div id="cartAppliedCouponPill" class="applied-coupon-pill" style="display: none;">
+          <div class="pill-info">
+            <span class="pill-tag">✓</span>
+            <span class="pill-code" id="cartAppliedCode">CODE</span>
+            <span class="pill-savings" id="cartAppliedSavings">(-₹0.00)</span>
+          </div>
+          <button type="button" class="pill-remove-btn" onclick="removeCartCoupon()" title="Remove coupon">Remove</button>
+        </div>
+      </div>
+
+      <div class="cart-gift-wrap-row">
+        <div class="cart-gift-wrap-label">
+          Gift Wrapping <span class="cart-gift-wrap-pill">from ₹5.00</span>
+        </div>
+        <button type="button" class="cart-gift-wrap-btn" id="giftWrapBtn" onclick="toggleGiftWrap(this)" aria-label="Add Gift Wrapping">+</button>
+      </div>
+
+      <div class="cart-subtotal-row">
+        <span>Subtotal</span>
+        <span id="cartSubtotal">₹0.00 INR</span>
+      </div>
+
+      <div class="cart-subtotal-row" id="cartDiscountRow" style="display: none; color: #16a34a; font-weight: 500;">
+        <span>Discount (<span id="cartDiscountLabel">CODE</span>)</span>
+        <span id="cartDiscountVal">-₹0.00</span>
+      </div>
+
+      <div class="cart-subtotal-row" id="cartEstimatedTotalRow" style="display: none; font-weight: 700; border-top: 1px dashed #e2e8f0; padding-top: 8px; margin-top: 6px;">
+        <span>Total</span>
+        <span id="cartGrandTotal">₹0.00 INR</span>
+      </div>
+
+      <a href="{% url 'checkout' %}" class="cart-checkout-btn" onclick="if(!window.TN_USER_LOGGED_IN){ event.preventDefault(); showToast('Please log in to proceed to checkout.'); setTimeout(()=>{ window.location.href=window.TN_LOGIN_URL + '?next=/checkout/'; }, 600); }">Checkout</a>
+    </div>
+  </aside>
+
+  <div class="boutique-toast" id="boutiqueToast">
+    <span id="toastMessage">Item added to bag!</span>
+  </div>
+
+  <script src="{% static 'js/homepage.js' %}?v=20261012-realnav"></script>
+  <script>
+    window.TN_USER_LOGGED_IN = {% if request.session.customer_logged_in or request.session.customer_id or user.is_authenticated %}true{% else %}false{% endif %};
+    window.TN_LOGIN_URL = "{% url 'customer_login' %}";
+
+    (function() {
+      const megaNav = document.querySelector('.nav-item.has-mega-menu');
+      if (megaNav) {
+        const link = megaNav.querySelector('.nav-link');
+        megaNav.addEventListener('mouseenter', () => megaNav.classList.add('is-open'));
+        megaNav.addEventListener('mouseleave', () => megaNav.classList.remove('is-open'));
+        if (link) {
+          link.addEventListener('click', function(e) {
+            megaNav.classList.toggle('is-open');
+          });
+        }
+        document.addEventListener('click', function(e) {
+          if (!megaNav.contains(e.target)) {
+            megaNav.classList.remove('is-open');
+          }
+        });
+      }
+    })();
+
+    function toggleChatDrawer() {
+      const drawer = document.getElementById('chatDrawer');
+      if (drawer) drawer.classList.toggle('active');
+    }
+
+    function parseCurrencyNumber(val) {
+      if (typeof val === 'number') return val;
+      if (!val) return 0;
+      return parseFloat(String(val).replace(/[^0-9.]/g, '')) || 0;
+    }
+
+    let boutiqueBag = [];
+    try {
+      boutiqueBag = JSON.parse(localStorage.getItem('theirnibs_bag') || '[]');
+      boutiqueBag.forEach(item => {
+        item.price = parseCurrencyNumber(item.price);
+      });
+    } catch(e) {
+      boutiqueBag = [];
+    }
+
+    function updateCartBadge() {
+      const totalQty = boutiqueBag.reduce((sum, item) => sum + (item.qty || 1), 0);
+      const badges = document.querySelectorAll('#headerCartCount');
+      badges.forEach(b => b.textContent = totalQty);
+      const drawerCount = document.getElementById('drawerCartCount');
+      if (drawerCount) drawerCount.textContent = totalQty;
+    }
+
+    function openCartDrawer() {
+      renderCartItems();
+      const drawer = document.getElementById('cartDrawer');
+      const overlay = document.getElementById('cartOverlay');
+      if (drawer) drawer.classList.add('active');
+      if (overlay) overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeCartDrawer() {
+      const drawer = document.getElementById('cartDrawer');
+      const overlay = document.getElementById('cartOverlay');
+      if (drawer) drawer.classList.remove('active');
+      if (overlay) overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function addToBag(title, price, image, slug, size, color) {
+      if (!window.TN_USER_LOGGED_IN) {
+        showToast('Please log in to add items to your shopping bag.');
+        setTimeout(() => {
+          window.location.href = window.TN_LOGIN_URL + '?next=' + encodeURIComponent(window.location.pathname + window.location.search);
+        }, 650);
+        return;
+      }
+
+      const chosenSize = size || 'M';
+      const chosenColor = color || 'Black';
+      const numPrice = parseCurrencyNumber(price) || 48.00;
+
+      const existing = boutiqueBag.find(item => item.slug === slug && item.size === chosenSize);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        boutiqueBag.push({
+          title: title,
+          price: numPrice,
+          image: image,
+          slug: slug,
+          size: chosenSize,
+          color: chosenColor,
+          qty: 1
+        });
+      }
+      localStorage.setItem('theirnibs_bag', JSON.stringify(boutiqueBag));
+      updateCartBadge();
+      showToast('Added ' + title + ' (' + chosenSize + ') to your bag!');
+      openCartDrawer();
+    }
+
+    function removeFromBag(index) {
+      boutiqueBag.splice(index, 1);
+      localStorage.setItem('theirnibs_bag', JSON.stringify(boutiqueBag));
+      updateCartBadge();
+      renderCartItems();
+    }
+
+    let hasGiftWrap = false;
+    function toggleGiftWrap(btn) {
+      hasGiftWrap = !hasGiftWrap;
+      const wrapBtn = btn || document.getElementById('giftWrapBtn');
+      if (wrapBtn) wrapBtn.textContent = hasGiftWrap ? '✓' : '+';
+      renderCartItems();
+    }
+
+    let availableCouponsList = [];
+    let appliedCouponData = null;
+
+    try {
+      const savedCoupon = localStorage.getItem('theirnibs_applied_coupon');
+      if (savedCoupon) {
+        appliedCouponData = JSON.parse(savedCoupon);
+      }
+    } catch(e) {}
+
+    function fetchAvailableCoupons(callback) {
+      fetch('/api/coupons/available/')
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 'success') {
+            availableCouponsList = data.coupons || [];
+            renderCartCouponsDropdown();
+            if (callback) callback(availableCouponsList);
+          }
+        })
+        .catch(err => {
+          console.error('Error fetching available coupons:', err);
+        });
+    }
+
+    function openCartCouponsDropdown() {
+      const dropdown = document.getElementById('cartCouponsDropdown');
+      if (dropdown) {
+        dropdown.style.display = 'block';
+        fetchAvailableCoupons();
+      }
+    }
+
+    function closeCartCouponsDropdown() {
+      const dropdown = document.getElementById('cartCouponsDropdown');
+      if (dropdown) dropdown.style.display = 'none';
+    }
+
+    function toggleCartCouponsDropdown() {
+      const dropdown = document.getElementById('cartCouponsDropdown');
+      if (!dropdown) return;
+      if (dropdown.style.display === 'none' || !dropdown.style.display) {
+        openCartCouponsDropdown();
+      } else {
+        closeCartCouponsDropdown();
+      }
+    }
+
+    function getCartSubtotalRaw() {
+      let sub = 0;
+      boutiqueBag.forEach(item => {
+        sub += (item.price || 48.00) * (item.qty || 1);
+      });
+      if (hasGiftWrap) sub += 5.00;
+      return sub;
+    }
+
+    function renderCartCouponsDropdown() {
+      const listEl = document.getElementById('cartCouponsList');
+      if (!listEl) return;
+
+      if (!availableCouponsList || availableCouponsList.length === 0) {
+        listEl.innerHTML = '<div style="padding: 12px; text-align: center; color: #64748b; font-size: 0.78rem;">No active seller coupons right now.</div>';
+        return;
+      }
+
+      const currentSubtotal = getCartSubtotalRaw();
+      const appliedCode = appliedCouponData ? (appliedCouponData.code || '').toUpperCase() : '';
+
+      let html = '';
+      availableCouponsList.forEach(c => {
+        const isApplied = appliedCode === c.code.toUpperCase();
+        const meetsMin = currentSubtotal >= (c.min_order || 0);
+        const diff = Math.max(0, (c.min_order || 0) - currentSubtotal);
+
+        html += `
+          <div class="coupon-item-card ${isApplied ? 'is-applied' : ''}" onclick="selectCartCoupon('${c.code}')">
+            <div class="coupon-card-top">
+              <span class="coupon-badge-code">${c.code}</span>
+              <span class="coupon-badge-discount">${c.discount_display}</span>
+            </div>
+            <div class="coupon-desc-text">${c.description}</div>
+            ${!meetsMin ? `<span class="coupon-min-hint">Min order ${c.min_order_display} (Add ₹${diff.toFixed(2)} more)</span>` : ''}
+            <div class="coupon-card-bottom">
+              <span>${c.validity}</span>
+              <button type="button" class="coupon-apply-btn ${isApplied ? 'applied' : ''}" onclick="event.stopPropagation(); selectCartCoupon('${c.code}')">
+                ${isApplied ? 'Applied ✓' : 'Apply'}
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      listEl.innerHTML = html;
+    }
+
+    function selectCartCoupon(code) {
+      const input = document.getElementById('cartDiscountInput');
+      if (input) input.value = code;
+      applyCartDiscount(code);
+    }
+
+    function applyCartDiscount(codeOverride) {
+      const input = document.getElementById('cartDiscountInput');
+      const code = (codeOverride || (input ? input.value : '')).trim().toUpperCase();
+
+      if (!code) {
+        showToast('Please enter a discount code.');
+        return;
+      }
+
+      const subtotal = getCartSubtotalRaw();
+
+      fetch('/api/coupons/apply/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken') || ''
+        },
+        body: JSON.stringify({ code: code, subtotal: subtotal })
+      })
+      .then(res => res.json().then(data => ({ status: res.status, body: data })))
+      .then(result => {
+        if (result.status === 200 && result.body.status === 'success') {
+          appliedCouponData = result.body;
+          localStorage.setItem('theirnibs_applied_coupon', JSON.stringify(result.body));
+          closeCartCouponsDropdown();
+          showToast(result.body.message || `Coupon "${code}" applied!`);
+          renderCartItems();
+        } else {
+          showToast(result.body.message || 'Invalid discount code.');
+        }
+      })
+      .catch(err => {
+        console.error('Apply coupon error:', err);
+        showToast('Failed to apply discount code. Please try again.');
+      });
+    }
+
+    function removeCartCoupon() {
+      fetch('/api/coupons/remove/', { method: 'POST', headers: { 'X-CSRFToken': getCookie('csrftoken') || '' } })
+        .catch(() => {});
+      appliedCouponData = null;
+      localStorage.removeItem('theirnibs_applied_coupon');
+      const input = document.getElementById('cartDiscountInput');
+      if (input) input.value = '';
+      showToast('Coupon removed.');
+      renderCartItems();
+      renderCartCouponsDropdown();
+    }
+
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+
+    document.addEventListener('click', function(e) {
+      const wrapper = document.getElementById('cartDiscountWrapper');
+      const dropdown = document.getElementById('cartCouponsDropdown');
+      if (wrapper && dropdown && !wrapper.contains(e.target)) {
+        dropdown.style.display = 'none';
+      }
+    });
+
+    function renderCartItems() {
+      const container = document.getElementById('cartItemsList');
+      const footer = document.getElementById('cartFooter');
+      const subtotalEl = document.getElementById('cartSubtotal');
+      const shippingBanner = document.getElementById('cartShippingBanner');
+      const freeShippingNotice = document.getElementById('freeShippingNotice');
+
+      if (!container) return;
+
+      if (boutiqueBag.length === 0) {
+        container.innerHTML = `
+          <div class="cart-empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 12px; opacity: 0.6;">
+              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="M16 10a4 4 0 0 1-8 0"/>
+            </svg>
+            <p>Your shopping bag is currently empty.</p>
+            <button type="button" onclick="triggerExploreNewInLoader('/collections/new-in-1/')" style="margin-top: 14px; padding: 10px 22px; background: #1d1d1b; color: #fff; border: none; border-radius: 4px; font-size: 0.85rem; font-weight: 600; cursor: pointer; letter-spacing: 0.04em;">Explore New In</button>
+          </div>
+        `;
+        if (footer) footer.style.display = 'none';
+        if (shippingBanner) shippingBanner.style.display = 'none';
+        return;
+      }
+
+      if (shippingBanner) shippingBanner.style.display = 'flex';
+
+      let subtotal = 0;
+      let html = '';
+      boutiqueBag.forEach((item, idx) => {
+        const itemTotal = (item.price || 48.00) * (item.qty || 1);
+        subtotal += itemTotal;
+        const colorDisplay = item.color || 'Black';
+        html += `
+          <div class="cart-item-row">
+            <img src="${item.image}" alt="${item.title}" class="cart-item-img" onerror="this.src='/static/images/products/womens-duck-egg-wisteria.png';">
+            <div class="cart-item-info">
+              <div>
+                <h4 class="cart-item-title">${item.title}</h4>
+                <div class="cart-item-meta">${colorDisplay} / ${item.size}</div>
+              </div>
+              <div class="cart-item-price-row">
+                <span class="cart-item-price">₹${itemTotal.toFixed(2)}</span>
+                <button type="button" class="cart-item-remove" onclick="removeFromBag(${idx})">Remove</button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      if (hasGiftWrap) {
+        subtotal += 5.00;
+      }
+
+      container.innerHTML = html;
+
+      const threshold = 60.00;
+      const remaining = Math.max(0, threshold - subtotal);
+      if (freeShippingNotice) {
+        if (remaining > 0) {
+          freeShippingNotice.textContent = 'Only ₹' + remaining.toFixed(2) + ' away from free shipping!';
+        } else {
+          freeShippingNotice.textContent = "🎉 You've unlocked FREE shipping!";
+        }
+      }
+
+      if (subtotalEl) {
+        subtotalEl.textContent = '₹' + subtotal.toFixed(2) + ' INR';
+      }
+
+      let discountAmount = 0;
+      const discountRow = document.getElementById('cartDiscountRow');
+      const discountLabel = document.getElementById('cartDiscountLabel');
+      const discountVal = document.getElementById('cartDiscountVal');
+      const estimatedTotalRow = document.getElementById('cartEstimatedTotalRow');
+      const grandTotalEl = document.getElementById('cartGrandTotal');
+      const appliedPill = document.getElementById('cartAppliedCouponPill');
+      const appliedCodeEl = document.getElementById('cartAppliedCode');
+      const appliedSavingsEl = document.getElementById('cartAppliedSavings');
+
+      if (appliedCouponData && appliedCouponData.code) {
+        const minReq = appliedCouponData.min_order_amount || 0;
+        if (subtotal >= minReq) {
+          if (appliedCouponData.discount_type === 'percentage') {
+            discountAmount = subtotal * (appliedCouponData.discount_value / 100);
+            if (appliedCouponData.max_discount && discountAmount > appliedCouponData.max_discount) {
+              discountAmount = appliedCouponData.max_discount;
+            }
+          } else {
+            discountAmount = Math.min(subtotal, appliedCouponData.discount_value || appliedCouponData.discount_amount);
+          }
+
+          if (discountRow && discountLabel && discountVal) {
+            discountLabel.textContent = appliedCouponData.code;
+            discountVal.textContent = `-₹${discountAmount.toFixed(2)}`;
+            discountRow.style.display = 'flex';
+          }
+          if (appliedPill && appliedCodeEl && appliedSavingsEl) {
+            appliedCodeEl.textContent = appliedCouponData.code;
+            appliedSavingsEl.textContent = `(-₹${discountAmount.toFixed(2)})`;
+            appliedPill.style.display = 'flex';
+          }
+          if (estimatedTotalRow && grandTotalEl) {
+            const finalTotal = Math.max(0, subtotal - discountAmount);
+            grandTotalEl.textContent = `₹${finalTotal.toFixed(2)} INR`;
+            estimatedTotalRow.style.display = 'flex';
+          }
+        } else {
+
+          if (discountRow) discountRow.style.display = 'none';
+          if (estimatedTotalRow) estimatedTotalRow.style.display = 'none';
+          if (appliedPill && appliedCodeEl && appliedSavingsEl) {
+            appliedCodeEl.textContent = appliedCouponData.code;
+            appliedSavingsEl.textContent = `(Min ₹${minReq} req)`;
+            appliedPill.style.display = 'flex';
+          }
+        }
+      } else {
+        if (discountRow) discountRow.style.display = 'none';
+        if (estimatedTotalRow) estimatedTotalRow.style.display = 'none';
+        if (appliedPill) appliedPill.style.display = 'none';
+      }
+
+      if (footer) footer.style.display = 'block';
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('boutiqueToast');
+      const toastMsg = document.getElementById('toastMessage');
+      if (toast && toastMsg) {
+        toastMsg.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3200);
+      }
+    }
+
+    function toggleWishlist(btn) {
+      btn.classList.toggle('active');
+      const isFavorited = btn.classList.contains('active');
+      if (isFavorited) {
+        btn.querySelector('svg').setAttribute('fill', '#e47e56');
+        btn.querySelector('svg').style.stroke = '#e47e56';
+        showToast('Saved to your wishlist!');
+      } else {
+        btn.querySelector('svg').setAttribute('fill', 'none');
+        btn.querySelector('svg').style.stroke = 'currentColor';
+        showToast('Removed from your wishlist.');
+      }
+    }
+
+    function triggerExploreNewInLoader(targetUrl) {
+      closeCartDrawer();
+      const loader = document.getElementById('clothifyPageLoader');
+      const bar = document.getElementById('clothifyTopProgress');
+      const statusElem = document.getElementById('preloaderStatusText');
+      const dest = targetUrl || '/collections/new-in-1/';
+
+      if (loader) {
+        if (statusElem) {
+          statusElem.textContent = "Entering Women's New In Collection... (2s)";
+        }
+        loader.classList.remove('fade-out');
+      }
+
+      if (bar) {
+        bar.classList.remove('finished');
+        bar.classList.add('active');
+        bar.style.width = '5%';
+      }
+
+      let elapsedMs = 0;
+      const totalMs = 10000;
+      const intervalMs = 100;
+
+      const timer = setInterval(() => {
+        elapsedMs += intervalMs;
+        const pct = Math.min(97, Math.floor((elapsedMs / totalMs) * 100));
+        if (bar) bar.style.width = pct + '%';
+        if (statusElem) {
+          const remainingSecs = Math.max(1, Math.ceil((totalMs - elapsedMs) / 1000));
+          statusElem.textContent = `Entering Women's New In Collection... (${remainingSecs}s)`;
+        }
+      }, intervalMs);
+
+      setTimeout(() => {
+        clearInterval(timer);
+        if (bar) {
+          bar.style.width = '100%';
+          bar.classList.add('finished');
+        }
+        if (statusElem) {
+          statusElem.textContent = "Welcome to Their Nibs New In";
+        }
+        setTimeout(() => {
+          window.location.href = dest;
+        }, 250);
+      }, totalMs);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      updateCartBadge();
+
+      const megaItem = document.querySelector('.nav-item.has-mega-menu');
+      const megaMenu = document.querySelector('.women-mega-menu');
+
+      if (megaItem && megaMenu) {
+        let megaCloseTimer = null;
+
+        function openMega() {
+          clearTimeout(megaCloseTimer);
+          megaItem.classList.add('is-open');
+          megaMenu.style.opacity = '1';
+          megaMenu.style.visibility = 'visible';
+          megaMenu.style.pointerEvents = 'auto';
+          megaMenu.style.transform = 'translateX(-50%) translateY(0)';
+        }
+
+        function scheduleCloseMega() {
+          clearTimeout(megaCloseTimer);
+          megaCloseTimer = setTimeout(() => {
+            megaItem.classList.remove('is-open');
+            megaMenu.style.opacity = '';
+            megaMenu.style.visibility = '';
+            megaMenu.style.pointerEvents = '';
+            megaMenu.style.transform = '';
+          }, 250); 
+        }
+
+        megaItem.addEventListener('mouseenter', openMega);
+        megaItem.addEventListener('mouseleave', scheduleCloseMega);
+        megaMenu.addEventListener('mouseenter', openMega);
+        megaMenu.addEventListener('mouseleave', scheduleCloseMega);
+
+        const menuLinks = megaMenu.querySelectorAll('a');
+        menuLinks.forEach(a => {
+          a.addEventListener('click', function(e) {
+            e.stopPropagation();
+          });
+        });
+      }
+    });
+  </script>
+  <script src="/static/js/preloader.js?v=20261012-loader10s"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

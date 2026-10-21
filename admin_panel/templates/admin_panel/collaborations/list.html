@@ -1,0 +1,199 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Brand Collaborations &amp; Influencer Desk{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Brand Collaborations &amp; PR Influencer Desk</h1>
+        <p class="page-subtitle">Manage high-fashion influencer partnerships, gifting campaigns, sponsored Lookbooks, and co-branded boutique initiatives.</p>
+    </div>
+    <div class="page-actions">
+        <a href="/admin-panel/coupons/add/" class="btn btn-primary">
+            <span>+ Create Influencer Promo Code</span>
+        </a>
+    </div>
+</div>
+
+<div class="stats-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 1.15rem;">
+    <div class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-title">Total Collaborations</span>
+        </div>
+        <div class="stat-value">{{ total_collabs }}</div>
+        <div class="stat-subtext"><span class="stat-trend-up">Creator proposals &amp; campaigns</span></div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-title">Active Campaigns</span>
+        </div>
+        <div class="stat-value">{{ active_campaigns }}</div>
+        <div class="stat-subtext"><span class="stat-trend-up">Approved, dispatched or live</span></div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-title">Audience Reach</span>
+        </div>
+        <div class="stat-value">{{ total_reach_formatted }}</div>
+        <div class="stat-subtext"><span class="stat-trend-up">Cumulative creator followers</span></div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-title">PR &amp; Sponsoring Value</span>
+        </div>
+        <div class="stat-value">₹{{ total_investment|floatformat:0 }}</div>
+        <div class="stat-subtext"><span class="stat-trend-up">Gifting + sponsorship budget</span></div>
+    </div>
+</div>
+
+<form method="GET" class="filter-bar">
+    <div class="search-input">
+        <input type="text" name="q" value="{{ current_q }}" class="form-control" placeholder="Search creator name, @handle, email, campaign ID...">
+    </div>
+    <div style="min-width: 150px;">
+        <select name="platform" class="form-select" onchange="this.form.submit()">
+            <option value="">All Platforms</option>
+            <option value="instagram" {% if current_platform == 'instagram' %}selected{% endif %}>Instagram</option>
+            <option value="youtube" {% if current_platform == 'youtube' %}selected{% endif %}>YouTube</option>
+            <option value="pinterest" {% if current_platform == 'pinterest' %}selected{% endif %}>Pinterest</option>
+            <option value="tiktok" {% if current_platform == 'tiktok' %}selected{% endif %}>TikTok / Reels</option>
+            <option value="celebrity" {% if current_platform == 'celebrity' %}selected{% endif %}>Celebrity / Stylist</option>
+            <option value="designer" {% if current_platform == 'designer' %}selected{% endif %}>Designer Brand</option>
+        </select>
+    </div>
+    <div style="min-width: 160px;">
+        <select name="status" class="form-select" onchange="this.form.submit()">
+            <option value="all">All Campaign Statuses</option>
+            <option value="inquiry" {% if current_status == 'inquiry' %}selected{% endif %}>Initial Inquiry</option>
+            <option value="approved" {% if current_status == 'approved' %}selected{% endif %}>Approved / Contracted</option>
+            <option value="dispatched" {% if current_status == 'dispatched' %}selected{% endif %}>Garment Dispatched</option>
+            <option value="published" {% if current_status == 'published' %}selected{% endif %}>Content Live</option>
+            <option value="completed" {% if current_status == 'completed' %}selected{% endif %}>Completed</option>
+            <option value="rejected" {% if current_status == 'rejected' %}selected{% endif %}>Declined</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
+    <a href="/admin-panel/collaborations/" class="btn btn-secondary btn-sm">Reset</a>
+</form>
+
+<div class="clothify-card">
+    <div class="card-header" style="display: flex; align-items: center; justify-content: space-between;">
+        <h3 class="card-title">Creator &amp; Influencer Partnership Pipeline</h3>
+        <span style="font-size: 0.78rem; color: var(--text-muted);">{{ collaborations.paginator.count }} creator records</span>
+    </div>
+    <div class="table-responsive">
+        <table class="clothify-table">
+            <thead>
+                <tr>
+                    <th>Creator &amp; Social Profile</th>
+                    <th>Audience &amp; Platform</th>
+                    <th>Type &amp; Budget</th>
+                    <th>Deliverables &amp; Content</th>
+                    <th>Campaign Status</th>
+                    <th style="text-align: right;">Workflow Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for col in collaborations %}
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.65rem;">
+                            <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #1e2632, #7c3aed); color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem; flex-shrink: 0;">
+                                {{ col.creator_name|slice:":1"|upper }}
+                            </div>
+                            <div>
+                                <strong style="font-size: 0.9rem; color: var(--primary);">{{ col.creator_name }}</strong>
+                                <div style="font-size: 0.76rem; color: var(--accent); font-weight: 600;">{{ col.handle }}</div>
+                                <div style="font-size: 0.70rem; color: var(--text-muted);">{{ col.email }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.15rem 0.5rem; background: #f5f3ff; color: #7c3aed; border-radius: 4px; font-weight: 700; font-size: 0.75rem;">
+                            {{ col.get_platform_display }}
+                        </div>
+                        <div style="font-size: 0.82rem; font-weight: 700; color: var(--primary); margin-top: 0.2rem;">
+                            {{ col.formatted_followers }} followers
+                        </div>
+                        <div style="font-size: 0.70rem; color: var(--text-muted);">{{ col.engagement_rate }}% engagement</div>
+                    </td>
+                    <td>
+                        <div style="font-size: 0.82rem; font-weight: 600; color: var(--primary);">{{ col.get_collab_type_display }}</div>
+                        <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.05rem; font-weight: 700; color: var(--accent);">
+                            ₹{{ col.budget_or_value|floatformat:0 }}
+                        </div>
+                    </td>
+                    <td style="max-width: 260px;">
+                        <div style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4;">
+                            {{ col.deliverables|default:"Pending scope definition" }}
+                        </div>
+                        {% if col.content_link %}
+                        <a href="{{ col.content_link }}" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.72rem; color: #2563eb; font-weight: 600; margin-top: 0.25rem; text-decoration: none;">
+                            <span>View Live Post ↗</span>
+                        </a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if col.status == 'published' or col.status == 'completed' %}
+                        <span class="status-badge status-delivered">✓ {{ col.get_status_display }}</span>
+                        {% elif col.status == 'approved' or col.status == 'dispatched' %}
+                        <span class="status-badge status-shipped">🌟 {{ col.get_status_display }}</span>
+                        {% elif col.status == 'inquiry' or col.status == 'in_review' %}
+                        <span class="status-badge status-pending">⏳ {{ col.get_status_display }}</span>
+                        {% else %}
+                        <span class="status-badge status-cancelled">✕ Declined</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: right;">
+                        <div style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                            {% if col.status == 'inquiry' or col.status == 'in_review' %}
+                            <a href="/admin-panel/collaborations/{{ col.id }}/approve/" class="btn btn-sm btn-primary" title="Approve Collaboration" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">
+                                Approve
+                            </a>
+                            <a href="/admin-panel/collaborations/{{ col.id }}/reject/" class="btn btn-sm btn-secondary" title="Decline" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; color: var(--danger);">
+                                Decline
+                            </a>
+                            {% elif col.status == 'approved' %}
+                            <a href="/admin-panel/collaborations/{{ col.id }}/dispatch/" class="btn btn-sm btn-secondary" title="Mark Garment Dispatched" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">
+                                Dispatch Garment
+                            </a>
+                            {% elif col.status == 'dispatched' %}
+                            <a href="/admin-panel/collaborations/{{ col.id }}/publish/" class="btn btn-sm btn-primary" title="Mark Content Live" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">
+                                Mark Live
+                            </a>
+                            {% elif col.status == 'published' %}
+                            <a href="/admin-panel/collaborations/{{ col.id }}/complete/" class="btn btn-sm btn-secondary" title="Complete Campaign" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">
+                                Complete
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2.5rem 1rem;">
+                        No collaborations found matching the criteria.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if collaborations.has_other_pages %}
+    <div class="card-footer" style="padding: 0.75rem 1.25rem; display: flex; justify-content: flex-end; gap: 0.5rem;">
+        {% if collaborations.has_previous %}
+        <a href="?page={{ collaborations.previous_page_number }}&status={{ current_status }}&platform={{ current_platform }}&q={{ current_q }}" class="btn btn-secondary btn-sm">Previous</a>
+        {% endif %}
+        <span style="display: flex; align-items: center; padding: 0 0.5rem; font-size: 0.8rem; color: var(--text-muted);">
+            Page {{ collaborations.number }} of {{ collaborations.paginator.num_pages }}
+        </span>
+        {% if collaborations.has_next %}
+        <a href="?page={{ collaborations.next_page_number }}&status={{ current_status }}&platform={{ current_platform }}&q={{ current_q }}" class="btn btn-secondary btn-sm">Next</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

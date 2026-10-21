@@ -1,0 +1,237 @@
+{% extends 'seller_panel/base.html' %}
+
+{% block title %}Earnings &amp; Revenue{% endblock %}
+{% block page_heading %}Finance — Sales &amp; Net Earnings Overview{% endblock %}
+
+{% block content %}
+<style>
+    .chart-toggle-btn {
+        padding: 4px 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border-radius: 4px;
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+        color: #475569;
+        cursor: pointer;
+    }
+    .chart-toggle-btn.active {
+        background: #2b5329;
+        color: #ffffff;
+        border-color: #2b5329;
+    }
+</style>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; margin: 0; color: var(--primary); font-weight: 700;">
+            Seller Revenue &amp; Earnings Overview
+        </h2>
+        <span style="font-size: 0.88rem; color: var(--text-muted);">
+            Track gross product sales, platform commission deductions, net settled revenue, and payout eligibility.
+        </span>
+    </div>
+    <button type="button" class="btn btn-secondary" style="padding: 8px 18px; font-weight: 600; font-size: 0.88rem; background: #ffffff; border: 1px solid #cbd5e1;" onclick="alert('Downloading full seller earnings report (CSV/PDF)...');">
+        <i class="bi bi-download me-1"></i> Download Report
+    </button>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+
+    <div class="clothify-card" style="padding: 1.1rem 1.35rem;  background: #ffffff;">
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); letter-spacing: 0.05em;">
+            Total Gross Sales
+        </div>
+        <div class="seller-card-value" style="color: var(--primary, #2b5329); margin-top: 4px;">
+            <span class="seller-card-currency">₹</span>{{ total_sales_formatted|default:"1,84,500" }}
+        </div>
+        <div style="font-size: 0.8rem; color: #16a34a; font-weight: 600; margin-top: 4px;">
+            +18.5% from last period
+        </div>
+    </div>
+
+    <div class="clothify-card" style="padding: 1.1rem 1.35rem;  background: #ffffff;">
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); letter-spacing: 0.05em;">
+            Net Seller Earnings
+        </div>
+        <div class="seller-card-value" style="color: #16a34a; margin-top: 4px;">
+            <span class="seller-card-currency">₹</span>{{ net_earnings_formatted|default:"1,56,825" }}
+        </div>
+        <div style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">
+            After 15% platform fee deduction
+        </div>
+    </div>
+
+    <div class="clothify-card" style="padding: 1.1rem 1.35rem;  background: #ffffff;">
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); letter-spacing: 0.05em;">
+            Pending Earnings
+        </div>
+        <div class="seller-card-value" style="color: #d97706; margin-top: 4px;">
+            <span class="seller-card-currency">₹</span>{{ pending_earnings_formatted|default:"14,145" }}
+        </div>
+        <div style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">
+            Awaiting order delivery/settlement
+        </div>
+    </div>
+
+    <div class="clothify-card" style="padding: 1.1rem 1.35rem;  background: #ffffff;">
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); letter-spacing: 0.05em;">
+            Available for Payout
+        </div>
+        <div class="seller-card-value" style="color: #0284c7; margin-top: 4px;">
+            <span class="seller-card-currency">₹</span>{{ available_for_payout_formatted|default:"42,680" }}
+        </div>
+        <div style="font-size: 0.8rem; color: #0284c7; font-weight: 600; margin-top: 4px;">
+            Eligible for next Friday withdrawal
+        </div>
+    </div>
+</div>
+
+<div class="clothify-card" style="padding: 1.25rem 1.5rem; background: #ffffff; margin-bottom: 1.5rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+        <div>
+            <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; margin: 0; color: var(--primary); font-weight: 700;">
+                Earnings &amp; Revenue Trends
+            </h3>
+            <span style="font-size: 0.82rem; color: #64748b;">Comparative breakdown of gross sales vs net earnings</span>
+        </div>
+        <div style="display: flex; gap: 4px;">
+            <button class="chart-toggle-btn" onclick="updateEarningsChart('daily', this)">Daily</button>
+            <button class="chart-toggle-btn active" onclick="updateEarningsChart('weekly', this)">Weekly</button>
+            <button class="chart-toggle-btn" onclick="updateEarningsChart('monthly', this)">Monthly</button>
+            <button class="chart-toggle-btn" onclick="updateEarningsChart('yearly', this)">Yearly</button>
+        </div>
+    </div>
+    <div style="height: 280px; position: relative;">
+        <canvas id="sellerEarningsChart"></canvas>
+    </div>
+</div>
+
+<div class="clothify-card" style="padding: 0; overflow: hidden;">
+    <div style="padding: 1rem 1.25rem; border-bottom: 1px solid #e2e8f0; background: #faf8f5;">
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; margin: 0; color: var(--primary); font-weight: 700;">
+            Recent Order Earnings &amp; Fee Deductions
+        </h3>
+    </div>
+    <div style="overflow-x: auto;">
+        <table class="clothify-table" style="width: 100%; font-size: 0.88rem; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #faf6f0; border-bottom: 1px solid var(--seller-border, #e5e7eb);">
+                    <th style="padding: 10px 14px; text-align: left;">ORDER REF</th>
+                    <th style="padding: 10px 14px; text-align: left;">GARMENT ITEM</th>
+                    <th style="padding: 10px 14px; text-align: right;">GROSS SALE (₹)</th>
+                    <th style="padding: 10px 14px; text-align: right;">COMMISSION (15%)</th>
+                    <th style="padding: 10px 14px; text-align: right;">NET EARNINGS (₹)</th>
+                    <th style="padding: 10px 14px; text-align: center;">DATE</th>
+                    <th style="padding: 10px 14px; text-align: center;">SETTLEMENT STATUS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if recent_earnings %}
+                    {% for e in recent_earnings %}
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                        <td style="padding: 10px 14px; font-weight: 700; color: var(--primary);">
+                            {{ e.order_number }}
+                        </td>
+                        <td style="padding: 10px 14px; font-weight: 600; color: #334155;">
+                            {{ e.product_name }}
+                        </td>
+                        <td style="padding: 10px 14px; text-align: right; font-weight: 600; color: #1e293b;">
+                            ₹{{ e.gross_amount|floatformat:2 }}
+                        </td>
+                        <td style="padding: 10px 14px; text-align: right; font-weight: 600; color: #dc2626;">
+                            -₹{{ e.commission|floatformat:2 }}
+                        </td>
+                        <td style="padding: 10px 14px; text-align: right; font-weight: 700; color: #16a34a;">
+                            ₹{{ e.net_earnings|floatformat:2 }}
+                        </td>
+                        <td style="padding: 10px 14px; text-align: center; font-size: 0.82rem; color: #64748b;">
+                            {{ e.date }}
+                        </td>
+                        <td style="padding: 10px 14px; text-align: center;">
+                            <span class="badge-status {{ e.badge_class }}">{{ e.status }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">No recent earnings records available.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    let earningsChartObj = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('sellerEarningsChart').getContext('2d');
+        earningsChartObj = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [
+                    {
+                        label: 'Gross Sales (₹)',
+                        data: [18500, 22000, 19400, 28000, 31000, 35000, 30600],
+                        borderColor: '#2b5329',
+                        backgroundColor: 'rgba(43, 83, 41, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                    },
+                    {
+                        label: 'Net Earnings (₹)',
+                        data: [15725, 18700, 16490, 23800, 26350, 29750, 26010],
+                        borderColor: '#16a34a',
+                        borderDash: [5, 5],
+                        backgroundColor: 'transparent',
+                        tension: 0.3,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    y: {
+                        ticks: {
+                            callback: function(val) { return '₹' + val.toLocaleString(); }
+                        }
+                    }
+                }
+            }
+        });
+    });
+
+    function updateEarningsChart(period, btn) {
+        document.querySelectorAll('.chart-toggle-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        if (!earningsChartObj) return;
+
+        if (period === 'daily') {
+            earningsChartObj.data.labels = ['09:00', '12:00', '15:00', '18:00', '21:00'];
+            earningsChartObj.data.datasets[0].data = [3500, 5200, 8900, 12400, 15000];
+            earningsChartObj.data.datasets[1].data = [2975, 4420, 7565, 10540, 12750];
+        } else if (period === 'weekly') {
+            earningsChartObj.data.labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            earningsChartObj.data.datasets[0].data = [18500, 22000, 19400, 28000, 31000, 35000, 30600];
+            earningsChartObj.data.datasets[1].data = [15725, 18700, 16490, 23800, 26350, 29750, 26010];
+        } else if (period === 'monthly') {
+            earningsChartObj.data.labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+            earningsChartObj.data.datasets[0].data = [42000, 48500, 45000, 49000];
+            earningsChartObj.data.datasets[1].data = [35700, 41225, 38250, 41650];
+        } else if (period === 'yearly') {
+            earningsChartObj.data.labels = ['Q1', 'Q2', 'Q3', 'Q4'];
+            earningsChartObj.data.datasets[0].data = [120000, 155000, 184500, 210000];
+            earningsChartObj.data.datasets[1].data = [102000, 131750, 156825, 178500];
+        }
+        earningsChartObj.update();
+    }
+</script>
+{% endblock %}

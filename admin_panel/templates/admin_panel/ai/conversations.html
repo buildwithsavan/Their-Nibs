@@ -1,0 +1,81 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}AI Conversations Log{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">AI Stylist Conversations Log</h1>
+        <p class="page-subtitle">Inspect customer dialogue patterns and search requests. (API keys & PII strictly redacted).</p>
+    </div>
+</div>
+
+<form method="GET" class="filter-bar">
+    <div class="search-input">
+        <input type="text" name="q" value="{{ current_q }}" class="form-control" placeholder="Search conversation ID or title...">
+    </div>
+    <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
+    <a href="/admin-panel/ai/conversations/" class="btn btn-secondary btn-sm">Reset</a>
+</form>
+
+<div class="clothify-card">
+    <div class="card-header">
+        <h3 class="card-title">Customer AI Assistant Sessions</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="clothify-table">
+            <thead>
+                <tr>
+                    <th>Conversation ID</th>
+                    <th>User / Session</th>
+                    <th>Topic / Title</th>
+                    <th>Inquiry Category</th>
+                    <th>Message Count</th>
+                    <th>Date Started</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for conv in conversations %}
+                <tr>
+                    <td><strong style="color: #fff; font-family: monospace;">{{ conv.conversation_id }}</strong></td>
+                    <td>{{ conv.user.username|default:"Guest Shopper" }}</td>
+                    <td>{{ conv.title }}</td>
+                    <td>
+                        <span class="status-badge status-info">{{ conv.get_request_type_display }}</span>
+                    </td>
+                    <td><strong>{{ conv.message_count }}</strong> turns</td>
+                    <td style="font-size: 0.8rem; color: var(--text-muted);">{{ conv.created_at|date:"M d, Y H:i" }}</td>
+                    <td>
+                        <span class="status-badge status-{{ conv.status }}">{{ conv.get_status_display }}</span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                        No conversational sessions recorded yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if conversations.has_other_pages %}
+    <div class="clothify-pagination">
+        <span style="font-size: 0.82rem; color: var(--text-muted);">
+            Page {{ conversations.number }} of {{ conversations.paginator.num_pages }}
+        </span>
+        <div class="pagination-links">
+            {% if conversations.has_previous %}
+            <a href="?page={{ conversations.previous_page_number }}&q={{ current_q }}" class="page-btn">Prev</a>
+            {% endif %}
+            <span class="page-btn active">{{ conversations.number }}</span>
+            {% if conversations.has_next %}
+            <a href="?page={{ conversations.next_page_number }}&q={{ current_q }}" class="page-btn">Next</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,315 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Cash on Delivery (CoD) Approvals | Their Nibs Admin{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Cash on Delivery (CoD) Verification &amp; Approvals</h1>
+        <p class="page-subtitle">Administrative moderation for Cash on Delivery orders. Every customer CoD request requires approval before garments are prepared and dispatched.</p>
+    </div>
+    <div class="page-actions">
+        <a href="/admin-panel/orders/" class="btn btn-secondary">
+            <span>&larr; View All Standard Orders</span>
+        </a>
+    </div>
+</div>
+
+<div class="stats-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 1.25rem;">
+    <div class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-title">Total CoD Requests</span>
+        </div>
+        <div class="stat-value">{{ total_cod }}</div>
+        <div class="stat-subtext"><span class="stat-trend-up">All Cash on Delivery submissions</span></div>
+    </div>
+
+    <div class="stat-card" style="border: 1px solid #fed7aa; background: #fffcf8;">
+        <div class="stat-card-header">
+            <span class="stat-title" style="color: #c2410c; font-weight: 700;">Awaiting Admin Approval</span>
+        </div>
+        <div class="stat-value" style="color: #c2410c;">{{ pending_cod }}</div>
+        <div class="stat-subtext">
+            {% if pending_cod > 0 %}
+            <span class="stat-trend-down" style="color: #c2410c; font-weight: 700;">Immediate action needed</span>
+            {% else %}
+            <span class="stat-trend-up">Zero pending approvals</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-title">Approved Orders</span>
+        </div>
+        <div class="stat-value">{{ approved_cod }}</div>
+        <div class="stat-subtext"><span class="stat-trend-up">Cleared for tailoring &amp; dispatch</span></div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-title">Rejected Requests</span>
+        </div>
+        <div class="stat-value">{{ rejected_cod }}</div>
+        <div class="stat-subtext"><span class="stat-trend-down">Customer notified via email</span></div>
+    </div>
+</div>
+
+<form method="GET" class="filter-bar" style="margin-bottom: 1.25rem;">
+    <div class="search-input" style="flex: 1;">
+        <input type="text" name="q" value="{{ current_q }}" class="form-control" placeholder="Search by Order #, Customer Name, Email, Phone, City...">
+    </div>
+    <div style="min-width: 190px;">
+        <select name="status" class="form-select" onchange="this.form.submit()">
+            <option value="all" {% if current_status == 'all' %}selected{% endif %}>All CoD Requests</option>
+            <option value="pending" {% if current_status == 'pending' %}selected{% endif %}>Pending Approval ({{ pending_cod }})</option>
+            <option value="approved" {% if current_status == 'approved' %}selected{% endif %}>Approved CoD</option>
+            <option value="rejected" {% if current_status == 'rejected' %}selected{% endif %}>Rejected CoD</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
+    <a href="/admin-panel/cod-requests/" class="btn btn-secondary btn-sm">Reset</a>
+</form>
+
+<div class="clothify-card">
+    <div class="card-header" style="display: flex; align-items: center; justify-content: space-between;">
+        <h3 class="card-title">Cash on Delivery Orders Governance</h3>
+        <span style="font-size: 0.78rem; color: var(--text-muted);">{{ orders.paginator.count }} orders recorded</span>
+    </div>
+
+    <div class="table-responsive" style="overflow-x: hidden; width: 100%;">
+        <table class="clothify-table" style="width: 100%; table-layout: auto;">
+            <thead>
+                <tr>
+                    <th style="width: 15%;">Order &amp; Date</th>
+                    <th style="width: 25%;">Customer &amp; Shipping Details</th>
+                    <th style="width: 27%;">Ordered Garment(s) &amp; Specs</th>
+                    <th style="width: 11%;">Order Total</th>
+                    <th style="width: 10%;">CoD Status</th>
+                    <th style="text-align: right; width: 12%;">Admin Moderation</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr style="{% if order.cod_status == 'pending' %}background-color: #fffdfa;{% endif %}">
+
+                    <td>
+                        <a href="/admin-panel/orders/{{ order.id }}/" style="font-weight: 700; color: var(--primary); text-decoration: none; font-size: 0.95rem;">
+                            #{{ order.order_number }}
+                        </a>
+                        <div style="font-size: 0.74rem; color: var(--text-muted); margin-top: 0.2rem;">
+                            {{ order.created_at|date:"d M Y, h:i A" }}
+                        </div>
+                        <span style="display: inline-block; margin-top: 0.35rem; font-size: 0.68rem; padding: 0.15rem 0.45rem; background: #f1f5f9; border-radius: 4px; color: #475569; font-weight: 600;">
+                            {{ order.shipping_method|default:"Standard Delivery" }}
+                        </span>
+                    </td>
+
+                    <td>
+                        <strong style="color: var(--primary); font-size: 0.9rem; display: block;">{{ order.shipping_name }}</strong>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.15rem;">
+                            {{ order.email }}
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">
+                            {{ order.shipping_phone }}
+                        </div>
+                        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.35rem; line-height: 1.35; background: #faf7f2; padding: 0.35rem 0.5rem; border-radius: 4px; border: 1px solid #ede8e1;">
+                            {{ order.shipping_address }}, {{ order.shipping_city }} - {{ order.shipping_pincode }}
+                        </div>
+                    </td>
+
+                    <td>
+                        <div style="display: flex; flex-direction: column; gap: 0.45rem;">
+                            {% for item in order.items.all %}
+                            <div style="background: #ffffff; padding: 0.4rem 0.6rem; border-radius: 6px; border: 1px solid #f0ede8;">
+                                <strong style="font-size: 0.84rem; color: var(--primary); display: block; overflow: hidden; text-overflow: ellipsis;">
+                                    {{ item.product_name }}
+                                </strong>
+                                <div style="font-size: 0.72rem; color: var(--text-muted); display: flex; gap: 0.6rem; margin-top: 0.2rem; flex-wrap: wrap;">
+                                    <span>Size: <strong>{{ item.size|default:"M" }}</strong></span>
+                                    <span>Qty: <strong>{{ item.quantity }}</strong></span>
+                                    {% if item.sku %}
+                                    <span style="font-family: monospace;">SKU: {{ item.sku }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% empty %}
+                            <span style="font-size: 0.8rem; color: var(--text-muted);">No product items recorded.</span>
+                            {% endfor %}
+                        </div>
+                    </td>
+
+                    <td>
+                        <strong style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 1.15rem; font-weight: 700; color: var(--primary); display: block; font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; letter-spacing: -0.01em;">
+                            ₹{{ order.total_amount|floatformat:2 }}
+                        </strong>
+                        <span style="font-size: 0.72rem; color: #15803d; font-weight: 600;">Cash Payable</span>
+                    </td>
+
+                    <td>
+                        {% if order.cod_status == 'pending' %}
+                        <span class="status-badge status-pending" style="display: inline-block;">
+                            Pending Approval
+                        </span>
+                        {% elif order.cod_status == 'approved' %}
+                        <span class="status-badge status-delivered" style="display: inline-block;">
+                            CoD Approved
+                        </span>
+                        {% elif order.cod_status == 'rejected' %}
+                        <span class="status-badge status-cancelled" style="display: inline-block;">
+                            CoD Declined
+                        </span>
+                        {% if order.cod_rejection_reason %}
+                        <div style="font-size: 0.7rem; color: #dc2626; margin-top: 0.35rem; line-height: 1.3; max-width: 180px;">
+                            <em>Reason: {{ order.cod_rejection_reason }}</em>
+                        </div>
+                        {% endif %}
+                        {% else %}
+                        <span class="status-badge" style="background: #f1f5f9; color: #475569;">
+                            {{ order.cod_status }}
+                        </span>
+                        {% endif %}
+                    </td>
+
+                    <td style="text-align: right;">
+                        <div style="display: inline-flex; align-items: center; justify-content: flex-end; gap: 0.5rem; white-space: nowrap;">
+                            {% if order.cod_status == 'pending' %}
+
+                            <a href="/admin-panel/cod-requests/{{ order.id }}/approve/" class="btn" title="Approve CoD &amp; Notify Customer" style="display: inline-flex; align-items: center; justify-content: center; background: #15803d; color: #ffffff; border: 1px solid #15803d; border-radius: 6px; padding: 0.45rem 1rem; font-size: 0.82rem; font-weight: 600; text-decoration: none; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                                Approve
+                            </a>
+
+                            <button type="button" class="btn" onclick="openRejectModal('{{ order.id }}', '{{ order.order_number }}', '{{ order.shipping_name|escapejs }}', '{{ order.email|escapejs }}')" title="Reject CoD &amp; Email Customer" style="display: inline-flex; align-items: center; justify-content: center; background: #ffffff; color: #dc2626; border: 1.5px solid #ef4444; border-radius: 6px; padding: 0.45rem 1rem; font-size: 0.82rem; font-weight: 600; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                                Reject
+                            </button>
+                            {% elif order.cod_status == 'approved' %}
+                            <a href="/admin-panel/orders/{{ order.id }}/" class="btn btn-secondary btn-sm" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-radius: 6px;">
+                                Order Details &rarr;
+                            </a>
+                            {% else %}
+
+                            <a href="/admin-panel/cod-requests/{{ order.id }}/approve/" class="btn btn-secondary btn-sm" title="Reconsider &amp; Approve" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-radius: 6px;" onclick="return confirm('Re-approve CoD for this order?');">
+                                Re-approve
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 3rem 1rem;">
+                        <strong style="color: var(--primary); font-size: 1rem; display: block;">No Cash on Delivery orders found</strong>
+                        <p style="margin: 0.25rem 0 0 0; font-size: 0.85rem;">There are currently no orders matching the selected filter criteria.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if orders.has_other_pages %}
+    <div class="card-footer" style="padding: 0.85rem 1.4rem; display: flex; justify-content: flex-end; gap: 0.5rem; align-items: center;">
+        {% if orders.has_previous %}
+        <a href="?page={{ orders.previous_page_number }}&status={{ current_status }}&q={{ current_q }}" class="btn btn-secondary btn-sm">Previous</a>
+        {% endif %}
+        <span style="font-size: 0.82rem; color: var(--text-muted); padding: 0 0.5rem;">
+            Page {{ orders.number }} of {{ orders.paginator.num_pages }}
+        </span>
+        {% if orders.has_next %}
+        <a href="?page={{ orders.next_page_number }}&status={{ current_status }}&q={{ current_q }}" class="btn btn-secondary btn-sm">Next</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<div id="rejectCodModal" style="display: none; position: fixed; inset: 0; background: rgba(30, 38, 50, 0.65); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(5px); padding: 1rem;">
+    <div style="background: #ffffff; border-radius: 12px; width: 100%; max-width: 520px; box-shadow: 0 25px 50px rgba(0,0,0,0.25); overflow: hidden; border: 1px solid var(--border-subtle);">
+
+        <div style="padding: 1.25rem 1.4rem; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; background: #fdfaf6;">
+            <div>
+                <h4 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: #dc2626;">Reject Cash on Delivery (CoD)</h4>
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.15rem;">
+                    Order: <strong id="rejectModalOrderNum" style="color: var(--primary);">#TN-0000</strong> &bull; Customer: <span id="rejectModalCustName">-</span>
+                </div>
+            </div>
+            <button type="button" onclick="closeRejectModal()" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--text-muted); line-height: 1;">✕</button>
+        </div>
+
+        <form id="rejectCodForm" method="POST" action="" style="padding: 1.4rem;">
+            {% csrf_token %}
+
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0 0 1rem 0; line-height: 1.45;">
+                Upon confirmation, this order's CoD request will be rejected and an explanatory email notification will be automatically dispatched to <strong id="rejectModalCustEmail" style="color: var(--primary);">customer@email.com</strong>.
+            </p>
+
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; font-size: 0.76rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.4rem;">
+                    Select Common Rejection Reason:
+                </label>
+                <select id="commonReasonSelect" class="form-select" onchange="applyCommonReason(this.value)">
+                    <option value="">-- Choose a standard reason or write custom --</option>
+                    <option value="Delivery address is currently outside our courier partner's serviceable Cash on Delivery PIN zones.">Address outside serviceable CoD PIN zones</option>
+                    <option value="Customer contact verification phone number could not be reached for dispatch confirmation.">Unable to reach customer phone for verification</option>
+                    <option value="Orders exceeding high-value boutique threshold require online prepayment (UPI/Cards).">Order value exceeds maximum CoD policy limit</option>
+                    <option value="Courier network temporarily suspended cash collections in this destination area.">Courier cash collection temporarily unavailable</option>
+                    <option value="Multiple previous unpaid delivery attempts recorded for this address.">Previous non-delivery history at this destination</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; font-size: 0.76rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.4rem;">
+                    Detailed Reason Sent to Customer Email *
+                </label>
+                <textarea id="rejectionReasonInput" name="reason" rows="3" class="form-control" required placeholder="State the reason clearly as it will be emailed to the customer..."></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 0.6rem; padding-top: 0.85rem; border-top: 1px solid var(--border-subtle);">
+                <button type="button" onclick="closeRejectModal()" class="btn btn-secondary btn-sm">Cancel</button>
+                <button type="submit" class="btn btn-sm" style="background: #dc2626; color: #ffffff; border: none; font-weight: 600; padding: 0.45rem 1rem;">
+                    Confirm Rejection &amp; Dispatch Mail
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script>
+    function openRejectModal(orderId, orderNum, customerName, customerEmail) {
+        document.getElementById('rejectModalOrderNum').textContent = '#' + orderNum;
+        document.getElementById('rejectModalCustName').textContent = customerName;
+        document.getElementById('rejectModalCustEmail').textContent = customerEmail;
+
+        const form = document.getElementById('rejectCodForm');
+        form.action = '/admin-panel/cod-requests/' + orderId + '/reject/';
+
+        document.getElementById('commonReasonSelect').value = '';
+        document.getElementById('rejectionReasonInput').value = "Cash on Delivery is currently unavailable for this destination or order value. Please place your order again using our secure online payment methods.";
+
+        const modal = document.getElementById('rejectCodModal');
+        if (modal) modal.style.display = 'flex';
+    }
+
+    function closeRejectModal() {
+        const modal = document.getElementById('rejectCodModal');
+        if (modal) modal.style.display = 'none';
+    }
+
+    function applyCommonReason(val) {
+        if (val) {
+            document.getElementById('rejectionReasonInput').value = val;
+        }
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeRejectModal();
+    });
+
+    const rejectBackdrop = document.getElementById('rejectCodModal');
+    if (rejectBackdrop) {
+        rejectBackdrop.addEventListener('click', function(e) {
+            if (e.target === rejectBackdrop) closeRejectModal();
+        });
+    }
+</script>
+{% endblock %}

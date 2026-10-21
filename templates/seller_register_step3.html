@@ -1,0 +1,421 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Their Nibs Seller Registration &ndash; Step 3: Declaration &amp; Seller Agreement</title>
+
+  <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg?v=crown2026">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/images/favicon-32.png?v=crown2026">
+  <link rel="icon" type="image/png" sizes="192x192" href="/static/images/favicon-192.png?v=crown2026">
+  <link rel="apple-touch-icon" href="/static/images/favicon.png?v=crown2026">
+  <link rel="shortcut icon" type="image/x-icon" href="/static/images/favicon.ico?v=crown2026">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
+  <link rel="stylesheet" href="{% static 'css/seller_register.css' %}">
+  <link rel="stylesheet" href="{% static 'css/preloader.css' %}?v=20261012-loader10s">
+
+  <style>
+
+    .declaration-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .declaration-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background-color: #fcfbfa;
+      border: 1px solid var(--color-border);
+      padding: 14px 18px;
+      border-radius: 6px;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .declaration-item:hover {
+      border-color: var(--color-brand-dark);
+      background-color: var(--color-peach-light);
+    }
+
+    .declaration-item input[type="checkbox"] {
+      accent-color: var(--color-brand-dark);
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .declaration-text {
+      font-size: 0.9rem;
+      color: var(--color-primary);
+      line-height: 1.5;
+    }
+
+    .policy-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 16px 0 24px;
+    }
+
+    .policy-card {
+      background-color: #fcfbfa;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      transition: border-color var(--transition-fast);
+    }
+
+    .policy-card:hover {
+      border-color: var(--color-brand-dark);
+    }
+
+    .policy-card h5 {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      font-style: italic;
+      color: var(--color-brand-dark);
+      margin-bottom: 4px;
+    }
+
+    .policy-card p {
+      font-size: 0.82rem;
+      color: var(--color-text-meta);
+      line-height: 1.4;
+    }
+
+    .policy-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--color-brand-dark);
+      text-decoration: underline;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    .policy-link-btn:hover {
+      color: var(--color-peach-dark);
+    }
+
+    @media (max-width: 768px) {
+      .policy-cards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="clothifyTopProgress" class="clothify-top-progress"></div>
+  <div id="clothifyPageLoader" class="clothify-preloader">
+    <div class="preloader-content">
+      <div class="preloader-image-wrap">
+        <img src="/static/images/loader-logo.png" 
+             alt="Their Nibs" 
+             class="preloader-custom-img" 
+             onerror="this.onerror=null; this.src='/static/images/loader-logo-square.png';">
+      </div>
+      <h2 class="preloader-brand-title">Their Nibs</h2>
+      <div class="preloader-brand-subtitle">Luxury Sleepwear &amp; Loungewear</div>
+      <div class="preloader-bar-wrap">
+        <div class="preloader-bar-inner"></div>
+      </div>
+      <div class="preloader-status-text" id="preloaderStatusText">Entering Boutique...</div>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="header-container">
+      <a href="{% url 'homepage' %}" class="brand-logo" aria-label="Their Nibs Home">
+        <div class="brand-emblem" aria-hidden="true">
+          <svg width="24" height="18" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 14L4 4L9 9L12 2L15 9L20 4L22 14H2Z"/>
+            <circle cx="12" cy="2" r="1" fill="currentColor"/>
+            <circle cx="4" cy="4" r="1" fill="currentColor"/>
+            <circle cx="20" cy="4" r="1" fill="currentColor"/>
+            <line x1="2" y1="16" x2="22" y2="16"/>
+          </svg>
+        </div>
+        <span class="brand-name">Their Nibs</span>
+      </a>
+
+      <div class="header-actions">
+        <a href="{% url 'homepage' %}" class="btn-secondary" style="padding: 6px 16px; font-size: 0.85rem;">&larr; Back to Home</a>
+        <a href="{% url 'customer_register' %}" class="btn-create-account">Create Account</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="registration-container">
+
+    <div class="stepper-wrapper">
+      <div class="stepper-header">
+        <h1>Their Nibs Seller Registration</h1>
+        <p>Complete your 3-step registration to start selling fashion &amp; apparel on Their Nibs</p>
+      </div>
+
+      <div class="stepper-steps">
+        <div class="step-item completed">
+          <div class="step-badge">&check;</div>
+          <span class="step-label">Personal &amp; ID Details</span>
+        </div>
+        <div class="step-item completed">
+          <div class="step-badge">&check;</div>
+          <span class="step-label">Business Details</span>
+        </div>
+        <div class="step-item {% if application_submitted %}completed{% else %}active{% endif %}">
+          <div class="step-badge">{% if application_submitted %}&check;{% else %}3{% endif %}</div>
+          <span class="step-label">Declaration &amp; Agreement</span>
+        </div>
+      </div>
+    </div>
+
+    {% if application_submitted %}
+    <div class="form-card" style="padding: 40px; text-align: center;">
+      <div style="width: 72px; height: 72px; border-radius: 50%; background-color: var(--color-success-bg); border: 2px solid var(--color-success-green); color: var(--color-success-green); font-size: 2.2rem; font-weight: 700; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+        &check;
+      </div>
+
+      <h2 style="font-family: var(--font-serif); font-size: 2.2rem; font-style: italic; color: var(--color-brand-dark); margin-bottom: 10px;">
+        Seller Application Submitted Successfully!
+      </h2>
+
+      <p style="font-size: 1.05rem; color: var(--color-primary); max-width: 650px; margin: 0 auto 24px;">
+        Thank you for applying to join the Their Nibs merchant family. Your application has been submitted and is currently <strong>awaiting administrator review and approval</strong>.
+      </p>
+
+      <div style="background-color: #faf8f5; border: 1px dashed var(--color-border); border-radius: 6px; padding: 20px; max-width: 540px; margin: 0 auto 30px; text-align: left;">
+        <p style="font-size: 0.88rem; margin-bottom: 6px;"><strong>Application Reference Number:</strong> <span style="color: var(--color-brand-dark); font-family: monospace; font-size: 1rem; font-weight: 700;">{{ app_ref|default:"CLF-SELL-2026-9842" }}</span></p>
+        <p style="font-size: 0.88rem; margin-bottom: 6px;"><strong>Applicant Name:</strong> {{ step1_data.full_name|default:"Registered Merchant" }}</p>
+        <p style="font-size: 0.88rem; margin-bottom: 6px;"><strong>Store Name:</strong> {{ step2_data.business_name|default:"Their Nibs Fashion Brand" }}</p>
+        <p style="font-size: 0.88rem; margin-bottom: 6px;"><strong>Approval Status:</strong> <span style="color: #b45309; font-weight: 700;">⏳ Awaiting Administrator Review</span></p>
+        <p style="font-size: 0.82rem; color: var(--color-text-meta); margin: 8px 0 0 0; line-height: 1.4;">
+          ✉️ Once our administration verifies your details and approves your account, an official welcome and approval email will be sent to your registered email address.
+        </p>
+      </div>
+
+      <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;">
+        <a href="{% url 'homepage' %}" class="btn-secondary" style="text-decoration: none; padding: 14px 28px;">
+          &larr; Return to Homepage
+        </a>
+        <a href="{% url 'seller_login' %}" class="btn-submit-step" style="text-decoration: none; padding: 14px 28px;">
+          Go to Seller Portal Login &rarr;
+        </a>
+      </div>
+    </div>
+
+    {% else %}
+
+    <form class="form-card" method="POST" action="{% url 'seller_register_step3' %}">
+      {% csrf_token %}
+
+      <div class="section-banner">
+        <span>Seller Declaration</span>
+      </div>
+
+      <div class="section-body">
+        <p style="font-size: 0.9rem; color: var(--color-text-meta); margin-bottom: 14px;">
+          Please review and check each required declaration statement below to confirm your merchant application:
+        </p>
+
+        <div class="declaration-list">
+          <label class="declaration-item">
+            <input type="checkbox" name="dec_accurate" required>
+            <span class="declaration-text">
+              I confirm that the information and documents submitted by me are accurate and genuine.
+            </span>
+          </label>
+
+          <label class="declaration-item">
+            <input type="checkbox" name="dec_authorization" required>
+            <span class="declaration-text">
+              I confirm that I have the legal right/authorization to sell the products listed on Their Nibs.
+            </span>
+          </label>
+
+          <label class="declaration-item">
+            <input type="checkbox" name="dec_no_counterfeit" required>
+            <span class="declaration-text">
+              I will not sell counterfeit, illegal, prohibited, or unauthorized products.
+            </span>
+          </label>
+
+          <label class="declaration-item">
+            <input type="checkbox" name="dec_accurate_info" required>
+            <span class="declaration-text">
+              I will provide accurate product information, pricing, images, and availability.
+            </span>
+          </label>
+
+          <label class="declaration-item">
+            <input type="checkbox" name="dec_fulfill_orders" required>
+            <span class="declaration-text">
+              I agree to fulfill customer orders within the required timeframe.
+            </span>
+          </label>
+
+          <label class="declaration-item">
+            <input type="checkbox" name="dec_follow_policies" required>
+            <span class="declaration-text">
+              I agree to follow Their Nibs's return, refund, cancellation, and customer-service policies.
+            </span>
+          </label>
+
+          <label class="declaration-item">
+            <input type="checkbox" name="dec_verify_info" required>
+            <span class="declaration-text">
+              I understand that Their Nibs may verify the information and documents submitted by me.
+            </span>
+          </label>
+
+          <label class="declaration-item">
+            <input type="checkbox" name="dec_termination" required>
+            <span class="declaration-text">
+              I understand that Their Nibs may suspend or terminate seller access for policy violations or fraudulent activity.
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <div class="section-banner">
+        <span>Agreement &amp; Policies</span>
+      </div>
+
+      <div class="section-body">
+        <p style="font-size: 0.9rem; color: var(--color-text-meta); margin-bottom: 12px;">
+          Click to review the official Their Nibs Merchant Agreements &amp; Governance Guidelines:
+        </p>
+
+        <div class="policy-cards-grid">
+          <div class="policy-card">
+            <div>
+              <h5>Seller Terms &amp; Conditions</h5>
+              <p>Governs marketplace commission, seller responsibilities, payout cycles, and merchant guidelines.</p>
+            </div>
+            <button type="button" class="policy-link-btn" onclick="openPolicyModal('termsModal')">
+              Read Seller Terms &rarr;
+            </button>
+          </div>
+
+          <div class="policy-card">
+            <div>
+              <h5>Privacy Policy</h5>
+              <p>Outlines how merchant identity documents, contact data, and customer information are secured.</p>
+            </div>
+            <button type="button" class="policy-link-btn" onclick="openPolicyModal('privacyModal')">
+              Read Privacy Policy &rarr;
+            </button>
+          </div>
+
+          <div class="policy-card">
+            <div>
+              <h5>Seller Policy</h5>
+              <p>Defines catalog standards, shipping dispatch SLAs, 30-day return handling, and dispute resolution.</p>
+            </div>
+            <button type="button" class="policy-link-btn" onclick="openPolicyModal('sellerPolicyModal')">
+              Read Seller Policy &rarr;
+            </button>
+          </div>
+        </div>
+
+        <div class="declaration-item" style="background-color: var(--color-peach-light); border-color: var(--color-peach-dark);">
+          <input type="checkbox" id="agree_terms_final" name="agree_terms_final" required>
+          <label for="agree_terms_final" class="declaration-text" style="font-weight: 600; cursor: pointer;">
+            I have read and agree to Their Nibs's Seller Terms &amp; Conditions and policies. <span class="required">*</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-actions-footer">
+        <a href="{% url 'seller_register_step2' %}" class="btn-secondary">&larr; Back to Step 2</a>
+        <button type="submit" class="btn-submit-step">
+          Submit Seller Application
+        </button>
+      </div>
+
+    </form>
+
+    {% endif %}
+
+  </main>
+
+  <div id="policyModalOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 15, 15, 0.75); backdrop-filter: blur(4px); z-index: 99999; align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: #ffffff; border-radius: 8px; max-width: 650px; width: 100%; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.3); border: 1px solid #e6e4df; position: relative;">
+      <div style="background-color: #1d1d1b; color: #ffffff; padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #f2c1ae;">
+        <h3 id="modalTitle" style="font-family: 'Instrument Serif', Georgia, serif; font-size: 1.6rem; font-style: italic; margin: 0; color: #ffffff;">Policy Document</h3>
+        <button type="button" onclick="closePolicyModal()" style="background: transparent; border: none; color: #ffffff; font-size: 1.8rem; cursor: pointer; line-height: 1; opacity: 0.85;">&times;</button>
+      </div>
+      <div id="modalBody" style="padding: 24px; font-size: 0.92rem; line-height: 1.7; color: #1d1d1b;">
+      </div>
+      <div style="background-color: #faf8f5; border-top: 1px solid #e6e4df; padding: 16px 24px; text-align: right;">
+        <button type="button" onclick="closePolicyModal()" class="btn-submit-step" style="padding: 8px 24px; font-size: 0.85rem;">Close Policy</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-bottom" style="border-top: none; max-width: 1100px; margin: 0 auto;">
+      <p>&copy; 2026 Their Nibs Ltd. All Rights Reserved. Merchant Onboarding Portal.</p>
+    </div>
+  </footer>
+
+  <script>
+    function openPolicyModal(type) {
+      const overlay = document.getElementById('policyModalOverlay');
+      const title = document.getElementById('modalTitle');
+      const body = document.getElementById('modalBody');
+
+      if (type === 'termsModal') {
+        title.textContent = 'Their Nibs Seller Terms & Conditions';
+        body.innerHTML = `
+          <p style="margin-bottom: 14px;"><strong>1. Merchant Agreement Overview</strong><br>This Agreement governs your seller registration and store activities on Their Nibs. By listing items, sellers warrant that all products are authentic, high quality, and fulfill orders promptly.</p>
+          <p style="margin-bottom: 14px;"><strong>2. Payout Settlements</strong><br>Automated payouts occur on scheduled bi-weekly cycles directly to your registered bank account (IFSC &amp; Account Number). Marketplace commission fees are calculated based on subcategories.</p>
+          <p style="margin-bottom: 0;"><strong>3. Account Governance</strong><br>Their Nibs reserves the right to suspend or terminate seller storefront access for counterfeit items or fraudulent activity.</p>
+        `;
+      } else if (type === 'privacyModal') {
+        title.textContent = 'Their Nibs Merchant Privacy Policy';
+        body.innerHTML = `
+          <p style="margin-bottom: 14px;"><strong>1. Identity Protection &amp; Encryption</strong><br>All government identity proofs (Aadhaar, PAN, Passport, Driving Licence, Voter ID), GSTIN records, and banking credentials are encrypted and stored securely.</p>
+          <p style="margin-bottom: 0;"><strong>2. Data Usage</strong><br>Merchant records are strictly utilized for identity verification, tax reporting, order processing, and payout settlements. We never share merchant data with third-party advertisers.</p>
+        `;
+      } else {
+        title.textContent = 'Their Nibs Seller & Returns Policy';
+        body.innerHTML = `
+          <p style="margin-bottom: 14px;"><strong>1. Order Dispatch SLA</strong><br>Sellers must process and dispatch orders to Their Nibs courier partners within 2 business days of customer purchase.</p>
+          <p style="margin-bottom: 14px;"><strong>2. 30-Day Customer Returns</strong><br>Their Nibs offers a 30-day customer return policy. Merchants agree to accept eligible returns in unused condition with tags attached.</p>
+          <p style="margin-bottom: 0;"><strong>3. Product Packaging</strong><br>All products must be delivered in clean, secure merchant boxes or Their Nibs protective packaging.</p>
+        `;
+      }
+      overlay.style.display = 'flex';
+    }
+
+    function closePolicyModal() {
+      document.getElementById('policyModalOverlay').style.display = 'none';
+    }
+
+    document.getElementById('policyModalOverlay')?.addEventListener('click', (e) => {
+      if (e.target.id === 'policyModalOverlay') closePolicyModal();
+    });
+  </script>
+  <script src="{% static 'js/preloader.js' %}?v=20261012-loader10s"></script>
+</body>
+</html>

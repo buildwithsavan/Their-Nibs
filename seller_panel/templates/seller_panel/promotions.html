@@ -1,0 +1,311 @@
+{% extends 'seller_panel/base.html' %}
+
+{% block title %}Promotions &amp; Campaigns{% endblock %}
+{% block page_heading %}Marketing — Promotions &amp; Discounts{% endblock %}
+
+{% block content %}
+<style>
+    .promo-card-stat {
+        background: #ffffff;
+        border: 1px solid var(--border-subtle, #e2e8f0);
+        border-radius: var(--radius-md, 10px);
+        padding: 1.1rem 1.35rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .promo-card-stat:hover {
+        border-color: #cbd5e1;
+    }
+    .status-pill {
+        display: inline-block;
+        padding: 0.25rem 0.65rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .badge-in-stock { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+    .badge-reserved { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+    .badge-out-stock { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+    .clothify-modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(15, 23, 42, 0.55);
+        backdrop-filter: blur(3px);
+        z-index: 99999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        overflow-y: auto;
+    }
+    .clothify-modal-backdrop.active {
+        display: flex !important;
+    }
+    .clothify-modal-dialog {
+        background: #ffffff;
+        border-radius: 12px;
+        max-width: 720px;
+        width: 100%;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+        animation: modalSlideIn 0.2s ease-out;
+        margin: auto;
+    }
+    @keyframes modalSlideIn {
+        from { opacity: 0; transform: translateY(-15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; margin: 0; color: var(--primary, #2b5329); font-weight: 700;">
+            Promotional Campaigns &amp; Sales Offers
+        </h2>
+        <span style="font-size: 0.88rem; color: var(--text-muted, #64748b);">
+            Create and monitor automated price discounts, seasonal sales, and category-level promotional campaigns.
+        </span>
+    </div>
+
+    <div>
+        <button type="button" class="btn" style="background: #2b5329; color: #ffffff; font-weight: 600; font-size: 0.88rem; padding: 10px 20px; border-radius: 6px;" onclick="openModal('createPromoModal')">
+            <i class="bi bi-plus-circle me-1"></i> + Create Promotion
+        </button>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+    <div class="promo-card-stat" >
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #64748b;">Active Promotions</div>
+        <div class="seller-card-value" style="color: #16a34a; margin-top: 4px;">
+            {{ active_count }}
+        </div>
+        <div style="font-size: 0.8rem; color: #16a34a; margin-top: 4px; font-weight: 500;">Currently running live</div>
+    </div>
+
+    <div class="promo-card-stat" >
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #64748b;">Scheduled Promotions</div>
+        <div class="seller-card-value" style="color: #2563eb; margin-top: 4px;">
+            {{ scheduled_count }}
+        </div>
+        <div style="font-size: 0.8rem; color: #2563eb; margin-top: 4px; font-weight: 500;">Upcoming campaigns</div>
+    </div>
+
+    <div class="promo-card-stat" >
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #64748b;">Expired Promotions</div>
+        <div class="seller-card-value" style="color: #64748b; margin-top: 4px;">
+            {{ expired_count }}
+        </div>
+        <div style="font-size: 0.8rem; color: #64748b; margin-top: 4px; font-weight: 500;">Past sales events</div>
+    </div>
+
+    <div class="promo-card-stat" >
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #64748b;">Products on Promotion</div>
+        <div class="seller-card-value" style="color: #d97706; margin-top: 4px;">
+            {{ products_on_promo_count }}
+        </div>
+        <div style="font-size: 0.8rem; color: #d97706; margin-top: 4px; font-weight: 500;">Discounted items</div>
+    </div>
+</div>
+
+<div class="clothify-card" style="padding: 1.1rem 1.25rem; background: #ffffff; margin-bottom: 1.5rem;">
+    <form method="GET" action="{% url 'seller_panel:promotions' %}" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 240px;">
+            <input type="text" name="q" value="{{ current_q }}" class="form-control" placeholder="Search promotion name or category..." style="font-size: 0.88rem;">
+        </div>
+
+        <div style="width: 180px;">
+            <select name="status" class="form-select" style="font-size: 0.88rem;">
+                <option value="all" {% if current_status == 'all' %}selected{% endif %}>All Statuses</option>
+                <option value="active" {% if current_status == 'active' %}selected{% endif %}>Active</option>
+                <option value="scheduled" {% if current_status == 'scheduled' %}selected{% endif %}>Scheduled</option>
+                <option value="expired" {% if current_status == 'expired' %}selected{% endif %}>Expired</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn" style="background: #2b5329; color: #ffffff; font-size: 0.88rem; font-weight: 600; padding: 6px 18px;">
+            <i class="bi bi-funnel me-1"></i> Filter
+        </button>
+        <a href="{% url 'seller_panel:promotions' %}" class="btn" style="background: #f1f5f9; color: #475569; font-size: 0.88rem; font-weight: 600; padding: 6px 16px;">
+            Reset
+        </a>
+    </form>
+</div>
+
+<div class="clothify-card" style="background: #ffffff; padding: 0; overflow: hidden; margin-bottom: 2rem;">
+    <div style="padding: 1.1rem 1.35rem; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between;">
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; margin: 0; font-weight: 700; color: var(--primary, #2b5329);">
+            Active &amp; Past Promotional Campaigns
+        </h3>
+        <span style="font-size: 0.82rem; color: #64748b; font-weight: 500;">
+            Showing {{ promotions|length }} campaign(s)
+        </span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table align-middle" style="margin-bottom: 0; font-size: 0.88rem;">
+            <thead style="background-color: #f8fafc; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; color: #64748b;">
+                <tr>
+                    <th style="padding: 0.9rem 1.2rem;">Campaign Details</th>
+                    <th style="padding: 0.9rem 1.2rem;">Discount</th>
+                    <th style="padding: 0.9rem 1.2rem;">Target Scope</th>
+                    <th style="padding: 0.9rem 1.2rem;">Validity Period</th>
+                    <th style="padding: 0.9rem 1.2rem; text-align: center;">Orders</th>
+                    <th style="padding: 0.9rem 1.2rem; text-align: center;">Units</th>
+                    <th style="padding: 0.9rem 1.2rem; text-align: right;">Total Discount</th>
+                    <th style="padding: 0.9rem 1.2rem; text-align: right;">Revenue</th>
+                    <th style="padding: 0.9rem 1.2rem; text-align: center;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for promo in promotions %}
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 0.9rem 1.2rem;">
+                        <strong style="color: #1e293b; display: block; font-size: 0.92rem;">{{ promo.name }}</strong>
+                        <span style="font-size: 0.78rem; color: #64748b;">ID: {{ promo.id }}</span>
+                    </td>
+                    <td style="padding: 0.9rem 1.2rem;">
+                        <span style="font-weight: 700; color: #2b5329; background: #f0fdf4; padding: 2px 8px; border-radius: 4px; border: 1px solid #bbf7d0;">
+                            {{ promo.discount_display }}
+                        </span>
+                    </td>
+                    <td style="padding: 0.9rem 1.2rem; color: #475569;">
+                        {{ promo.category }}
+                    </td>
+                    <td style="padding: 0.9rem 1.2rem; color: #64748b; font-size: 0.82rem;">
+                        <div><i class="bi bi-calendar-event me-1"></i>{{ promo.start_date }}</div>
+                        <div style="color: #94a3b8;">to {{ promo.end_date }}</div>
+                    </td>
+                    <td style="padding: 0.9rem 1.2rem; text-align: center; font-weight: 600; color: #334155;">
+                        {{ promo.orders_generated }}
+                    </td>
+                    <td style="padding: 0.9rem 1.2rem; text-align: center; font-weight: 600; color: #334155;">
+                        {{ promo.units_sold }}
+                    </td>
+                    <td style="padding: 0.9rem 1.2rem; text-align: right; color: #dc2626; font-weight: 600;">
+                        ₹{{ promo.discount_amount }}
+                    </td>
+                    <td style="padding: 0.9rem 1.2rem; text-align: right; font-weight: 700; color: #16a34a;">
+                        ₹{{ promo.revenue_generated }}
+                    </td>
+                    <td style="padding: 0.9rem 1.2rem; text-align: center;">
+                        <span class="status-pill {{ promo.badge_class }}">{{ promo.status }}</span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" style="text-align: center; padding: 2.5rem; color: #64748b;">
+                        No promotional campaigns match your current filters.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="clothify-modal-backdrop" id="createPromoModal">
+    <div class="clothify-modal-dialog">
+        <div style="background: #faf6f0; border-bottom: 1px solid #e2e8f0; padding: 1.2rem 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+            <h5 style="font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 1.4rem; color: #2b5329; margin: 0;">
+                Create New Promotional Campaign
+            </h5>
+            <button type="button" style="background: transparent; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b; line-height: 1;" onclick="closeModal('createPromoModal')">&times;</button>
+        </div>
+
+        <form method="POST" action="{% url 'seller_panel:add_promotion_action' %}">
+            {% csrf_token %}
+            <div style="padding: 1.5rem; font-size: 0.88rem;">
+
+                <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 0.85rem 1rem; margin-bottom: 1.25rem; font-size: 0.83rem; color: #1e40af;">
+                    <i class="bi bi-info-circle-fill me-1"></i> 
+                    <strong>Clothify Policy Note:</strong> Promotions apply automatically at checkout for eligible products. All seller promotion rules comply with platform discount ceilings.
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" style="font-weight: 600; color: #334155; margin-bottom: 4px; display: block;">PROMOTION NAME *</label>
+                    <input type="text" name="name" class="form-control" placeholder="e.g. Diwali Sleepwear Festive Treat" required style="font-size: 0.88rem;">
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label" style="font-weight: 600; color: #334155; margin-bottom: 4px; display: block;">DISCOUNT TYPE *</label>
+                        <select name="discount_type" class="form-select" style="font-size: 0.88rem;">
+                            <option value="percentage">Percentage Discount (%)</option>
+                            <option value="fixed">Fixed Amount Off (₹)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" style="font-weight: 600; color: #334155; margin-bottom: 4px; display: block;">DISCOUNT VALUE *</label>
+                        <input type="number" name="discount_value" class="form-control" placeholder="e.g. 15 or 250" required min="1" style="font-size: 0.88rem;">
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label" style="font-weight: 600; color: #334155; margin-bottom: 4px; display: block;">TARGET SCOPE / CATEGORY</label>
+                        <select name="category" class="form-select" style="font-size: 0.88rem;">
+                            <option value="All Categories">All Products &amp; Categories</option>
+                            <option value="Nightwear &amp; Pyjamas">Nightwear &amp; Pyjamas</option>
+                            <option value="Kimono Robes">Kimono Robes</option>
+                            <option value="Nightdresses">Nightdresses</option>
+                            <option value="Loungewear Accessories">Loungewear Accessories</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" style="font-weight: 600; color: #334155; margin-bottom: 4px; display: block;">MINIMUM ORDER VALUE (₹)</label>
+                        <input type="number" name="min_order_value" class="form-control" placeholder="e.g. 1499 (Optional)" style="font-size: 0.88rem;">
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label" style="font-weight: 600; color: #334155; margin-bottom: 4px; display: block;">START DATE *</label>
+                        <input type="date" name="start_date" class="form-control" required style="font-size: 0.88rem;">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" style="font-weight: 600; color: #334155; margin-bottom: 4px; display: block;">END DATE *</label>
+                        <input type="date" name="end_date" class="form-control" required style="font-size: 0.88rem;">
+                    </div>
+                </div>
+
+            </div>
+            <div style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 1rem 1.5rem; display: flex; justify-content: flex-end; gap: 0.75rem;">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('createPromoModal')" style="font-size: 0.88rem; font-weight: 600; padding: 8px 16px;">Cancel</button>
+                <button type="submit" class="btn" style="background: #2b5329; color: #ffffff; font-size: 0.88rem; font-weight: 600; padding: 8px 20px;">
+                    Launch Promotion
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openModal(id) {
+    var modal = document.getElementById(id);
+    if(modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+function closeModal(id) {
+    var modal = document.getElementById(id);
+    if(modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+window.addEventListener('click', function(event) {
+    var modal = document.getElementById('createPromoModal');
+    if (event.target === modal) {
+        closeModal('createPromoModal');
+    }
+});
+</script>
+{% endblock %}

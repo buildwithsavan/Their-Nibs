@@ -1,0 +1,764 @@
+{% extends 'seller_panel/base.html' %}
+
+{% block title %}Track Orders &amp; Fulfillment{% endblock %}
+{% block page_heading %}Orders &amp; Fulfillment &mdash; Track Orders{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --seller-track-primary: #111111;
+        --seller-track-accent: #ba6853;
+        --seller-track-success: #16a34a;
+        --seller-track-border: #e2e8f0;
+        --seller-track-subtle: #faf6f0;
+    }
+
+    .track-page-header {
+        margin-bottom: 1.25rem;
+    }
+    .track-page-title {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin: 0 0 0.4rem 0;
+    }
+    .track-page-subtitle {
+        font-size: 0.88rem;
+        color: var(--text-muted);
+        display: block;
+    }
+
+    .status-text-pill {
+        font-weight: 700;
+        font-size: 0.82rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        letter-spacing: 0.02em;
+    }
+    .status-in-transit {
+        color: #0369a1;
+    }
+    .status-out-delivery {
+        color: #b45309;
+    }
+    .status-delivered {
+        color: #15803d;
+    }
+    .status-packed {
+        color: #475569;
+    }
+
+    .track-modal-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.65);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 1050;
+        align-items: center;
+        justify-content: center;
+        padding: 1.25rem;
+        overflow-y: auto;
+    }
+    .track-modal-backdrop.show {
+        display: flex;
+    }
+
+    .track-modal-dialog {
+        background: #ffffff;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 900px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        animation: trackModalSlide 0.22s ease-out;
+        max-height: 92vh;
+        display: flex;
+        flex-direction: column;
+    }
+    @keyframes trackModalSlide {
+        from { transform: translateY(-16px) scale(0.98); opacity: 0; }
+        to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .track-modal-header {
+        padding: 1.1rem 1.6rem;
+        background: var(--seller-track-subtle);
+        border-bottom: 1px solid var(--seller-track-border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .track-modal-header-title {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 1.45rem;
+        margin: 0;
+        font-weight: 700;
+        color: #111111;
+    }
+    .track-modal-close-btn {
+        background: transparent;
+        border: none;
+        font-size: 1.6rem;
+        color: #64748b;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0;
+        transition: color 0.15s ease;
+    }
+    .track-modal-close-btn:hover {
+        color: #111111;
+    }
+
+    .track-modal-body {
+        padding: 1.6rem;
+        overflow-y: auto;
+        flex: 1;
+    }
+
+    .modal-product-banner {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding-bottom: 18px;
+        border-bottom: 1px solid var(--seller-track-border);
+        margin-bottom: 22px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .modal-product-title {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #111111;
+        margin: 0 0 4px;
+    }
+    .modal-product-meta {
+        font-size: 0.86rem;
+        color: #64748b;
+        margin: 0;
+    }
+
+    .modal-stage-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: #fffbeb;
+        color: #b45309;
+        border: 1px solid #fef3c7;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+    }
+    .badge-pulse {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #d97706;
+        animation: trackPulse 1.8s infinite;
+    }
+    @keyframes trackPulse {
+        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.6); }
+        70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(217, 119, 6, 0); }
+        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(217, 119, 6, 0); }
+    }
+
+    .modal-logistics-strip {
+        background: var(--seller-track-subtle);
+        border: 1px solid #ede4db;
+        border-radius: 8px;
+        padding: 14px 18px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 14px;
+        margin-bottom: 26px;
+    }
+    .modal-logistics-lbl {
+        font-size: 0.74rem;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        color: #78716c;
+        margin-bottom: 2px;
+    }
+    .modal-logistics-val {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #111111;
+    }
+    .modal-awb-code {
+        font-family: monospace;
+        background: #ffffff;
+        padding: 2px 8px;
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+        font-size: 0.84rem;
+    }
+
+    .stepper-header-title {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #111111;
+        margin: 0 0 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .track-stepper-wrap {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 28px;
+    }
+    .track-stepper-line {
+        position: absolute;
+        top: 22px;
+        left: 40px;
+        right: 40px;
+        height: 3px;
+        background: #e2e8f0;
+        z-index: 1;
+    }
+    .track-stepper-progress {
+        height: 100%;
+        width: 75%;
+        background: linear-gradient(90deg, #16a34a 0%, #16a34a 65%, #ba6853 100%);
+        border-radius: 2px;
+        transition: width 0.3s ease;
+    }
+
+    .track-step-node {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 19%;
+    }
+    .track-node-circle {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: #ffffff;
+        border: 3px solid #cbd5e1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.05rem;
+        color: #94a3b8;
+        margin-bottom: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        transition: all 0.25s ease;
+    }
+    .track-step-node.completed .track-node-circle {
+        background: #16a34a;
+        border-color: #16a34a;
+        color: #ffffff;
+    }
+    .track-step-node.active .track-node-circle {
+        background: #ba6853;
+        border-color: #ba6853;
+        color: #ffffff;
+        box-shadow: 0 0 0 4px rgba(186, 104, 83, 0.22);
+    }
+
+    .track-step-title {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 2px;
+        line-height: 1.25;
+    }
+    .track-step-note {
+        font-size: 0.72rem;
+        color: #64748b;
+        line-height: 1.3;
+        margin-bottom: 4px;
+    }
+    .track-step-pill {
+        font-size: 0.68rem;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 10px;
+        display: inline-block;
+    }
+    .track-step-node.completed .track-step-pill {
+        background: #ecfdf5;
+        color: #047857;
+    }
+    .track-step-node.active .track-step-pill {
+        background: #fff7ed;
+        color: #c2410c;
+        border: 1px solid #ffedd5;
+    }
+    .track-step-node.pending .track-step-pill {
+        background: #f1f5f9;
+        color: #94a3b8;
+    }
+
+    .modal-details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+    .modal-detail-box {
+        background: #fafaf9;
+        border: 1px solid #e7e5e4;
+        border-radius: 8px;
+        padding: 16px;
+    }
+    .modal-box-header {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #111111;
+        margin: 0 0 12px;
+        border-bottom: 1px solid #e7e5e4;
+        padding-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .modal-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        font-size: 0.84rem;
+        margin-bottom: 8px;
+    }
+    .modal-row:last-child {
+        margin-bottom: 0;
+    }
+    .modal-lbl {
+        color: #64748b;
+        font-weight: 500;
+    }
+    .modal-val {
+        font-weight: 600;
+        text-align: right;
+        color: #0f172a;
+    }
+
+    .track-modal-footer {
+        padding: 0.9rem 1.6rem;
+        background: var(--seller-track-subtle);
+        border-top: 1px solid var(--seller-track-border);
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    @media (max-width: 768px) {
+        .modal-details-grid {
+            grid-template-columns: 1fr;
+        }
+        .track-stepper-wrap {
+            flex-direction: column;
+            gap: 16px;
+            padding-left: 18px;
+        }
+        .track-stepper-line {
+            left: 35px;
+            top: 18px;
+            bottom: 18px;
+            width: 3px;
+            height: auto;
+            right: auto;
+        }
+        .track-stepper-progress {
+            width: 100%;
+            height: 70%;
+        }
+        .track-step-node {
+            width: 100%;
+            flex-direction: row;
+            text-align: left;
+            gap: 12px;
+        }
+        .track-node-circle {
+            margin-bottom: 0;
+            flex-shrink: 0;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .track-modal-backdrop {
+            padding: 0.5rem;
+        }
+        .track-modal-dialog {
+            max-height: 96vh;
+            border-radius: 8px;
+        }
+        .track-modal-header {
+            padding: 0.85rem 1rem;
+        }
+        .track-modal-body {
+            padding: 1rem;
+        }
+        .modal-product-banner {
+            flex-direction: column;
+            gap: 8px;
+        }
+        .modal-product-title {
+            font-size: 1.25rem;
+        }
+        .modal-logistics-strip {
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 10px 12px;
+        }
+    }
+</style>
+
+<div class="track-page-header">
+    <h2 class="track-page-title">
+        Order &amp; Product Tracking Pipeline
+    </h2>
+    <span class="track-page-subtitle">
+        Click on the Track button for any order in the table below to view its live 5-stage fulfillment progress, carrier AWB, and delivery milestones.
+    </span>
+</div>
+
+<div class="clothify-card" style="padding: 0; overflow: hidden; margin-bottom: 2rem;">
+    <div style="overflow-x: auto;">
+        <table class="clothify-table" style="width: 100%; font-size: 0.88rem; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #faf6f0; border-bottom: 1px solid var(--seller-border, #e5e7eb);">
+                    <th style="padding: 12px 14px; text-align: left; font-weight: 700;">ORDER REF</th>
+                    <th style="padding: 12px 14px; text-align: left; font-weight: 700;">PRODUCT NAME</th>
+                    <th style="padding: 12px 14px; text-align: left; font-weight: 700;">SKU</th>
+                    <th style="padding: 12px 14px; text-align: left; font-weight: 700;">CUSTOMER</th>
+                    <th style="padding: 12px 14px; text-align: left; font-weight: 700;">COURIER &amp; AWB</th>
+                    <th style="padding: 12px 14px; text-align: right; font-weight: 700;">ACTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if tracking_orders %}
+                    {% for o in tracking_orders %}
+                    <tr style="border-bottom: 1px solid #f1f5f9; transition: background-color 0.15s ease;" onmouseover="this.style.backgroundColor='#faf6f0'" onmouseout="this.style.backgroundColor='transparent'">
+
+                        <td style="padding: 12px 14px; font-weight: 700; color: var(--primary); white-space: nowrap;">
+                            {{ o.order_number }}
+                        </td>
+
+                        <td style="padding: 12px 14px; font-weight: 600; color: #1e293b;">
+                            {{ o.product_name }}
+                        </td>
+
+                        <td style="padding: 12px 14px;">
+                            <code style="font-size: 0.8rem; background: #f8fafc; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0;">{{ o.sku }}</code>
+                        </td>
+
+                        <td style="padding: 12px 14px;">
+                            <div style="font-weight: 600; color: #1e293b;">{{ o.customer }}</div>
+                            <div style="font-size: 0.78rem; color: #64748b;">{{ o.city }}</div>
+                        </td>
+
+                        <td style="padding: 12px 14px;">
+                            <div style="font-weight: 600; color: #1e293b;">{{ o.courier }}</div>
+                            <span style="font-family: monospace; font-size: 0.78rem; color: #475569;">{{ o.awb }}</span>
+                        </td>
+
+                        <td style="padding: 12px 14px; text-align: right; white-space: nowrap;">
+                            <button type="button" class="btn btn-secondary btn-sm" style="font-size: 0.8rem; padding: 4px 10px; font-weight: 600;" onclick="openProductTrackModal('{{ o.clean_id|escapejs }}')">
+                                <i class="bi bi-geo-alt"></i> Track
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">
+                            No orders currently in the tracking pipeline.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="productTrackModal" class="track-modal-backdrop" onclick="handleBackdropClick(event)">
+    <div class="track-modal-dialog">
+
+        <div class="track-modal-header">
+            <div>
+                <h3 class="track-modal-header-title">
+                    Product Order Tracking &amp; Milestone Pipeline
+                </h3>
+                <span style="font-size: 0.8rem; color: #64748b;">Live fulfillment stage checkpoints and carrier details</span>
+            </div>
+            <button type="button" class="track-modal-close-btn" onclick="closeProductTrackModal()">&times;</button>
+        </div>
+
+        <div class="track-modal-body">
+
+            <div class="modal-product-banner">
+                <div>
+                    <h4 class="modal-product-title" id="modalProductName">Garment Product</h4>
+                    <p class="modal-product-meta">
+                        Order Ref: <strong id="modalOrderNum" style="color: #111111;">#TN-10245</strong> &bull; Client: <strong id="modalCustomerName" style="color: #111111;">Customer</strong>
+                    </p>
+                </div>
+                <div>
+                    <span class="modal-stage-badge">
+                        <span class="badge-pulse"></span>
+                        <span id="modalLiveStageText">Live Stage: In Transit / Out for Delivery</span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="modal-logistics-strip">
+                <div>
+                    <div class="modal-logistics-lbl">Assigned Carrier</div>
+                    <div class="modal-logistics-val" id="modalCourierName">BlueDart Express</div>
+                </div>
+                <div>
+                    <div class="modal-logistics-lbl">Air Waybill (AWB)</div>
+                    <div class="modal-logistics-val">
+                        <span class="modal-awb-code" id="modalAwbCode">BD-98234105</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="modal-logistics-lbl">Dispatch Date</div>
+                    <div class="modal-logistics-val" id="modalDispatchDate">17 Oct 2026</div>
+                </div>
+                <div>
+                    <div class="modal-logistics-lbl">Estimated Delivery</div>
+                    <div class="modal-logistics-val" id="modalEstDelivery" style="color: #166534;">21 Oct 2026</div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <h5 class="stepper-header-title">
+                    <i class="bi bi-diagram-3" style="color: var(--seller-track-accent);"></i>
+                    5-Stage Fulfillment Progress
+                </h5>
+
+                <div class="track-stepper-wrap">
+                    <div class="track-stepper-line">
+                        <div class="track-stepper-progress" id="modalProgressLine"></div>
+                    </div>
+
+                    <div class="track-step-node completed" id="modalStage1">
+                        <div class="track-node-circle">✓</div>
+                        <div>
+                            <div class="track-step-title">1. Order Confirmed</div>
+                            <div class="track-step-note" id="modalStage1Note">Payment verified</div>
+                            <span class="track-step-pill">Completed</span>
+                        </div>
+                    </div>
+
+                    <div class="track-step-node completed" id="modalStage2">
+                        <div class="track-node-circle">✓</div>
+                        <div>
+                            <div class="track-step-title">2. Atelier Quality Check</div>
+                            <div class="track-step-note">Garment seams inspected</div>
+                            <span class="track-step-pill">Completed</span>
+                        </div>
+                    </div>
+
+                    <div class="track-step-node completed" id="modalStage3">
+                        <div class="track-node-circle">✓</div>
+                        <div>
+                            <div class="track-step-title">3. Packed &amp; Sealed</div>
+                            <div class="track-step-note">Gift box &amp; dispatch label</div>
+                            <span class="track-step-pill">Completed</span>
+                        </div>
+                    </div>
+
+                    <div class="track-step-node active" id="modalStage4">
+                        <div class="track-node-circle">🚚</div>
+                        <div>
+                            <div class="track-step-title">4. In Transit / Out for Delivery</div>
+                            <div class="track-step-note" id="modalStage4Note">En-route via carrier</div>
+                            <span class="track-step-pill">Current Stage</span>
+                        </div>
+                    </div>
+
+                    <div class="track-step-node pending" id="modalStage5">
+                        <div class="track-node-circle">🏠</div>
+                        <div>
+                            <div class="track-step-title">5. Delivered</div>
+                            <div class="track-step-note" id="modalStage5Note">Expected on arrival</div>
+                            <span class="track-step-pill">Upcoming</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-details-grid">
+
+                <div class="modal-detail-box">
+                    <h5 class="modal-box-header">
+                        <i class="bi bi-geo-alt" style="color: var(--seller-track-accent);"></i>
+                        Customer &amp; Delivery Destination
+                    </h5>
+                    <div class="modal-row">
+                        <span class="modal-lbl">Recipient:</span>
+                        <span class="modal-val" id="modalGridCustomer">--</span>
+                    </div>
+                    <div class="modal-row">
+                        <span class="modal-lbl">Contact Phone:</span>
+                        <span class="modal-val" id="modalGridPhone">--</span>
+                    </div>
+                    <div class="modal-row">
+                        <span class="modal-lbl">Contact Email:</span>
+                        <span class="modal-val" id="modalGridEmail">--</span>
+                    </div>
+                    <div class="modal-row">
+                        <span class="modal-lbl">Shipping Address:</span>
+                        <span class="modal-val" id="modalGridAddress" style="max-width: 240px;">--</span>
+                    </div>
+                    <div class="modal-row">
+                        <span class="modal-lbl">Destination City:</span>
+                        <span class="modal-val" id="modalGridCity">--</span>
+                    </div>
+                </div>
+
+                <div class="modal-detail-box">
+                    <h5 class="modal-box-header">
+                        <i class="bi bi-bag-check" style="color: var(--seller-track-accent);"></i>
+                        Garment Item &amp; Payment Manifest
+                    </h5>
+                    <div class="modal-row">
+                        <span class="modal-lbl">Garment Item:</span>
+                        <span class="modal-val" id="modalGridItem">--</span>
+                    </div>
+                    <div class="modal-row">
+                        <span class="modal-lbl">SKU Code:</span>
+                        <span class="modal-val"><code id="modalGridSku" style="font-size: 0.82rem;">--</code></span>
+                    </div>
+                    <div class="modal-row">
+                        <span class="modal-lbl">Payment Mode:</span>
+                        <span class="modal-val" id="modalGridPayment">--</span>
+                    </div>
+                    <div class="modal-row" style="border-top: 1px dashed #cbd5e1; padding-top: 6px; margin-top: 6px;">
+                        <span class="modal-lbl"><strong>Total Value:</strong></span>
+                        <span class="modal-val" style="font-size: 1rem; color: #111111;">
+                            <strong id="modalGridAmount">₹0.00</strong>
+                        </span>
+                    </div>
+                    <div class="modal-row">
+                        <span class="modal-lbl">Packaging:</span>
+                        <span class="modal-val">Signature Silk Touch Gift Box</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="track-modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="closeProductTrackModal()" style="font-weight: 600; padding: 6px 18px;">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const TRACKING_DATA = {{ tracking_orders_json|safe }};
+
+    function openProductTrackModal(cleanId) {
+        const order = TRACKING_DATA[cleanId];
+        if (!order) return;
+
+        document.getElementById('modalProductName').textContent = order.product_name;
+        document.getElementById('modalOrderNum').textContent = order.order_number;
+        document.getElementById('modalCustomerName').textContent = order.customer;
+        document.getElementById('modalLiveStageText').textContent = 'Live Stage: ' + (order.stage_label || 'In Transit');
+
+        document.getElementById('modalCourierName').textContent = order.courier;
+        document.getElementById('modalAwbCode').textContent = order.awb;
+        document.getElementById('modalDispatchDate').textContent = order.dispatched_date;
+        document.getElementById('modalEstDelivery').textContent = order.est_delivery;
+
+        document.getElementById('modalGridCustomer').textContent = order.customer;
+        document.getElementById('modalGridPhone').textContent = order.phone;
+        document.getElementById('modalGridEmail').textContent = order.email;
+        document.getElementById('modalGridAddress').textContent = order.address;
+        document.getElementById('modalGridCity').textContent = order.city;
+
+        document.getElementById('modalGridItem').textContent = order.product_name;
+        document.getElementById('modalGridSku').textContent = order.sku;
+        document.getElementById('modalGridPayment').textContent = order.payment;
+        document.getElementById('modalGridAmount').textContent = '₹' + parseFloat(order.amount).toFixed(2);
+
+        document.getElementById('modalStage1Note').textContent = 'Payment verified (' + order.payment + ')';
+        document.getElementById('modalStage4Note').textContent = 'En-route via ' + order.courier;
+        document.getElementById('modalStage5Note').textContent = 'Expected by ' + order.est_delivery;
+
+        const stage = parseInt(order.current_stage) || 4;
+        const progressLine = document.getElementById('modalProgressLine');
+
+        for (let i = 1; i <= 5; i++) {
+            const node = document.getElementById('modalStage' + i);
+            if (!node) continue;
+            const pill = node.querySelector('.track-step-pill');
+            const circle = node.querySelector('.track-node-circle');
+
+            if (i < stage) {
+                node.className = 'track-step-node completed';
+                if (pill) pill.textContent = 'Completed';
+                if (circle) circle.textContent = '✓';
+            } else if (i === stage) {
+                if (stage === 5) {
+                    node.className = 'track-step-node completed';
+                    if (pill) pill.textContent = 'Delivered';
+                    if (circle) circle.textContent = '✓';
+                } else {
+                    node.className = 'track-step-node active';
+                    if (pill) pill.textContent = 'Current Stage';
+                    if (circle) circle.textContent = (stage === 4 ? '🚚' : '⚙');
+                }
+            } else {
+                node.className = 'track-step-node pending';
+                if (pill) pill.textContent = 'Upcoming';
+                if (circle) circle.textContent = (i === 5 ? '🏠' : (i === 4 ? '🚚' : '○'));
+            }
+        }
+
+        if (stage === 1) progressLine.style.width = '10%';
+        else if (stage === 2) progressLine.style.width = '35%';
+        else if (stage === 3) progressLine.style.width = '60%';
+        else if (stage === 4) progressLine.style.width = '80%';
+        else if (stage >= 5) progressLine.style.width = '100%';
+
+        const modal = document.getElementById('productTrackModal');
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeProductTrackModal() {
+        const modal = document.getElementById('productTrackModal');
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+
+    function handleBackdropClick(e) {
+        if (e.target.id === 'productTrackModal') {
+            closeProductTrackModal();
+        }
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeProductTrackModal();
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const autoOpen = '{{ auto_open_id|escapejs }}';
+        if (autoOpen && TRACKING_DATA[autoOpen]) {
+            openProductTrackModal(autoOpen);
+        }
+    });
+</script>
+{% endblock %}

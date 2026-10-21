@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Terms & Conditions – Their Nibs{% endblock %}
+
+{% block extra_css %}
+<style>
+  .policy-container {
+    max-width: 1120px;
+    margin: 40px auto 90px;
+    padding: 0 24px;
+    font-family: var(--font-body, 'Poppins', sans-serif);
+    color: #1d1d1b;
+  }
+  .policy-breadcrumbs {
+    font-size: 13px;
+    color: #71717a;
+    margin-bottom: 24px;
+  }
+  .policy-breadcrumbs a {
+    color: #1d1d1b;
+    text-decoration: none;
+  }
+  .policy-breadcrumbs a:hover {
+    text-decoration: underline;
+  }
+  .policy-layout {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .policy-content h1 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    font-size: 2.5rem;
+    font-weight: 400;
+    margin: 0 0 16px;
+    color: #111111;
+  }
+  .policy-content .intro-lead {
+    font-size: 16px;
+    line-height: 1.7;
+    color: #555555;
+    margin-bottom: 32px;
+    border-bottom: 1px solid #e5e5e5;
+    padding-bottom: 24px;
+  }
+  .policy-content h2 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    font-size: 1.5rem;
+    margin: 32px 0 12px;
+    color: #111111;
+  }
+  .policy-content p,
+  .policy-content li {
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: #444444;
+  }
+  .policy-content ul {
+    padding-left: 20px;
+    margin-bottom: 20px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="policy-container">
+  <div class="policy-breadcrumbs">
+    <a href="{% url 'homepage' %}">Home</a> &rsaquo; <a href="{% url 'here_to_help' %}">Here to Help</a> &rsaquo; <span>Terms &amp; Conditions</span>
+  </div>
+
+  <div class="policy-layout">
+
+    <div class="policy-content">
+      <h1>Terms &amp; Conditions</h1>
+      <p class="intro-lead">
+        Welcome to Their Nibs. These terms and conditions apply to your use of this website and all orders placed with Their Nibs Ltd.
+      </p>
+
+      <h2>1. About Us</h2>
+      <p>
+        Their Nibs is an independent British sleepwear brand registered in England and Wales. Our flagship boutique is situated at 103 Chamberlayne Road, Kensal Rise, London, NW10 3NS.
+      </p>
+
+      <h2>2. Order Acceptance &amp; Contract</h2>
+      <p>
+        When you submit an order through our checkout, you will receive an automatic acknowledgement email confirming receipt of your order. Acceptance of your order and completion of the contract takes place when the goods are dispatched from our warehouse to your delivery address.
+      </p>
+
+      <h2>3. Pricing &amp; VAT</h2>
+      <p>
+        All prices displayed on the site are in British Pounds Sterling (£) or Indian Rupees (₹) as configured, inclusive of applicable sales taxes (VAT). We reserve the right to correct pricing errors before dispatch.
+      </p>
+
+      <h2>4. Promotional Codes &amp; Discounts</h2>
+      <p>
+        Promotional discount codes must be entered during checkout before completing payment. Promotional codes cannot be combined with other offers or applied retroactively to completed orders unless explicitly stated.
+      </p>
+
+      <h2>5. Intellectual Property</h2>
+      <p>
+        All creative designs, hand-drawn print illustrations, artwork, trademarks, photography, logos, and website copy are the exclusive intellectual property of Their Nibs Ltd and are protected under UK and international copyright laws.
+      </p>
+
+      <h2>6. Statutory Rights</h2>
+      <p>
+        Nothing in these terms affects your statutory consumer rights under the Consumer Rights Act 2015 and Consumer Contracts Regulations 2013.
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

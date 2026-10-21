@@ -1,0 +1,298 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}{% if is_edit %}Edit {{ product.name }}{% else %}Add Product{% endif %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <a href="/admin-panel/products/" style="font-size: 0.82rem; color: var(--text-muted); display: inline-flex; align-items: center; gap: 0.35rem; margin-bottom: 0.5rem;">
+            ← Back to Products
+        </a>
+        <h1 class="page-title">{% if is_edit %}Edit: {{ product.name }}{% else %}Add New Garment Item{% endif %}</h1>
+        <p class="page-subtitle">Configure pricing, fashion taxonomy, inventory units, and variants.</p>
+    </div>
+    <div class="page-actions"></div>
+</div>
+
+<form method="POST" id="productForm">
+    {% csrf_token %}
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+
+        <div>
+
+            <div class="clothify-card">
+                <div class="card-header">
+                    <h3 class="card-title">Garment Details</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="form-label">Product Name *</label>
+                        {{ form.name }}
+                        {% if form.name.errors %}<div class="text-danger" style="font-size:0.75rem; color:var(--danger);">{{ form.name.errors }}</div>{% endif %}
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">SKU Identifier *</label>
+                            {{ form.sku }}
+                            {% if form.sku.errors %}<div class="text-danger" style="font-size:0.75rem; color:var(--danger);">{{ form.sku.errors }}</div>{% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Brand *</label>
+                            {{ form.brand }}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Boutique Seller / Vendor</label>
+                            {{ form.seller }}
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Category *</label>
+                            {{ form.category }}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Subcategory</label>
+                            {{ form.subcategory }}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Target Gender *</label>
+                            {{ form.gender }}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Description & Fit *</label>
+                        {{ form.description }}
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Material & Fabric Composition</label>
+                            {{ form.material }}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fashion Tags (Comma-separated)</label>
+                            {{ form.tags }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="clothify-card">
+                <div class="card-header">
+                    <h3 class="card-title">Pricing & Stock Inventory</h3>
+                </div>
+                <div class="card-body">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Base Retail Price (₹) *</label>
+                            {{ form.price }}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Discount Percentage (%)</label>
+                            {{ form.discount_percent }}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Initial Stock Quantity *</label>
+                            {{ form.stock }}
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Primary Color</label>
+                            {{ form.color }}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Default Size</label>
+                            {{ form.size }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if is_edit %}
+            <div class="clothify-card">
+                <div class="card-header">
+                    <h3 class="card-title">Product Variants (Colors & Sizes)</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive" style="margin-bottom: 1.5rem;">
+                        <table class="clothify-table">
+                            <thead>
+                                <tr>
+                                    <th>Variant SKU</th>
+                                    <th>Color</th>
+                                    <th>Size</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for v in variants %}
+                                <tr>
+                                    <td><strong>{{ v.sku }}</strong></td>
+                                    <td>{{ v.color }}</td>
+                                    <td>{{ v.size }}</td>
+                                    <td>₹{{ v.price }}</td>
+                                    <td>{{ v.stock }}</td>
+                                    <td><span class="status-badge status-{{ v.stock_status|slugify }}">{{ v.stock_status }}</span></td>
+                                    <td>
+                                        <a href="/admin-panel/variants/{{ v.id }}/delete/" class="btn btn-danger btn-sm" data-confirm="Delete this variant?">Delete</a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">
+                                        No variants created yet. Add standard sizes/colors below.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: var(--radius-sm); border: 1px dashed var(--border-subtle);">
+                        <h4 style="font-size: 0.88rem; margin-bottom: 0.75rem; color: #818cf8;">+ Add New Size / Color Variant</h4>
+                        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto; gap: 0.5rem; align-items: end;">
+                            <div>
+                                <label class="form-label" style="font-size:0.75rem;">Variant SKU</label>
+                                <input type="text" name="variant_sku" id="v_sku" class="form-control" placeholder="{{ product.sku }}-BLK-M">
+                            </div>
+                            <div>
+                                <label class="form-label" style="font-size:0.75rem;">Color</label>
+                                <input type="text" name="variant_color" id="v_color" class="form-control" placeholder="Black">
+                            </div>
+                            <div>
+                                <label class="form-label" style="font-size:0.75rem;">Size</label>
+                                <input type="text" name="variant_size" id="v_size" class="form-control" placeholder="M">
+                            </div>
+                            <div>
+                                <label class="form-label" style="font-size:0.75rem;">Price (₹)</label>
+                                <input type="number" step="0.01" name="variant_price" id="v_price" class="form-control" value="{{ product.final_price }}">
+                            </div>
+                            <div>
+                                <label class="form-label" style="font-size:0.75rem;">Stock</label>
+                                <input type="number" name="variant_stock" id="v_stock" class="form-control" value="25">
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="submitVariantForm()">Add Variant</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div>
+
+            <div class="clothify-card">
+                <div class="card-header">
+                    <h3 class="card-title">Publishing & Status</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="form-label">Publication Status *</label>
+                        {{ form.status }}
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; color: #fff; cursor: pointer;">
+                            {{ form.is_featured }}
+                            <span>Featured on Storefront</span>
+                        </label>
+                    </div>
+
+                    <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle);">
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            {% if is_edit %}Update Product Details{% else %}Save & Create Product{% endif %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="clothify-card">
+                <div class="card-header">
+                    <h3 class="card-title">Fashion Taxonomy</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="form-label">Season</label>
+                        {{ form.season }}
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Occasion</label>
+                        {{ form.occasion }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="clothify-card">
+                <div class="card-header">
+                    <h3 class="card-title">Product Image</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="form-label">Primary Image URL</label>
+                        {{ form.image_url }}
+                    </div>
+
+                    <div id="imagePreviewContainer" style="margin-top: 1rem; text-align: center;">
+                        {% if form.image_url.value %}
+                        <div style="position: relative; display: inline-block;">
+                            <img id="imagePreview" src="{{ form.image_url.value }}" alt="{{ form.name.value|default:'Product Preview' }}" class="lightbox-trigger" data-lightbox-title="{{ form.name.value|default:'Product Preview' }}" data-lightbox-subtitle="SKU: {{ form.sku.value|default:'Pending' }}" style="max-width: 100%; height: 200px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-subtle); cursor: zoom-in;" title="Click to view full garment image">
+                            <div style="font-size: 0.74rem; color: var(--accent); margin-top: 0.4rem; font-weight: 500;">🔍 Click image to enlarge & zoom</div>
+                        </div>
+                        {% else %}
+                        <div id="imagePlaceholder" style="height: 160px; background: var(--bg-main); border: 1px dashed var(--border-subtle); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.82rem;">
+                            Enter image URL to view preview
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% if is_edit %}
+<form id="hiddenVariantForm" method="POST" action="/admin-panel/products/{{ product.id }}/variants/add/" style="display: none;">
+    {% csrf_token %}
+    <input type="hidden" name="sku" id="h_sku">
+    <input type="hidden" name="color" id="h_color">
+    <input type="hidden" name="size" id="h_size">
+    <input type="hidden" name="price" id="h_price">
+    <input type="hidden" name="stock" id="h_stock">
+    <input type="hidden" name="is_available" value="on">
+</form>
+
+<script>
+    function submitVariantForm() {
+        const sku = document.getElementById('v_sku').value.trim();
+        const color = document.getElementById('v_color').value.trim();
+        const size = document.getElementById('v_size').value.trim();
+        const price = document.getElementById('v_price').value.trim();
+        const stock = document.getElementById('v_stock').value.trim();
+
+        if (!sku || !color || !size || !price) {
+            alert('Please fill out Variant SKU, Color, Size, and Price.');
+            return;
+        }
+
+        document.getElementById('h_sku').value = sku;
+        document.getElementById('h_color').value = color;
+        document.getElementById('h_size').value = size;
+        document.getElementById('h_price').value = price;
+        document.getElementById('h_stock').value = stock || '0';
+        document.getElementById('hiddenVariantForm').submit();
+    }
+</script>
+{% endif %}
+
+{% endblock %}

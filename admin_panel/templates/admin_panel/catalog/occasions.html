@@ -1,0 +1,122 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Occasion Management{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+    <div>
+        <h1 class="page-title">Occasions & Dress Codes</h1>
+        <p class="page-subtitle">Curate lookbooks and ground AI styling around lifestyle occasions.</p>
+    </div>
+    <div class="page-actions">
+        <button type="button" class="btn btn-primary" onclick="openAddModal()">
+            <span>Add New Occasion</span>
+        </button>
+    </div>
+</div>
+
+<div class="clothify-card" style="width: 100%;">
+    <div class="card-header" style="display: flex; align-items: center; justify-content: space-between;">
+        <h3 class="card-title">Lifestyle Occasions</h3>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">{{ occasions|length }} occasions configured</span>
+    </div>
+    <div class="table-responsive">
+        <table class="clothify-table" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th style="width: 40%;">Occasion</th>
+                    <th style="width: 25%;">Slug</th>
+                    <th style="width: 20%;">Products Tagged</th>
+                    <th style="text-align: right; width: 15%;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for occ in occasions %}
+                <tr>
+                    <td>
+                        <strong style="color: var(--primary); font-size: 0.92rem;">{{ occ.name }}</strong>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">{{ occ.description|default:"Standard style category" }}</div>
+                    </td>
+                    <td style="color: var(--text-muted); font-family: monospace;">{{ occ.slug }}</td>
+                    <td>
+                        <strong style="color: var(--accent, #ba6853);">{{ occ.products_count }}</strong> items
+                    </td>
+                    <td style="text-align: right;">
+                        {% if occ.is_active %}
+                        <span class="status-badge status-active">Active</span>
+                        {% else %}
+                        <span class="status-badge status-cancelled">Inactive</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                        No occasions added yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="addOccasionModal" style="display: {% if form.errors %}flex{% else %}none{% endif %}; position: fixed; inset: 0; background: rgba(30, 38, 50, 0.65); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(5px); padding: 1rem;">
+    <div style="background: #ffffff; border-radius: 12px; width: 100%; max-width: 520px; box-shadow: 0 25px 50px rgba(0,0,0,0.25); overflow: hidden; border: 1px solid var(--border-subtle); max-height: 90vh; display: flex; flex-direction: column;">
+        <div style="padding: 1.15rem 1.4rem; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; background: #fdfaf6;">
+            <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: var(--primary);">Add New Occasion</h3>
+            <button type="button" onclick="closeAddModal()" style="background: none; border: none; font-size: 1.35rem; cursor: pointer; color: var(--text-muted); line-height: 1;">✕</button>
+        </div>
+        <form method="POST" style="padding: 1.4rem; overflow-y: auto;">
+            {% csrf_token %}
+            {% if form.errors %}
+            <div style="background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 0.65rem 0.85rem; border-radius: 6px; font-size: 0.82rem; margin-bottom: 1rem;">
+                Please correct the errors indicated below.
+            </div>
+            {% endif %}
+            <div class="form-group" style="margin-bottom: 0.85rem;">
+                <label class="form-label" style="display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.35rem;">Occasion Name *</label>
+                {{ form.name }}
+            </div>
+            <div class="form-group" style="margin-bottom: 0.85rem;">
+                <label class="form-label" style="display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.35rem;">Description & Styling Notes</label>
+                {{ form.description }}
+            </div>
+            <div class="form-group" style="margin-bottom: 1.25rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-primary); cursor: pointer;">
+                    {{ form.is_active }}
+                    <span>Active Occasion</span>
+                </label>
+            </div>
+            <div style="display: flex; gap: 0.75rem; justify-content: flex-end; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle);">
+                <button type="button" onclick="closeAddModal()" class="btn btn-secondary">Cancel</button>
+                <button type="submit" class="btn btn-primary">Create Occasion</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openAddModal() {
+    const modal = document.getElementById('addOccasionModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+}
+function closeAddModal() {
+    const modal = document.getElementById('addOccasionModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+window.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeAddModal();
+});
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('addOccasionModal');
+    if (e.target === modal) closeAddModal();
+});
+</script>
+{% endblock %}

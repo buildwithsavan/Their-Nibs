@@ -1,0 +1,141 @@
+{% extends 'seller_panel/base.html' %}
+
+{% block title %}Transactions Log{% endblock %}
+{% block page_heading %}Finance — Complete Transaction Movement Ledger{% endblock %}
+
+{% block content %}
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; margin: 0; color: var(--primary); font-weight: 700;">
+            Seller Account Financial Ledger
+        </h2>
+        <span style="font-size: 0.88rem; color: var(--text-muted);">
+            Detailed line-item record of every financial credit, commission deduction, refund adjustment, and payout transfer.
+        </span>
+    </div>
+    <button type="button" class="btn btn-secondary" style="padding: 8px 18px; font-weight: 600; font-size: 0.88rem; background: #ffffff; border: 1px solid #cbd5e1;" onclick="alert('Exporting complete transaction ledger to CSV file...');">
+        <i class="bi bi-file-earmark-spreadsheet me-1"></i> Export CSV
+    </button>
+</div>
+
+<div class="clothify-card" style="margin-bottom: 1.5rem; padding: 1rem 1.25rem; background: #ffffff;">
+    <form method="GET" action="/seller-panel/finance/transactions/" style="display: flex; flex-wrap: wrap; gap: 0.85rem; align-items: flex-end;">
+        <div style="flex: 1.5; min-width: 230px;">
+            <label style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; display: block;">
+                Search Transaction or Order
+            </label>
+            <input type="text" name="q" value="{{ current_q|default:'' }}" class="form-control" placeholder="Search Txn ID, Order # or type..." style="width: 100%; height: 36px; font-size: 0.88rem;">
+        </div>
+
+        <div style="flex: 1.2; min-width: 180px;">
+            <label style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; display: block;">
+                Transaction Type
+            </label>
+            <select name="type" class="form-select" style="width: 100%; height: 36px; font-size: 0.88rem;">
+                <option value="all" {% if current_type == 'all' or not current_type %}selected{% endif %}>All Transaction Types</option>
+                <option value="sale" {% if current_type == 'sale' %}selected{% endif %}>Sales Revenue</option>
+                <option value="commission_deduction" {% if current_type == 'commission_deduction' %}selected{% endif %}>Commission Deductions</option>
+                <option value="refund_adjustment" {% if current_type == 'refund_adjustment' %}selected{% endif %}>Refund Adjustments</option>
+                <option value="payout_transfer" {% if current_type == 'payout_transfer' %}selected{% endif %}>Payout Transfers</option>
+                <option value="manual_adjustment" {% if current_type == 'manual_adjustment' %}selected{% endif %}>Manual Adjustments</option>
+            </select>
+        </div>
+
+        <div style="flex: 1; min-width: 150px;">
+            <label style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; display: block;">
+                Status
+            </label>
+            <select name="status" class="form-select" style="width: 100%; height: 36px; font-size: 0.88rem;">
+                <option value="all" {% if current_status == 'all' or not current_status %}selected{% endif %}>All Statuses</option>
+                <option value="completed" {% if current_status == 'completed' %}selected{% endif %}>Completed</option>
+                <option value="pending" {% if current_status == 'pending' %}selected{% endif %}>Pending</option>
+                <option value="failed" {% if current_status == 'failed' %}selected{% endif %}>Failed</option>
+            </select>
+        </div>
+
+        <div style="display: flex; gap: 6px; align-items: center;">
+            <button type="submit" class="btn btn-primary" style="height: 36px; padding: 0 16px; font-size: 0.88rem; font-weight: 600;">
+                <i class="bi bi-funnel"></i> Filter
+            </button>
+            {% if current_q or current_type != 'all' or current_status != 'all' %}
+                <a href="/seller-panel/finance/transactions/" class="btn btn-secondary" style="height: 36px; padding: 0 14px; font-size: 0.88rem; display: flex; align-items: center;">Reset</a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<div class="clothify-card" style="padding: 0; overflow: hidden;">
+    <div style="overflow-x: auto;">
+        <table class="clothify-table" style="width: 100%; font-size: 0.88rem; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #faf6f0; border-bottom: 2px solid var(--seller-border, #e5e7eb);">
+                    <th style="padding: 10px 14px; text-align: left;">TXN ID</th>
+                    <th style="padding: 10px 14px; text-align: center;">DATE &amp; TIME</th>
+                    <th style="padding: 10px 14px; text-align: left;">TRANSACTION TYPE</th>
+                    <th style="padding: 10px 14px; text-align: center;">RELATED ORDER</th>
+                    <th style="padding: 10px 14px; text-align: right;">GROSS AMOUNT</th>
+                    <th style="padding: 10px 14px; text-align: right;">COMMISSION</th>
+                    <th style="padding: 10px 14px; text-align: right;">REFUND / ADJ</th>
+                    <th style="padding: 10px 14px; text-align: right;">NET AMOUNT (₹)</th>
+                    <th style="padding: 10px 14px; text-align: center;">STATUS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if transactions %}
+                    {% for t in transactions %}
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+
+                        <td style="padding: 10px 14px; font-weight: 700; color: var(--primary);">
+                            {{ t.txn_id }}
+                        </td>
+
+                        <td style="padding: 10px 14px; text-align: center; font-size: 0.82rem; color: #64748b;">
+                            {{ t.datetime }}
+                        </td>
+
+                        <td style="padding: 10px 14px;">
+                            <span class="{{ t.type_badge }}" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 4px;">
+                                {{ t.type }}
+                            </span>
+                        </td>
+
+                        <td style="padding: 10px 14px; text-align: center;">
+                            {% if t.order_number != '--' %}
+                                <code style="font-size: 0.82rem; color: var(--primary); font-weight: 600;">{{ t.order_number }}</code>
+                            {% else %}
+                                <span style="color: #94a3b8;">--</span>
+                            {% endif %}
+                        </td>
+
+                        <td style="padding: 10px 14px; text-align: right; font-weight: 600; color: #1e293b;">
+                            ₹{{ t.gross_amount|floatformat:2 }}
+                        </td>
+
+                        <td style="padding: 10px 14px; text-align: right; font-weight: 600; color: #dc2626;">
+                            {% if t.commission != 0 %}₹{{ t.commission|floatformat:2 }}{% else %}<span style="color:#94a3b8;">₹0.00</span>{% endif %}
+                        </td>
+
+                        <td style="padding: 10px 14px; text-align: right; font-weight: 600; color: #b45309;">
+                            {% if t.refund_adj != 0 %}₹{{ t.refund_adj|floatformat:2 }}{% else %}<span style="color:#94a3b8;">₹0.00</span>{% endif %}
+                        </td>
+
+                        <td style="padding: 10px 14px; text-align: right; font-weight: 700; color: {% if t.net_amount > 0 %}#16a34a{% else %}#1e293b{% endif %};">
+                            ₹{{ t.net_amount|floatformat:2 }}
+                        </td>
+
+                        <td style="padding: 10px 14px; text-align: center;">
+                            <span class="badge-status {{ t.badge_class }}">{{ t.status }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="9" class="text-center py-4 text-muted">No transactions found for the selected search or filter criteria.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

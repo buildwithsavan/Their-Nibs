@@ -1,0 +1,561 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Size Guides – Their Nibs{% endblock %}
+
+{% block extra_css %}
+<style>
+  .size-guide-container {
+    max-width: 1120px;
+    margin: 40px auto 80px;
+    padding: 0 24px;
+    font-family: var(--font-body, 'Poppins', sans-serif);
+    color: #1d1d1b;
+  }
+
+  .size-guide-breadcrumbs {
+    font-size: 13px;
+    color: #71717a;
+    margin-bottom: 24px;
+  }
+  .size-guide-breadcrumbs a {
+    color: #1d1d1b;
+    text-decoration: none;
+  }
+  .size-guide-breadcrumbs a:hover {
+    text-decoration: underline;
+  }
+
+  .size-guide-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .size-guide-header h1 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    font-size: 2.8rem;
+    font-weight: 400;
+    margin: 0 0 10px;
+    letter-spacing: -0.02em;
+    color: #111111;
+  }
+  .size-guide-header p {
+    color: #666666;
+    font-size: 15px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .size-guide-nav {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 48px;
+    border-bottom: 1px solid #e5e5e5;
+    padding-bottom: 16px;
+  }
+  .size-guide-nav a {
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #555555;
+    text-decoration: none;
+    border-radius: 20px;
+    background: #f7f5f2;
+    transition: all 0.2s ease;
+  }
+  .size-guide-nav a:hover,
+  .size-guide-nav a.active {
+    background: #1d1d1b;
+    color: #ffffff;
+  }
+
+  .size-guide-section {
+    margin-bottom: 56px;
+    scroll-margin-top: 100px;
+  }
+  .size-guide-section h2 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    font-size: 2rem;
+    font-weight: 500;
+    margin: 0 0 12px;
+    color: #1d1d1b;
+  }
+  .size-guide-section .section-intro {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #444444;
+    margin-bottom: 20px;
+    max-width: 800px;
+  }
+  .size-guide-section .section-intro strong {
+    color: #111111;
+  }
+
+  .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    background: #ffffff;
+  }
+  .size-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    min-width: 640px;
+  }
+  .size-table th,
+  .size-table td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid #ebebeb;
+    border-right: 1px solid #f0f0f0;
+  }
+  .size-table th {
+    background: #faf8f5;
+    font-weight: 600;
+    color: #111111;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .size-table tr:last-child td {
+    border-bottom: none;
+  }
+  .size-table td:first-child {
+    font-weight: 600;
+    color: #222222;
+    background: #faf8f5;
+    min-width: 160px;
+  }
+
+  .measurement-tips-box {
+    background: #faf8f5;
+    border: 1px solid #ede8e1;
+    border-radius: 6px;
+    padding: 28px 32px;
+    margin-top: 48px;
+  }
+  .measurement-tips-box h3 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    font-size: 1.5rem;
+    margin-top: 0;
+    margin-bottom: 16px;
+    color: #111111;
+  }
+  .measurement-tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+  }
+  .tip-item h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 6px;
+    color: #1d1d1b;
+  }
+  .tip-item p {
+    font-size: 13.5px;
+    color: #555555;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .size-help-banner {
+    margin-top: 40px;
+    padding: 24px;
+    background: #fff;
+    border: 1px dashed #d4d4d8;
+    border-radius: 6px;
+    text-align: center;
+  }
+  .size-help-banner p {
+    margin: 0 0 12px;
+    font-size: 14.5px;
+    color: #555555;
+  }
+  .size-help-banner a {
+    color: #1d1d1b;
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .size-guide-header h1 {
+      font-size: 2.2rem;
+    }
+    .size-guide-section h2 {
+      font-size: 1.6rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="size-guide-container">
+  <div class="size-guide-breadcrumbs">
+    <a href="{% url 'homepage' %}">Home</a> &rsaquo; <span>Size Guides</span>
+  </div>
+
+  <div class="size-guide-header">
+    <h1>Size Guides</h1>
+    <p>Find your perfect Their Nibs fit across our traditional, oversized, men's and kids collections.</p>
+  </div>
+
+  <nav class="size-guide-nav" aria-label="Size Guide Sections">
+    <a href="#womens-traditional">Womens Traditional</a>
+    <a href="#womens-oversized">Womens Oversized</a>
+    <a href="#mens-pyjamas">Men's Pyjamas</a>
+    <a href="#kids-pyjamas">Kid's Pyjamas (till 13 yrs)</a>
+    <a href="#how-to-measure">How to Measure</a>
+  </nav>
+
+  <section class="size-guide-section" id="womens-traditional">
+    <h2>Womens Traditional</h2>
+    <p class="section-intro">
+      For our <strong>traditional pyjama shape</strong>, we recommend buying as close to your high street size as possible. The inside leg of our traditional pyjamas is 76cms, all of our pyjama waists are elasticated unless stated otherwise in the product description.
+    </p>
+
+    <div class="table-responsive">
+      <table class="size-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>XS</th>
+            <th>S</th>
+            <th>M</th>
+            <th>L</th>
+            <th>XL</th>
+            <th>2XL</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>UK CLOTHES SIZE</td>
+            <td>8</td>
+            <td>10</td>
+            <td>12</td>
+            <td>14-16</td>
+            <td>18-20</td>
+            <td>22-24</td>
+          </tr>
+          <tr>
+            <td>US CLOTHES SIZE</td>
+            <td>4</td>
+            <td>6</td>
+            <td>8</td>
+            <td>10-12</td>
+            <td>14-16</td>
+            <td>18-20</td>
+          </tr>
+          <tr>
+            <td>BUST</td>
+            <td>90cm / 35.4"</td>
+            <td>100cm / 39.4"</td>
+            <td>110cm / 43.3"</td>
+            <td>120cm / 47.2"</td>
+            <td>130cm / 51.2"</td>
+            <td>140cm / 55.1"</td>
+          </tr>
+          <tr>
+            <td>WAIST</td>
+            <td>62cm / 22.4"</td>
+            <td>72cm / 28.3"</td>
+            <td>82cm / 32.3"</td>
+            <td>92cm / 36.2"</td>
+            <td>102cm / 40.2"</td>
+            <td>112cm / 44.1"</td>
+          </tr>
+          <tr>
+            <td>HIP</td>
+            <td>96cm / 37.8"</td>
+            <td>106cm / 41.7"</td>
+            <td>116cm / 45.7"</td>
+            <td>126cm / 49.6"</td>
+            <td>136cm / 53.5"</td>
+            <td>146cm / 57.5"</td>
+          </tr>
+          <tr>
+            <td>THIGH</td>
+            <td>63cm / 24.8"</td>
+            <td>68cm / 26.8"</td>
+            <td>73cm / 28.7"</td>
+            <td>78cm / 30.7"</td>
+            <td>83cm / 32.7"</td>
+            <td>88cm / 34.6"</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="size-guide-section" id="womens-oversized">
+    <h2>Womens Oversized</h2>
+    <p class="section-intro">
+      Our <strong>Oversized shape</strong> has an improved fit. Simply choose your usual size for a relaxed, classic oversized look.
+    </p>
+
+    <div class="table-responsive">
+      <table class="size-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>XS</th>
+            <th>S</th>
+            <th>M</th>
+            <th>L</th>
+            <th>XL</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>UK CLOTHES SIZE</td>
+            <td>8</td>
+            <td>10</td>
+            <td>12</td>
+            <td>14-16</td>
+            <td>18-20</td>
+          </tr>
+          <tr>
+            <td>US CLOTHES SIZE</td>
+            <td>4</td>
+            <td>6</td>
+            <td>8</td>
+            <td>10-12</td>
+            <td>14-16</td>
+          </tr>
+          <tr>
+            <td>BUST</td>
+            <td>104cm / 40.9"</td>
+            <td>114cm / 44.9"</td>
+            <td>124cm / 48.8"</td>
+            <td>134cm / 52.8"</td>
+            <td>144cm / 56.7"</td>
+          </tr>
+          <tr>
+            <td>WAIST</td>
+            <td>62cm / 24.4"</td>
+            <td>72cm / 28.3"</td>
+            <td>82cm / 32.3"</td>
+            <td>92cm / 36.2"</td>
+            <td>102cm / 40.2"</td>
+          </tr>
+          <tr>
+            <td>INSEAM</td>
+            <td>70cm / 27.6"</td>
+            <td>70cm / 27.6"</td>
+            <td>71cm / 28.0"</td>
+            <td>72cm / 28.3"</td>
+            <td>73cm / 28.7"</td>
+          </tr>
+          <tr>
+            <td>THIGH</td>
+            <td>71cm / 28.0"</td>
+            <td>76cm / 29.9"</td>
+            <td>81cm / 31.9"</td>
+            <td>86cm / 33.9"</td>
+            <td>91cm / 35.8"</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="size-guide-section" id="mens-pyjamas">
+    <h2>Men's Pyjamas Size Guide</h2>
+    <p class="section-intro">
+      Designed with a tailored relaxed cut for effortless comfort through the night. Waists are gently elasticated with adjustable drawstring ties.
+    </p>
+
+    <div class="table-responsive">
+      <table class="size-table">
+        <thead>
+          <tr>
+            <th>Measurement</th>
+            <th>XS</th>
+            <th>S</th>
+            <th>M</th>
+            <th>L</th>
+            <th>XL</th>
+            <th>2XL</th>
+            <th>3XL</th>
+            <th>Unit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td rowspan="2">CHEST</td>
+            <td>81-86</td>
+            <td>89-94</td>
+            <td>96-102</td>
+            <td>104-109</td>
+            <td>112-117</td>
+            <td>119-124</td>
+            <td>127-132</td>
+            <td>CMS</td>
+          </tr>
+          <tr>
+            <td>32-34</td>
+            <td>35-37</td>
+            <td>38-40</td>
+            <td>41-43</td>
+            <td>44-46</td>
+            <td>47-49</td>
+            <td>50-52</td>
+            <td>INCHES</td>
+          </tr>
+          <tr>
+            <td rowspan="2">WAIST</td>
+            <td>71-76</td>
+            <td>76-81</td>
+            <td>84-89</td>
+            <td>91-96</td>
+            <td>99-104</td>
+            <td>106-112</td>
+            <td>114-119</td>
+            <td>CMS</td>
+          </tr>
+          <tr>
+            <td>28-30</td>
+            <td>30-32</td>
+            <td>33-35</td>
+            <td>36-38</td>
+            <td>39-41</td>
+            <td>42-44</td>
+            <td>45-47</td>
+            <td>INCHES</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="size-guide-section" id="kids-pyjamas">
+    <h2>Kid's Pyjamas size guide</h2>
+    <p class="section-intro">
+      Soft, durable, breathable cotton and satin pyjamas designed to grow comfortably with your little ones. Sized by age from 1 year up to 13 years old.
+    </p>
+
+    <div class="table-responsive">
+      <table class="size-table">
+        <thead>
+          <tr>
+            <th>Age</th>
+            <th>Height (cm)</th>
+            <th>Chest (cm)</th>
+            <th>Waist (cm)</th>
+            <th>Height (inches)</th>
+            <th>Chest (inches)</th>
+            <th>Waist (inches)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1/2 Years</td>
+            <td>80-86 cm</td>
+            <td>50-52 cm</td>
+            <td>47-48 cm</td>
+            <td>31.5-33.9"</td>
+            <td>19.7-20.5"</td>
+            <td>18.5-18.9"</td>
+          </tr>
+          <tr>
+            <td>2/3 Years</td>
+            <td>90-98 cm</td>
+            <td>52-54 cm</td>
+            <td>48-50 cm</td>
+            <td>35.4-38.6"</td>
+            <td>20.5-21.3"</td>
+            <td>18.9-19.7"</td>
+          </tr>
+          <tr>
+            <td>3/4 Years</td>
+            <td>98-104 cm</td>
+            <td>54-56 cm</td>
+            <td>50-52 cm</td>
+            <td>38.6-40.9"</td>
+            <td>21.3-22.0"</td>
+            <td>19.7-20.5"</td>
+          </tr>
+          <tr>
+            <td>5/6 Years</td>
+            <td>110-116 cm</td>
+            <td>58-60 cm</td>
+            <td>53.5-55.5 cm</td>
+            <td>43.3-45.7"</td>
+            <td>22.8-23.6"</td>
+            <td>21.1-21.9"</td>
+          </tr>
+          <tr>
+            <td>7/8 Years</td>
+            <td>118-125 cm</td>
+            <td>62-64 cm</td>
+            <td>56.5-58 cm</td>
+            <td>46.5-49.2"</td>
+            <td>24.2-25.2"</td>
+            <td>22.2-22.8"</td>
+          </tr>
+          <tr>
+            <td>9/10 Years</td>
+            <td>128-140 cm</td>
+            <td>64-69 cm</td>
+            <td>58-62 cm</td>
+            <td>50.4-55.1"</td>
+            <td>25.2-27.2"</td>
+            <td>22.8-24.4"</td>
+          </tr>
+          <tr>
+            <td>11/12 Years</td>
+            <td>146-152 cm</td>
+            <td>70-76 cm</td>
+            <td>62-66 cm</td>
+            <td>57.5-59.8"</td>
+            <td>27.6-29.9"</td>
+            <td>24.4-26.0"</td>
+          </tr>
+          <tr>
+            <td>12/13 Years</td>
+            <td>152-158 cm</td>
+            <td>76-82 cm</td>
+            <td>66-70 cm</td>
+            <td>59.8-62.2"</td>
+            <td>29.9-32.3"</td>
+            <td>26.0-27.6"</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="measurement-tips-box" id="how-to-measure">
+    <h3>How to Measure Yourself</h3>
+    <div class="measurement-tips-grid">
+      <div class="tip-item">
+        <h4>1. Bust / Chest</h4>
+        <p>Measure around the fullest part of your bust or chest, keeping the measuring tape comfortably level under your arms.</p>
+      </div>
+      <div class="tip-item">
+        <h4>2. Waist</h4>
+        <p>Measure around your natural waistline, where your trousers naturally sit. Do not pull the tape too tight.</p>
+      </div>
+      <div class="tip-item">
+        <h4>3. Hips</h4>
+        <p>Stand with your feet together and measure around the widest part of your hips and bottom.</p>
+      </div>
+      <div class="tip-item">
+        <h4>4. Inside Leg</h4>
+        <p>Measure from the top of your inner thigh down to the bottom of your ankle bone.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="size-help-banner">
+    <p>Still unsure about your size? We'd love to help you find the right fit.</p>
+    <a href="mailto:info@their-nibs.com">Email us at info@their-nibs.com</a> &nbsp;|&nbsp;
+    <a href="{% url 'contact_us' %}">Visit our Contact Page</a>
+  </div>
+</div>
+{% endblock %}

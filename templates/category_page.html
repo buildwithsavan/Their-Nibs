@@ -1,0 +1,1851 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ category.title }} | Their Nibs London</title>
+
+  <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg?v=crown2026">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/images/favicon-32.png?v=crown2026">
+  <link rel="icon" type="image/png" sizes="192x192" href="/static/images/favicon-192.png?v=crown2026">
+  <link rel="apple-touch-icon" href="/static/images/favicon.png?v=crown2026">
+  <link rel="shortcut icon" type="image/x-icon" href="/static/images/favicon.ico?v=crown2026">
+
+  <meta name="description" content="{{ category.desc }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'css/homepage.css' %}?v=20261013-megamenu-perfect-v4">
+  <link rel="stylesheet" href="{% static 'css/preloader.css' %}?v=20261012-loader10s">
+
+  <style id="women-megamenu-inline-styles">
+    .site-header {
+      position: sticky !important;
+      top: 0 !important;
+      z-index: 9999 !important;
+    }
+    .header-container {
+      position: relative !important;
+    }
+    .nav-desktop {
+      position: static !important;
+    }
+    .nav-desktop .nav-item.has-mega-menu,
+    .nav-item.has-mega-menu,
+    .nav-item.has-dropdown.has-mega-menu {
+      position: static !important;
+    }
+    .nav-item.has-mega-menu .women-mega-menu {
+      position: absolute !important;
+      top: 100% !important;
+      left: 50% !important;
+      right: auto !important;
+      width: calc(100% - 60px) !important;
+      max-width: 1400px !important;
+      transform: translateX(-50%) translateY(6px) !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border-radius: 3px !important;
+      background-color: #ffffff !important;
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.12) !important;
+      border: 1px solid #e5e5e5 !important;
+      border-top: none !important;
+      overflow: hidden !important;
+      z-index: 10000 !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s !important;
+    }
+    .nav-item.has-mega-menu .women-mega-menu::before {
+      content: '' !important;
+      position: absolute !important;
+      top: -35px !important;
+      left: 0 !important;
+      right: 0 !important;
+      height: 35px !important;
+      display: block !important;
+    }
+    .nav-item.has-mega-menu:hover .women-mega-menu,
+    .nav-item.has-mega-menu:focus-within .women-mega-menu,
+    .nav-item.has-mega-menu.active .women-mega-menu,
+    .nav-item.has-mega-menu.is-open .women-mega-menu {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      transform: translateX(-50%) translateY(0) !important;
+    }
+    .nav-item.has-mega-menu:hover .nav-chevron,
+    .nav-item.has-mega-menu:focus-within .nav-chevron,
+    .nav-item.has-mega-menu.active .nav-chevron,
+    .nav-item.has-mega-menu.is-open .nav-chevron {
+      transform: rotate(180deg) !important;
+    }
+    .nav-item.has-mega-menu:hover .nav-link,
+    .nav-item.has-mega-menu:focus-within .nav-link,
+    .nav-item.has-mega-menu.active .nav-link,
+    .nav-item.has-mega-menu.is-open .nav-link {
+      text-decoration: underline !important;
+      text-underline-offset: 6px !important;
+      text-decoration-thickness: 1.5px !important;
+      color: #000000 !important;
+    }
+    .women-dropdown-grid {
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      align-items: stretch !important;
+      justify-content: space-between !important;
+      width: 100% !important;
+      background-color: #ffffff !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      box-sizing: border-box !important;
+    }
+    .women-dropdown-col {
+      display: flex !important;
+      flex-direction: column !important;
+      box-sizing: border-box !important;
+    }
+    .women-dropdown-col.col-shop {
+      flex: 1.15 1 0 !important;
+      padding: 28px 24px 30px 32px !important;
+      border-right: 1px solid #ebebeb !important;
+    }
+    .women-dropdown-col.col-fabric {
+      flex: 1 1 0 !important;
+      padding: 28px 24px 30px 28px !important;
+      border-right: 1px solid #ebebeb !important;
+    }
+    .women-dropdown-col.col-collection {
+      flex: 1.35 1 0 !important;
+      padding: 28px 24px 30px 28px !important;
+    }
+    .women-dropdown-col.col-banner {
+      flex: 1.5 0 310px !important;
+      width: 320px !important;
+      min-width: 280px !important;
+      max-width: 380px !important;
+      position: relative !important;
+      overflow: hidden !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      display: flex !important;
+      align-items: stretch !important;
+      background-color: #f7f3ef !important;
+    }
+    .women-dropdown-banner {
+      position: relative !important;
+      display: flex !important;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 380px !important;
+      text-decoration: none !important;
+      overflow: hidden !important;
+    }
+    .women-banner-img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      object-position: center top !important;
+      display: block !important;
+      transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+    }
+    .women-dropdown-banner:hover .women-banner-img {
+      transform: scale(1.03) !important;
+    }
+    .women-banner-cta {
+      position: absolute !important;
+      bottom: 22px !important;
+      left: 20px !important;
+      background-color: #f1c0ad !important;
+      color: #1e1e1e !important;
+      font-family: var(--font-body, 'Poppins', sans-serif) !important;
+      font-size: 0.76rem !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.08em !important;
+      padding: 8px 18px !important;
+      text-transform: uppercase !important;
+      border-radius: 2px !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
+      transition: background-color 0.2s ease, transform 0.2s ease !important;
+      pointer-events: none !important;
+      line-height: 1.2 !important;
+      display: inline-block !important;
+    }
+    .women-dropdown-banner:hover .women-banner-cta {
+      background-color: #e5ab96 !important;
+      transform: translateY(-1px) !important;
+    }
+    .women-menu-section.section-style {
+      margin-top: 24px !important;
+    }
+    .women-menu-title {
+      font-family: var(--font-body, 'Poppins', sans-serif) !important;
+      font-size: 1.02rem !important;
+      font-weight: 600 !important;
+      color: #1d1d1f !important;
+      margin: 0 0 12px 0 !important;
+      padding: 0 !important;
+      letter-spacing: -0.01em !important;
+      line-height: 1.3 !important;
+    }
+    .women-menu-list {
+      list-style: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 7px !important;
+    }
+    .women-menu-item {
+      display: inline-block !important;
+      font-family: var(--font-body, 'Poppins', sans-serif) !important;
+      font-size: 0.88rem !important;
+      font-weight: 400 !important;
+      color: #4b5563 !important;
+      text-decoration: none !important;
+      line-height: 1.35 !important;
+      transition: color 0.15s ease !important;
+      max-width: 230px !important;
+      white-space: normal !important;
+    }
+    .women-menu-item:hover {
+      color: #000000 !important;
+      text-decoration: underline !important;
+      text-underline-offset: 3px !important;
+    }
+
+    .nav-item.has-dropdown:not(.has-mega-menu) {
+      position: relative !important;
+    }
+    .nav-desktop .nav-item.has-mega-menu,
+    .nav-item.has-mega-menu,
+    .nav-item.has-dropdown.has-mega-menu {
+      position: static !important;
+    }
+    .mens-dropdown-menu::before,
+    .kids-dropdown-menu::before,
+    .accessories-dropdown-menu::before,
+    .gifting-dropdown-menu::before {
+      content: '' !important;
+      position: absolute !important;
+      top: -24px !important;
+      left: 0 !important;
+      right: 0 !important;
+      height: 24px !important;
+      display: block !important;
+    }
+
+    .mens-dropdown-menu {
+      position: absolute !important;
+      top: 100% !important;
+      left: 50% !important;
+      transform: translateX(-38%) translateY(6px) !important;
+      background-color: #ffffff !important;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.12) !important;
+      border: 1px solid #e5e5e5 !important;
+      border-radius: 3px !important;
+      padding: 0 !important;
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: stretch !important;
+      z-index: 9999 !important;
+      overflow: hidden !important;
+      white-space: nowrap !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s !important;
+    }
+    .nav-item:hover .mens-dropdown-menu,
+    .nav-item.active .mens-dropdown-menu,
+    .nav-item:focus-within .mens-dropdown-menu {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      transform: translateX(-38%) translateY(0) !important;
+    }
+    .mens-dropdown-banner {
+      display: block !important;
+      width: 295px !important;
+      height: 168px !important;
+      flex-shrink: 0 !important;
+      overflow: hidden !important;
+      position: relative !important;
+      background-color: #1a1a1a !important;
+      text-decoration: none !important;
+    }
+    .mens-banner-img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      display: block !important;
+      transition: transform 0.4s ease !important;
+    }
+    .mens-dropdown-banner:hover .mens-banner-img {
+      transform: scale(1.03) !important;
+    }
+    .mens-dropdown-col {
+      padding: 28px 36px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: flex-start !important;
+      min-width: 175px !important;
+      box-sizing: border-box !important;
+    }
+    .mens-dropdown-col.has-divider {
+      border-right: 1px solid #ebebeb !important;
+    }
+    .mens-menu-link {
+      font-family: var(--font-body, 'Poppins', sans-serif) !important;
+      font-size: 15px !important;
+      font-weight: 500 !important;
+      color: #1d1d1b !important;
+      text-decoration: none !important;
+      white-space: nowrap !important;
+      line-height: 1.4 !important;
+      transition: color 0.15s ease !important;
+    }
+    .mens-menu-link:hover {
+      color: #000000 !important;
+      text-decoration: underline !important;
+      text-underline-offset: 4px !important;
+    }
+
+    .kids-dropdown-menu {
+      position: absolute !important;
+      top: 100% !important;
+      left: 50% !important;
+      transform: translateX(-50%) translateY(6px) !important;
+      background-color: #ffffff !important;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.12) !important;
+      border: 1px solid #e5e5e5 !important;
+      border-radius: 3px !important;
+      padding: 0 !important;
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: stretch !important;
+      z-index: 9999 !important;
+      overflow: hidden !important;
+      white-space: nowrap !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s !important;
+    }
+    .nav-item:hover .kids-dropdown-menu,
+    .nav-item.active .kids-dropdown-menu,
+    .nav-item:focus-within .kids-dropdown-menu {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      transform: translateX(-50%) translateY(0) !important;
+    }
+    .kids-dropdown-col {
+      padding: 28px 36px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: flex-start !important;
+      gap: 16px !important;
+      min-width: 210px !important;
+      box-sizing: border-box !important;
+      border-right: 1px solid #ebebeb !important;
+    }
+    .kids-menu-link {
+      font-family: var(--font-body, 'Poppins', sans-serif) !important;
+      font-size: 15px !important;
+      font-weight: 500 !important;
+      color: #1d1d1b !important;
+      text-decoration: none !important;
+      white-space: nowrap !important;
+      line-height: 1.4 !important;
+      transition: color 0.15s ease !important;
+    }
+    .kids-menu-link:hover {
+      color: #000000 !important;
+      text-decoration: underline !important;
+      text-underline-offset: 4px !important;
+    }
+    .kids-dropdown-banner {
+      display: block !important;
+      width: 299px !important;
+      height: 170px !important;
+      flex-shrink: 0 !important;
+      overflow: hidden !important;
+      position: relative !important;
+      background-color: #f7f3ef !important;
+      text-decoration: none !important;
+    }
+    .kids-banner-img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      display: block !important;
+      transition: transform 0.4s ease !important;
+    }
+    .kids-dropdown-banner:hover .kids-banner-img {
+      transform: scale(1.03) !important;
+    }
+
+    .accessories-dropdown-menu {
+      position: absolute !important;
+      top: 100% !important;
+      left: 0 !important;
+      transform: translateY(6px) !important;
+      background-color: #ffffff !important;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.1) !important;
+      border: 1px solid #e8e8e8 !important;
+      border-radius: 3px !important;
+      padding: 20px 24px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 12px !important;
+      min-width: 200px !important;
+      z-index: 9999 !important;
+      white-space: nowrap !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s !important;
+    }
+    .nav-item:hover .accessories-dropdown-menu,
+    .nav-item.active .accessories-dropdown-menu,
+    .nav-item:focus-within .accessories-dropdown-menu {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      transform: translateY(0) !important;
+    }
+    .accessories-menu-link {
+      font-family: var(--font-body, 'Poppins', sans-serif) !important;
+      font-size: 14.5px !important;
+      font-weight: 450 !important;
+      color: #1d1d1b !important;
+      text-decoration: none !important;
+      white-space: nowrap !important;
+      padding: 2px 0 !important;
+      transition: color 0.15s ease !important;
+    }
+    .accessories-menu-link:hover {
+      color: #000000 !important;
+      text-decoration: underline !important;
+      text-underline-offset: 4px !important;
+    }
+
+    .gifting-dropdown-menu {
+      position: absolute !important;
+      top: 100% !important;
+      right: 0 !important;
+      left: auto !important;
+      transform: translateY(6px) !important;
+      background-color: #ffffff !important;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.1) !important;
+      border: 1px solid #e8e8e8 !important;
+      border-radius: 3px !important;
+      padding: 20px 24px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 10px !important;
+      min-width: 215px !important;
+      z-index: 9999 !important;
+      white-space: nowrap !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s !important;
+    }
+    .nav-item:hover .gifting-dropdown-menu,
+    .nav-item.active .gifting-dropdown-menu,
+    .nav-item:focus-within .gifting-dropdown-menu {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      transform: translateY(0) !important;
+    }
+    .gifting-menu-link {
+      font-family: var(--font-body, 'Poppins', sans-serif) !important;
+      font-size: 14.5px !important;
+      font-weight: 450 !important;
+      color: #1d1d1b !important;
+      text-decoration: none !important;
+      white-space: nowrap !important;
+      padding: 2px 0 !important;
+      transition: color 0.15s ease !important;
+    }
+    .gifting-menu-link:hover {
+      color: #000000 !important;
+      text-decoration: underline !important;
+      text-underline-offset: 4px !important;
+    }
+  </style>
+
+  <style>
+
+    .cat-hero-banner {
+      position: relative;
+      width: 100%;
+      min-height: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 24px;
+      background-size: cover;
+      background-position: center center;
+      color: #ffffff;
+      overflow: hidden;
+    }
+
+    .cat-hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(18, 16, 14, 0.45) 0%, rgba(18, 16, 14, 0.78) 100%);
+      z-index: 1;
+    }
+
+    .cat-hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+    }
+
+    .cat-breadcrumbs {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #ffd4b2;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .cat-breadcrumbs a {
+      color: rgba(255, 255, 255, 0.85);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .cat-breadcrumbs a:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    .cat-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 14px;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+    .hero-subtitle {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.6;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    .cat-filter-bar {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px 28px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .cat-pills-list {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .cat-pill-btn {
+      padding: 8px 18px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--color-primary);
+      background-color: #faf7f2;
+      border: 1px solid var(--color-border);
+      border-radius: 20px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+    }
+
+    .cat-pill-btn:hover,
+    .cat-pill-btn.active {
+      background-color: var(--color-peach-dark);
+      border-color: var(--color-peach-dark);
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(228, 126, 86, 0.3);
+    }
+
+    .cat-sort-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.84rem;
+      color: var(--color-text-meta);
+    }
+
+    .cat-sort-select {
+      padding: 6px 12px;
+      border: 1px solid var(--color-border);
+      border-radius: 4px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.82rem;
+      background: #ffffff;
+      cursor: pointer;
+    }
+
+    .cat-products-section {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 40px 28px 70px;
+    }
+
+    .cat-products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 30px;
+    }
+
+    .cat-product-card {
+      background: #ffffff;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+    }
+
+    .cat-product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      border-color: var(--color-peach);
+    }
+
+    .cat-img-box {
+      position: relative;
+      width: 100%;
+      height: 360px;
+      background-color: #f6f3ee;
+      overflow: hidden;
+    }
+
+    .cat-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .cat-product-card:hover .cat-img-box img {
+      transform: scale(1.06);
+    }
+
+    .cat-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 4px 10px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      z-index: 2;
+    }
+
+    .cat-badge.best-seller { background: #1d1d1b; color: #ffffff; }
+    .cat-badge.new { background: #e47e56; color: #ffffff; }
+    .cat-badge.trending { background: #6366f1; color: #ffffff; }
+    .cat-badge.artisan { background: #d97706; color: #ffffff; }
+    .cat-badge.matching-set { background: #1b5e20; color: #ffffff; }
+    .cat-badge.popular { background: #2563eb; color: #ffffff; }
+
+    .cat-wish-btn {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(4px);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #555555;
+      transition: all 0.25s ease;
+      z-index: 2;
+    }
+
+    .cat-wish-btn:hover {
+      background: #ffffff;
+      color: #e47e56;
+      transform: scale(1.15);
+    }
+
+    .cat-card-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+    }
+
+    .cat-prod-cat {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-text-meta);
+      margin-bottom: 6px;
+    }
+
+    .cat-prod-name {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--color-primary);
+      margin-bottom: 6px;
+      line-height: 1.35;
+    }
+    .cat-prod-price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .cat-prod-price {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    .cat-prod-original-price {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      text-decoration: line-through;
+    }
+    .cat-prod-discount {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #e11d48;
+    }
+    .cat-prod-rating {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 0.78rem;
+    }
+
+    .cat-meta-label {
+      font-weight: 600;
+      color: var(--color-text-meta);
+      min-width: 46px;
+      text-transform: uppercase;
+      font-size: 0.68rem;
+      letter-spacing: 0.05em;
+    }
+
+    .cat-pills-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .cat-size-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 6px;
+      min-width: 22px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #333333;
+      background: #f6f3ee;
+      border: 1px solid #e5ded3;
+      border-radius: 3px;
+      text-transform: uppercase;
+    }
+
+    .cat-color-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: #444444;
+      background: #faf7f2;
+      border: 1px solid #ebdcc5;
+      border-radius: 12px;
+      white-space: nowrap;
+    }
+
+    .cat-add-btn {
+      width: 100%;
+      padding: 11px 16px;
+      background: #ffffff;
+      color: var(--color-primary);
+      border: 1.5px solid var(--color-primary);
+      border-radius: 25px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .cat-add-btn:hover {
+      background: var(--color-primary);
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+    }
+
+    .cat-btn-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .cat-view-btn {
+      padding: 10px 16px;
+      background: #faf7f2;
+      color: var(--color-primary);
+      border: 1px solid var(--color-border);
+      border-radius: 25px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .cat-view-btn:hover {
+      background: var(--color-primary);
+      color: #ffffff;
+      border-color: var(--color-primary);
+    }
+
+    .cat-toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      padding: 14px 24px;
+      background: #1d1d1b;
+      color: #ffffff;
+      border-radius: 8px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      z-index: 10000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .cat-toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .cart-drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(4px);
+      z-index: 9998;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .cart-drawer-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .cart-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 440px;
+      max-width: 90vw;
+      background: #ffffff;
+      z-index: 9999;
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      box-shadow: -10px 0 35px rgba(0, 0, 0, 0.2);
+    }
+
+    .cart-drawer.active {
+      transform: translateX(0);
+    }
+
+    .cart-header {
+      padding: 22px 24px;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cart-header h2 {
+      margin: 0;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    .cart-close-btn {
+      font-size: 1.3rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #64748b;
+    }
+    .cart-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+    .cart-empty-message {
+      text-align: center;
+      color: #94a3b8;
+      padding: 40px 0;
+    }
+    .cart-item {
+      display: flex;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--color-border);
+      align-items: center;
+    }
+    .cart-item-img {
+      width: 64px;
+      height: 78px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+    .cart-item-details {
+      flex: 1;
+    }
+    .cart-item-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--color-primary);
+      margin-bottom: 4px;
+    }
+    .cart-item-meta {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+    .cart-item-price {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    .cart-item-remove {
+      color: #ef4444;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    }
+
+    .cart-footer {
+      padding: 22px 24px;
+      border-top: 1px solid var(--color-border);
+      background: #faf7f2;
+    }
+
+    .cart-total-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .cart-checkout-btn {
+      width: 100%;
+      height: 50px;
+      background: var(--color-peach-dark);
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="clothifyTopProgress" class="clothify-top-progress"></div>
+  <div id="clothifyPageLoader" class="clothify-preloader">
+    <div class="preloader-content">
+      <div class="preloader-image-wrap">
+        <img src="/static/images/loader-logo.png" 
+             alt="Their Nibs" 
+             class="preloader-custom-img" 
+             onerror="this.onerror=null; this.src='/static/images/loader-logo-square.png';">
+      </div>
+      <h2 class="preloader-brand-title">Their Nibs</h2>
+      <div class="preloader-brand-subtitle">Luxury Sleepwear &amp; Loungewear</div>
+      <div class="preloader-bar-wrap">
+        <div class="preloader-bar-inner"></div>
+      </div>
+      <div class="preloader-status-text" id="preloaderStatusText">Entering Boutique...</div>
+    </div>
+  </div>
+
+  <div class="top-banner" role="region" aria-label="Announcement">
+    <div class="top-banner-content">
+      <span>FREE Delivery on Orders Over ₹60 &bull; Hand-Drawn British Prints &bull; Hassle-Free Returns</span>
+    </div>
+  </div>
+
+  <header class="site-header" role="banner">
+    <div class="header-container">
+
+      <a href="{% url 'homepage' %}" class="brand-logo" aria-label="Their Nibs Home">
+        <div class="brand-emblem" aria-hidden="true">
+          <svg width="24" height="18" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 14L4 4L9 9L12 2L15 9L20 4L22 14H2Z"/>
+            <circle cx="12" cy="2" r="1" fill="currentColor"/>
+            <circle cx="4" cy="4" r="1" fill="currentColor"/>
+            <circle cx="20" cy="4" r="1" fill="currentColor"/>
+            <line x1="2" y1="16" x2="22" y2="16"/>
+          </svg>
+        </div>
+        <span class="brand-name">Their Nibs</span>
+      </a>
+
+      <nav class="nav-desktop" aria-label="Primary Navigation">
+
+        <div class="nav-item">
+          <a href="{% url 'homepage' %}#halloween" class="nav-link">
+            Halloween
+          </a>
+        </div>
+
+        <div class="nav-item has-dropdown">
+          <a href="{% url 'category_page' 'sleepwear' %}" class="nav-link">
+            Sleepwear
+            <svg class="nav-chevron" viewBox="0 0 24 24"><path d="M1.875 7.438 12 17.563 22.125 7.438"/></svg>
+          </a>
+          <div class="dropdown-menu dropdown-align-left">
+            <div class="dropdown-grid">
+              <div class="dropdown-col">
+                <span class="dropdown-col-title" style="display:block; font-size:0.75rem; font-weight:700; color:var(--color-peach-dark); text-transform:uppercase; margin-bottom:8px;">Signature Pyjamas</span>
+                <a href="{% url 'category_page' 'sleepwear' %}" class="dropdown-item">Traditional Long Pyjamas</a>
+                <a href="{% url 'category_page' 'sleepwear' %}" class="dropdown-item">Short &amp; Capri Sets</a>
+                <a href="{% url 'category_page' 'sleepwear' %}" class="dropdown-item">Brushed Cotton Nightwear</a>
+                <a href="{% url 'category_page' 'sleepwear' %}" class="dropdown-item">Satin &amp; Silk Lounge Sets</a>
+              </div>
+              <div class="dropdown-col">
+                <span class="dropdown-col-title" style="display:block; font-size:0.75rem; font-weight:700; color:var(--color-peach-dark); text-transform:uppercase; margin-bottom:8px;">Hand-Drawn Prints</span>
+                <a href="{% url 'category_page' 'sleepwear' %}" class="dropdown-item">Hummingbird Collection</a>
+                <a href="{% url 'category_page' 'sleepwear' %}" class="dropdown-item">Botanical Meadow</a>
+                <a href="{% url 'category_page' 'sleepwear' %}" class="dropdown-item">Starlight Celestial</a>
+                <a href="{% url 'category_page' 'sleepwear' %}" class="dropdown-item">Wildflower Kimono Robes</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="nav-item has-dropdown has-mega-menu">
+          <a href="{% url 'homepage' %}#womens" class="nav-link">
+            Womens
+            <svg class="nav-chevron" viewBox="0 0 24 24"><path d="M1.875 7.438 12 17.563 22.125 7.438"/></svg>
+          </a>
+          <div class="dropdown-menu women-mega-menu">
+            <div class="women-dropdown-grid">
+
+              <div class="women-dropdown-col col-shop">
+                <div class="women-menu-section">
+                  <h4 class="women-menu-title">Shop</h4>
+                  <ul class="women-menu-list">
+                    <li><a href="{% url 'homepage' %}#new-in" class="women-menu-item">New In</a></li>
+                    <li><a href="{% url 'homepage' %}#best-sellers" class="women-menu-item">Best Sellers</a></li>
+                    <li><a href="{% url 'homepage' %}#shop-all-pyjama-sets" class="women-menu-item">Shop All Pyjama Sets</a></li>
+                    <li><a href="{% url 'homepage' %}#e-gift-card" class="women-menu-item">E-Gift Card</a></li>
+                  </ul>
+                </div>
+                <div class="women-menu-section section-style">
+                  <h4 class="women-menu-title">Shop by Style</h4>
+                  <ul class="women-menu-list">
+                    <li><a href="{% url 'homepage' %}#traditional-long-pyjamas" class="women-menu-item">Traditional Long Pyjamas</a></li>
+                    <li><a href="{% url 'homepage' %}#oversized-pyjamas" class="women-menu-item">Oversized Pyjamas</a></li>
+                    <li><a href="{% url 'homepage' %}#short-pyjamas" class="women-menu-item">Short Pyjamas</a></li>
+                    <li><a href="{% url 'homepage' %}#capri-pyjamas" class="women-menu-item">Capri Pyjamas</a></li>
+                    <li><a href="{% url 'homepage' %}#boxy-pyjamas" class="women-menu-item">Boxy Pyjamas</a></li>
+                    <li><a href="{% url 'homepage' %}#dressing-gowns-robes" class="women-menu-item">Dressing Gowns &amp; Robes</a></li>
+                    <li><a href="{% url 'homepage' %}#nightdresses-shirts" class="women-menu-item">Nightdresses &amp; Shirts</a></li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="women-dropdown-col col-fabric">
+                <div class="women-menu-section">
+                  <h4 class="women-menu-title">Shop by Fabric</h4>
+                  <ul class="women-menu-list">
+                    <li><a href="{% url 'homepage' %}#fabric-cotton" class="women-menu-item">Cotton</a></li>
+                    <li><a href="{% url 'homepage' %}#fabric-brushed-cotton" class="women-menu-item">Brushed Cotton</a></li>
+                    <li><a href="{% url 'homepage' %}#fabric-cotton-voile" class="women-menu-item">Cotton Voile</a></li>
+                    <li><a href="{% url 'homepage' %}#fabric-cotton-gauze" class="women-menu-item">Cotton Gauze</a></li>
+                    <li><a href="{% url 'homepage' %}#fabric-satin" class="women-menu-item">Satin</a></li>
+                    <li><a href="{% url 'homepage' %}#fabric-linen-blend" class="women-menu-item">Linen Blend</a></li>
+                    <li><a href="{% url 'homepage' %}#fabric-jersey" class="women-menu-item">Jersey</a></li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="women-dropdown-col col-collection">
+                <div class="women-menu-section">
+                  <h4 class="women-menu-title">Shop by Collection</h4>
+                  <ul class="women-menu-list">
+                    <li><a href="{% url 'homepage' %}#collection-christmas-pyjamas" class="women-menu-item">Christmas Pyjamas</a></li>
+                    <li><a href="{% url 'homepage' %}#collection-matching-family" class="women-menu-item">Matching Family Pyjamas</a></li>
+                    <li><a href="{% url 'homepage' %}#collection-animal-feather" class="women-menu-item">Animal &amp; Feather Print Nightwear</a></li>
+                    <li><a href="{% url 'homepage' %}#collection-celestial-print" class="women-menu-item">Celestial Print Nightwear</a></li>
+                    <li><a href="{% url 'homepage' %}#collection-gingham-checked" class="women-menu-item">Gingham &amp; Checked Nightwear</a></li>
+                    <li><a href="{% url 'homepage' %}#collection-floral" class="women-menu-item">Floral Nightwear</a></li>
+                    <li><a href="{% url 'homepage' %}#collection-striped" class="women-menu-item">Striped Nightwear</a></li>
+                    <li><a href="{% url 'homepage' %}#collection-bridal-party" class="women-menu-item">Bridal Party Pyjamas</a></li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="women-dropdown-col col-banner">
+                <a href="{% url 'homepage' %}#womens" class="women-dropdown-banner">
+                  <img src="{% static 'images/women_dropdown_banner.png' %}" alt="Their Nibs Womens Pyjamas" class="women-banner-img">
+                  <span class="women-banner-cta">SHOP NOW</span>
+                </a>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="nav-item has-dropdown">
+          <a href="{% url 'category_page' 'mens' %}" class="nav-link">
+            <span class="nav-label">Mens</span>
+            <svg class="nav-chevron" viewBox="0 0 24 24"><path d="M1.875 7.438 12 17.563 22.125 7.438"/></svg>
+          </a>
+          <div class="dropdown-menu mens-dropdown-menu">
+            <a href="{% url 'category_page' 'mens' %}" class="mens-dropdown-banner" aria-label="Shop Mens">
+              <img src="{% static 'images/mens_dropdown_banner.png' %}" alt="Shop Mens - Their Nibs" class="mens-banner-img">
+            </a>
+            <div class="mens-dropdown-col has-divider">
+              <a href="{% url 'category_page' 'mens-pyjamas' %}" class="mens-menu-link">Mens Pyjamas</a>
+            </div>
+            <div class="mens-dropdown-col">
+              <a href="{% url 'category_page' 'matching-family' %}" class="mens-menu-link">Matching Family Pyjamas</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="nav-item has-dropdown">
+          <a href="{% url 'category_page' 'kids' %}" class="nav-link">
+            <span class="nav-label">Kids</span>
+            <svg class="nav-chevron" viewBox="0 0 24 24"><path d="M1.875 7.438 12 17.563 22.125 7.438"/></svg>
+          </a>
+          <div class="dropdown-menu kids-dropdown-menu">
+            <div class="kids-dropdown-col">
+              <a href="{% url 'category_page' 'kids' %}" class="kids-menu-link">Kids Pyjamas</a>
+              <a href="{% url 'category_page' 'kids' %}" class="kids-menu-link">Tween Pyjamas &amp; Nightwear</a>
+            </div>
+
+            <div class="kids-dropdown-col">
+              <a href="{% url 'category_page' 'matching-family' %}" class="kids-menu-link">Matching Family Pyjamas</a>
+              <a href="{% url 'category_page' 'kids' %}" class="kids-menu-link">All Kids &amp; Tweens</a>
+            </div>
+
+            <a href="{% url 'category_page' 'kids' %}" class="kids-dropdown-banner" aria-label="Shop Kids Collection">
+              <img src="{% static 'images/kids_dropdown_banner.png' %}" alt="Kids Collection - Their Nibs" class="kids-banner-img">
+            </a>
+          </div>
+        </div>
+
+        <div class="nav-item has-dropdown">
+          <a href="{% url 'category_page' 'accessories' %}" class="nav-link">
+            <span class="nav-label">Accessories</span>
+            <svg class="nav-chevron" viewBox="0 0 24 24"><path d="M1.875 7.438 12 17.563 22.125 7.438"/></svg>
+          </a>
+          <div class="dropdown-menu accessories-dropdown-menu">
+            <a href="{% url 'category_page' 'accessories' %}" class="accessories-menu-link">Make-up Bags</a>
+            <a href="{% url 'category_page' 'accessories-eyemasks' %}" class="accessories-menu-link">Eye Masks</a>
+            <a href="{% url 'category_page' 'accessories' %}" class="accessories-menu-link">Shower Caps</a>
+            <a href="{% url 'category_page' 'accessories' %}" class="accessories-menu-link">Scrunchies</a>
+          </div>
+        </div>
+
+        <div class="nav-item has-dropdown">
+          <a href="{% url 'category_page' 'gifting' %}" class="nav-link">
+            <span class="nav-label">Gifting</span>
+            <svg class="nav-chevron" viewBox="0 0 24 24"><path d="M1.875 7.438 12 17.563 22.125 7.438"/></svg>
+          </a>
+          <div class="dropdown-menu gifting-dropdown-menu">
+            <a href="{% url 'category_page' 'gifts-for-her' %}" class="gifting-menu-link">Gifts For Her</a>
+            <a href="{% url 'category_page' 'gifts-for-him' %}" class="gifting-menu-link">Gifts For Him</a>
+            <a href="{% url 'category_page' 'gifting' %}" class="gifting-menu-link">Gifts For Kids</a>
+            <a href="{% url 'category_page' 'matching-family' %}" class="gifting-menu-link">Matching Pyjamas</a>
+            <a href="{% url 'category_page' 'gifting' %}" class="gifting-menu-link">Gifts Under £100</a>
+            <a href="{% url 'category_page' 'gifting' %}" class="gifting-menu-link">Gifts Under £50</a>
+            <a href="{% url 'category_page' 'gifting' %}" class="gifting-menu-link">Gifts Under £25</a>
+            <a href="{% url 'category_page' 'gifting' %}" class="gifting-menu-link">Gifts under £15</a>
+            <a href="{% url 'category_page' 'gift-cards' %}" class="gifting-menu-link">E-Gift Card</a>
+          </div>
+        </div>
+
+      </nav>
+
+      <div class="header-actions">
+        <button class="action-btn btn-search" aria-label="Open Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="11" cy="11" r="7"/>
+            <line x1="16.5" y1="16.5" x2="22" y2="22"/>
+          </svg>
+        </button>
+
+        <a href="#wishlist" class="action-btn" aria-label="Wishlist">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </a>
+
+        <button class="action-btn" id="openCartBtn" aria-label="View Shopping Bag" title="Shopping Bag" onclick="openCartDrawer()" style="position: relative; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 6px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="22" height="22" stroke-width="2">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+          <span class="cart-badge-count" id="headerCartCount" style="position: absolute; top: -3px; right: -3px; background: var(--color-peach-dark); color: white; border-radius: 50%; font-size: 0.7rem; font-weight: 700; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;">0</span>
+        </button>
+
+        <a href="{% url 'checkout' %}" class="btn-create-account" style="padding: 7px 16px;">Checkout</a>
+        <a href="{% url 'seller_login' %}" class="btn-seller-login" target="_blank" title="Seller Portal Login">Seller Login</a>
+
+        <button class="mobile-menu-toggle" aria-label="Open Navigation Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <main id="main">
+
+    <section class="cat-hero-banner" style="background-image: url('{{ category.banner }}');">
+      <div class="cat-hero-overlay"></div>
+      <div class="cat-hero-content">
+        <nav class="cat-breadcrumbs" aria-label="Breadcrumbs">
+          <a href="{% url 'homepage' %}">Home</a>
+          <span>&rsaquo;</span>
+          {% if category.parent and category.parent != 'Home' %}
+          <a href="{% url 'category_page' category.parent_slug|default:'collections' %}">{{ category.parent }}</a>
+          <span>&rsaquo;</span>
+          {% endif %}
+          <span>{{ category.title }}</span>
+        </nav>
+        <h1 class="cat-title">{{ category.title }}</h1>
+        <p class="cat-desc">{{ category.desc }}</p>
+      </div>
+    </section>
+
+    <div class="cat-filter-bar">
+      <div class="cat-pills-list">
+        {% for c in categories %}
+        <a href="{% url 'category_page' c.slug %}" class="cat-pill-btn {% if c.slug == category_slug %}active{% endif %}">{{ c.name }}</a>
+        {% endfor %}
+      </div>
+      <div class="cat-sort-box">
+        <span>Sort By:</span>
+        <select class="cat-sort-select" id="sortSelect" onchange="location.href='?sort='+this.value">
+          <option value="featured" {% if not sort_param or sort_param == 'featured' %}selected{% endif %}>Featured Collection</option>
+          <option value="price-low" {% if sort_param == 'price-low' %}selected{% endif %}>Price: Low to High</option>
+          <option value="price-high" {% if sort_param == 'price-high' %}selected{% endif %}>Price: High to Low</option>
+          <option value="bestseller" {% if sort_param == 'bestseller' %}selected{% endif %}>Best Sellers First</option>
+        </select>
+      </div>
+    </div>
+
+    <section class="cat-products-section">
+      <div class="cat-products-grid" id="productsGrid">
+        {% for product in category.products %}
+        <article class="cat-product-card" id="product-{{ product.slug }}">
+          <div class="cat-img-box">
+            {% if product.discount_percent %}
+            <span class="cat-badge" style="background: #e53935; color: #ffffff;">-{{ product.discount_percent }}% OFF</span>
+            {% elif product.badge %}
+            <span class="cat-badge {{ product.badge_type }}">{{ product.badge }}</span>
+            {% endif %}
+            <button class="cat-wish-btn" aria-label="Add to wishlist" onclick="toggleWishlist(this)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </button>
+            <a href="{% url 'product_detail' product.slug %}" style="display: block; width: 100%; height: 100%;">
+              <img src="{{ product.image }}" alt="{{ product.name }}" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="if(!this.dataset.tried){this.dataset.tried='1'; this.src='/static/images/products/womens-duck-egg-wisteria.png';}">
+            </a>
+          </div>
+          <div class="cat-card-body">
+            <div>
+              <p class="cat-prod-cat">{{ product.category }}</p>
+              <h3 class="cat-prod-name">
+                <a href="{% url 'product_detail' product.slug %}" style="color: var(--color-primary); text-decoration: none;">{{ product.name }}</a>
+              </h3>
+
+              <div class="cat-prod-pricing">
+                <span class="cat-price">{{ product.price }}</span>
+                {% if product.original_price %}
+                <span class="cat-orig-price">{{ product.original_price }}</span>
+                <span class="cat-discount-badge">-{{ product.discount_percent }}% OFF</span>
+                {% endif %}
+              </div>
+
+              {% if product.sizes %}
+              <div class="cat-meta-row cat-sizes-row">
+                <span class="cat-meta-label">Sizes:</span>
+                <div class="cat-pills-wrap">
+                  {% for s in product.sizes %}
+                  <span class="cat-size-pill">{{ s }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+              {% endif %}
+
+              {% if product.color_items %}
+              <div class="cat-meta-row cat-colors-row" style="margin-top: 6px;">
+                <span class="cat-meta-label" style="font-size: 0.72rem; font-weight: 600; color: #64748b; text-transform: uppercase;">Colors ({{ product.color_items|length }}):</span>
+                <div class="cat-pills-wrap" style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 3px;">
+                  {% for col in product.color_items %}
+                  <button type="button" class="cat-color-pill {% if forloop.first %}active{% endif %}" 
+                          title="Click to view {{ col.name }}"
+                          onclick="switchCardColor(this, '{{ product.slug }}', '{{ col.image }}', '{{ col.name }}', '{{ product.name|escapejs }}', '{{ product.price }}')"
+                          style="display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 12px; font-size: 0.72rem; font-weight: {% if forloop.first %}700{% else %}500{% endif %}; background: {% if forloop.first %}#ffffff{% else %}#f8fafc{% endif %}; border: 1.5px solid {% if forloop.first %}#0f172a{% else %}#e2e8f0{% endif %}; color: #334155; cursor: pointer; transition: all 0.2s ease;">
+                    <span style="width: 10px; height: 10px; border-radius: 50%; display: inline-block; background: {{ col.hex }}; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.15);"></span>
+                    <span>{{ col.name }}</span>
+                  </button>
+                  {% endfor %}
+                </div>
+              </div>
+              {% endif %}
+            </div>
+
+            <div style="margin-top: 14px;">
+              <div class="cat-btn-row">
+                <button class="cat-add-btn" onclick="addToBag('{{ product.name|escapejs }}', '{{ product.price }}', '{{ product.image }}', '{{ product.slug }}')">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <path d="M16 10a4 4 0 0 1-8 0"/>
+                  </svg>
+                  <span>Add to Cart</span>
+                </button>
+                <a href="{% url 'product_detail' product.slug %}" class="cat-view-btn">View</a>
+              </div>
+            </div>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="section-trust">
+      <div class="trust-inner">
+        <div class="trust-item">
+          <div class="trust-icon" aria-hidden="true">★</div>
+          <p class="trust-title">Hand-Drawn Prints</p>
+          <p class="trust-sub">Artisanal British design studio heritage</p>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon" aria-hidden="true">✓</div>
+          <p class="trust-title">FREE Delivery</p>
+          <p class="trust-sub">On all qualifying orders over ₹60</p>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon" aria-hidden="true">↺</div>
+          <p class="trust-title">30-Day Easy Returns</p>
+          <p class="trust-sub">Hassle-free customer exchange policy</p>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon" aria-hidden="true">♥</div>
+          <p class="trust-title">Sustainable Fabrics</p>
+          <p class="trust-sub">Organic cottons &amp; eco-friendly packaging</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="brand-name">Their Nibs</span>
+        <p>British-inspired boutique sleepwear &amp; loungewear brand designing beautiful prints to brighten up every cosy moment at home.</p>
+        <div class="footer-portal-buttons">
+          <a href="{% url 'admin_panel:login' %}" class="footer-portal-btn">
+            Admin Portal Login
+          </a>
+          <a href="{% url 'seller_login' %}" class="footer-portal-btn">
+            Seller Portal Login
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>ABOUT US</h4>
+        <ul>
+          <li><a href="#about-us">About Us</a></li>
+          <li><a href="#size-guides">Size guides</a></li>
+          <li><a href="#behind-the-seams">Behind The Seams</a></li>
+          <li><a href="#contact-us">Contact us</a></li>
+          <li><a href="#wholesale-enquiries">Wholesale enquiries</a></li>
+          <li><a href="#their-nibs-stores">Their Nibs Stores</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>HERE TO HELP</h4>
+        <ul>
+          <li><a href="#delivery-returns">Delivery &amp; returns</a></li>
+          <li><a href="#refund-policy">Refund policy</a></li>
+          <li><a href="#terms-conditions">Terms &amp; conditions</a></li>
+          <li><a href="#terms-of-service">Terms of service</a></li>
+          <li><a href="#privacy-policy">Privacy policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-community">
+        <h4>JOIN OUR COMMUNITY</h4>
+        <p class="community-desc">Sign up to our email newsletter to get access to exclusive offers, giveaways and get involved in our antics behind-the-scenes!</p>
+        <form class="community-newsletter-form" onsubmit="event.preventDefault(); alert('Thank you for subscribing to Their Nibs!');">
+          <div class="community-input-wrap">
+            <input type="email" class="community-newsletter-input" placeholder="Enter your email" required aria-label="Email Address">
+            <button type="submit" class="community-newsletter-btn">SUBSCRIBE</button>
+          </div>
+        </form>
+        <div class="footer-social-row">
+          <a href="https://www.facebook.com/theirnibs/" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="Facebook">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+          </a>
+          <a href="https://www.instagram.com/theirnibs/" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="Instagram">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+          </a>
+          <a href="https://www.tiktok.com/@theirnibs" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="TikTok">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298 0 .59.043.87.127V9.32a6.31 6.31 0 0 0-.87-.06A6.334 6.334 0 0 0 3.15 15.6a6.34 6.34 0 0 0 10.74 4.54c1.19-1.19 1.86-2.8 1.86-4.47V8.71a8.17 8.17 0 0 0 4.84 1.59v-3.45a4.77 4.77 0 0 1-1-.16z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="footer-copyright">Copyright &copy; 2026, THEIR NIBS. All rights reserved. See our <a href="#terms-of-service">terms of use</a> and <a href="#privacy-policy">privacy notice</a>.</p>
+    </div>
+  </footer>
+
+  <button class="chat-widget-btn" aria-label="Open Customer Chat">
+    <svg viewBox="0 0 24 24">
+      <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-3 9H7V9h10v2zm0-3H7V6h10v2z"/>
+    </svg>
+  </button>
+
+  <div class="chat-drawer" role="dialog" aria-modal="true" aria-label="Their Nibs Concierge">
+    <div class="chat-drawer-header">
+      <span>Their Nibs Customer Care</span>
+      <button class="chat-close-btn" aria-label="Close Chat">&times;</button>
+    </div>
+    <div class="chat-drawer-body">
+      <p>Hello! Welcome to Their Nibs.</p>
+      <p style="margin-top: 8px;">Need assistance with sizes, fabrics, or our charity kids collection? We're here to help!</p>
+    </div>
+  </div>
+
+  <div class="search-modal" style="display:none;" id="searchModal">
+    <input type="text" placeholder="Search pyjamas, silk robes, slippers...">
+  </div>
+
+  <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
+  <aside class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Mobile Navigation">
+    <div class="mobile-nav-header">
+      <span class="brand-name" style="font-size: 1.4rem;">Their Nibs</span>
+      <button class="mobile-nav-close" aria-label="Close Navigation">&times;</button>
+    </div>
+    <nav class="mobile-nav-links">
+      <a href="{% url 'homepage' %}#halloween" class="mobile-nav-item" style="font-weight: 600;">Halloween</a>
+
+      <div style="border-top: 1px solid var(--color-border); margin: 8px 16px;"></div>
+      <a href="{% url 'category_page' 'sleepwear' %}" class="mobile-nav-item" style="font-weight: 700; color: var(--color-peach-dark);">Pyjamas &amp; Sleepwear</a>
+      <a href="{% url 'category_page' 'women' %}" class="mobile-nav-item">Women</a>
+      <a href="{% url 'category_page' 'mens' %}" class="mobile-nav-item">Men’s</a>
+      <a href="{% url 'category_page' 'kids' %}" class="mobile-nav-item" style="font-weight: 700; color: #1e3a8a;">Kids (All Clothes)</a>
+      <a href="{% url 'category_page' 'kids-boy' %}" class="mobile-nav-item" style="padding-left: 28px;">• Boys Clothes</a>
+      <a href="{% url 'category_page' 'kids-girl' %}" class="mobile-nav-item" style="padding-left: 28px;">• Girls Clothes</a>
+      <a href="{% url 'category_page' 'kids-sets' %}" class="mobile-nav-item" style="padding-left: 28px;">• Co-ord Sets &amp; Dungarees</a>
+      <a href="{% url 'category_page' 'kids-hoodies' %}" class="mobile-nav-item" style="padding-left: 28px;">• Kids Hoodies</a>
+      <a href="{% url 'category_page' 'accessories' %}" class="mobile-nav-item">Accessories</a>
+      <a href="{% url 'category_page' 'gifting' %}" class="mobile-nav-item">Gifting</a>
+      <a href="#seller-section" class="mobile-nav-item" style="color: #92400e; font-weight: 600;">Become a Seller</a>
+    </nav>
+
+    <div class="mobile-nav-auth">
+      <a href="{% url 'seller_login' %}" class="btn-seller-login" style="text-align: center; justify-content: center; width: 100%;">
+        Seller Portal Login &rarr;
+      </a>
+      {% if request.session.customer_logged_in %}
+      <a href="{% url 'customer_logout' %}" class="btn-logout" style="text-align: center; justify-content: center; width: 100%;">Log Out</a>
+      {% else %}
+      <a href="{% url 'customer_login' %}" class="btn-login" style="text-align: center; justify-content: center; width: 100%;">Customer Login</a>
+      <a href="{% url 'customer_register' %}" class="btn-create-account" style="text-align: center; justify-content: center; width: 100%;">Create Account</a>
+      {% endif %}
+    </div>
+  </aside>
+
+  <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping Bag">
+    <div class="cart-header">
+      <h2>Your Shopping Bag</h2>
+      <button class="cart-close-btn" onclick="closeCartDrawer()" aria-label="Close Shopping Bag">&times;</button>
+      <button class="cart-close-btn" onclick="closeCartDrawer()" aria-label="Close Shopping Bag">&times;</button>
+    </div>
+
+    <div class="cart-shipping-bar" id="cartShippingBar">
+      <span>Spend ₹999 for FREE Delivery across India</span>
+    </div>
+
+    <div class="cart-items-list" id="cartItemsList">
+    </div>
+
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span>Subtotal</span>
+        <span id="cartDrawerSubtotal">₹0.00</span>
+      </div>
+      <a href="{% url 'checkout' %}" class="cart-checkout-btn" onclick="const isLogged = {% if request.session.customer_logged_in or request.session.customer_id or user.is_authenticated %}true{% else %}false{% endif %}; if(!isLogged){ event.preventDefault(); showToast('Please log in to proceed to checkout.'); setTimeout(()=>{ window.location.href='{% url 'customer_login' %}?next=/checkout/'; }, 600); }">
+        <span>Proceed to Checkout</span>
+        <span>&rarr;</span>
+      </a>
+    </div>
+  </aside>
+
+  <div class="cat-toast" id="catToast">
+    <span id="toastMsg">Added to bag!</span>
+  </div>
+
+  <script src="{% static 'js/homepage.js' %}"></script>
+  <script>
+    function toggleWishlist(btn) {
+      btn.classList.toggle('active');
+      if (btn.classList.contains('active')) {
+        btn.style.color = '#e47e56';
+        showToast('Saved to your wishlist! ♥');
+      } else {
+        btn.style.color = '';
+        showToast('Removed from wishlist');
+      }
+    }
+
+    function getStoredCart() {
+      try {
+        return JSON.parse(localStorage.getItem('theirnibs_cart')) || [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveStoredCart(cart) {
+      localStorage.setItem('theirnibs_cart', JSON.stringify(cart));
+      updateCartUI();
+    }
+
+    function switchCardColor(btn, slug, imgUrl, colorName, productName, priceStr) {
+      const card = document.getElementById('product-' + slug) || btn.closest('.cat-product-card');
+      if (!card) return;
+
+      const img = card.querySelector('.cat-img-box img');
+      if (img && imgUrl) {
+        img.style.transition = 'opacity 0.18s ease, transform 0.22s ease';
+        img.style.opacity = '0.35';
+        img.style.transform = 'scale(0.97)';
+        setTimeout(() => {
+          img.src = imgUrl;
+          img.style.opacity = '1';
+          img.style.transform = 'scale(1)';
+        }, 150);
+      }
+
+      card.querySelectorAll('.cat-color-pill').forEach(pill => {
+        pill.style.borderColor = '#e2e8f0';
+        pill.style.background = '#f8fafc';
+        pill.style.fontWeight = '500';
+      });
+      btn.style.borderColor = '#0f172a';
+      btn.style.background = '#ffffff';
+      btn.style.fontWeight = '700';
+
+      const addBtn = card.querySelector('.cat-add-btn');
+      if (addBtn) {
+        addBtn.onclick = function() {
+          addToBag(productName, priceStr, imgUrl, slug, colorName);
+        };
+      }
+    }
+
+    function addToBag(productName, priceStr, image, slug, colorName) {
+      const isUserLoggedIn = {% if request.session.customer_logged_in or request.session.customer_id or user.is_authenticated %}true{% else %}false{% endif %};
+      if (!isUserLoggedIn) {
+        showToast('Please log in to add items to your shopping bag.');
+        setTimeout(() => {
+          window.location.href = "{% url 'customer_login' %}?next=" + encodeURIComponent(window.location.pathname + window.location.search);
+        }, 650);
+        return;
+      }
+
+      const cart = getStoredCart();
+      const numMatch = priceStr.match(/[\d.]+/);
+      const priceNum = numMatch ? parseFloat(numMatch[0]) : 58.0;
+      const color = colorName || 'Standard';
+
+      const existingIndex = cart.findIndex(item => item.slug === slug && item.size === 'M' && (item.color || '') === color);
+      if (existingIndex > -1) {
+        cart[existingIndex].qty += 1;
+        cart[existingIndex].item_total = (cart[existingIndex].qty * cart[existingIndex].price_num).toFixed(2);
+      } else {
+        cart.push({
+          slug: slug,
+          name: productName,
+          price: priceStr,
+          price_num: priceNum,
+          size: 'M',
+          color: color,
+          qty: 1,
+          image: image,
+          item_total: priceNum.toFixed(2)
+        });
+      }
+
+      saveStoredCart(cart);
+
+      fetch('/api/cart/add/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug: slug, size: 'M', color: color, qty: 1 })
+      }).catch(err => console.log(err));
+
+      showToast(`Added "${productName}" (${color}) to bag!`);
+      openCartDrawer();
+    }
+
+    function openCartDrawer() {
+      updateCartUI();
+      document.getElementById('cartDrawer').classList.add('active');
+      document.getElementById('cartOverlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeCartDrawer() {
+      document.getElementById('cartDrawer').classList.remove('active');
+      document.getElementById('cartOverlay').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function removeCartItem(index) {
+      const cart = getStoredCart();
+      cart.splice(index, 1);
+      saveStoredCart(cart);
+    }
+
+    function updateCartItemQty(index, delta) {
+      const cart = getStoredCart();
+      if (!cart[index]) return;
+      cart[index].qty += delta;
+      if (cart[index].qty <= 0) {
+        cart.splice(index, 1);
+      } else {
+        cart[index].item_total = (cart[index].qty * cart[index].price_num).toFixed(2);
+      }
+      saveStoredCart(cart);
+    }
+
+    function updateCartUI() {
+      const cart = getStoredCart();
+      const listContainer = document.getElementById('cartItemsList');
+      const badge = document.getElementById('headerCartCount');
+      const subtotalEl = document.getElementById('cartDrawerSubtotal');
+      const shippingBar = document.getElementById('cartShippingBar');
+
+      let totalQty = 0;
+      let totalAmount = 0.0;
+
+      if (!listContainer) return;
+
+      if (cart.length === 0) {
+        listContainer.innerHTML = `
+          <div style="text-align:center; padding: 50px 20px; color:#888;">
+            <p style="font-size: 1.05rem; margin-bottom: 6px;">Your bag is currently empty.</p>
+            <p style="font-size: 0.85rem;">Discover our British luxury collection and add your pieces!</p>
+          </div>
+        `;
+        subtotalEl.textContent = '₹0.00';
+        if (badge) badge.textContent = '0';
+        shippingBar.innerHTML = `<span>Spend ₹999 for FREE Delivery across India</span>`;
+        return;
+      }
+
+      let html = '';
+      cart.forEach((item, idx) => {
+        totalQty += item.qty;
+        totalAmount += parseFloat(item.item_total);
+
+        html += `
+          <div class="cart-item">
+            <img src="${item.image}" alt="${item.name}" class="cart-item-img">
+            <div class="cart-item-info">
+              <div>
+                <h4 class="cart-item-name">${item.name}</h4>
+                <div class="cart-item-size" style="font-size:0.8rem; color:#64748b; margin-top:2px;">Size: <strong>${item.size}</strong> &bull; Color: <strong style="color:#0f172a;">${item.color || 'Standard'}</strong></div>
+              </div>
+              <div class="cart-item-pricing">
+                <div style="display:flex; align-items:center; gap:8px; border:1px solid #ddd; border-radius:3px; padding:2px 6px;">
+                  <button onclick="updateCartItemQty(${idx}, -1)" style="border:none; background:none; cursor:pointer; font-weight:700;">&minus;</button>
+                  <span style="font-size:0.85rem; font-weight:600;">${item.qty}</span>
+                  <button onclick="updateCartItemQty(${idx}, 1)" style="border:none; background:none; cursor:pointer; font-weight:700;">&plus;</button>
+                </div>
+                <span style="font-size:0.95rem; font-weight:700;">₹${parseFloat(item.item_total).toFixed(2)}</span>
+                <button onclick="removeCartItem(${idx})" style="border:none; background:none; color:#999; cursor:pointer; font-size:1.1rem;">&times;</button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      listContainer.innerHTML = html;
+      subtotalEl.textContent = `₹${totalAmount.toFixed(2)}`;
+      if (badge) badge.textContent = totalQty;
+
+      if (totalAmount >= 999.0) {
+        shippingBar.innerHTML = `<span style="color:#2e7d32; font-weight:600;">🎉 Congratulations! You have unlocked FREE Delivery!</span>`;
+      } else {
+        const remaining = (60.0 - totalAmount).toFixed(2);
+        shippingBar.innerHTML = `<span>Add <strong>₹${remaining}</strong> more for FREE Delivery</span>`;
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('catToast');
+      const toastMsg = document.getElementById('toastMsg');
+      if (!toast) return;
+      toastMsg.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    const sortSelect = document.getElementById('sortSelect');
+    const productsGrid = document.getElementById('productsGrid');
+    if (sortSelect && productsGrid) {
+      sortSelect.addEventListener('change', () => {
+        const cards = Array.from(productsGrid.querySelectorAll('.cat-product-card'));
+        const val = sortSelect.value;
+        cards.sort((a, b) => {
+          const priceA = parseFloat(a.querySelector('.cat-price')?.textContent.replace(/[^0-9.]/g, '') || 0);
+          const priceB = parseFloat(b.querySelector('.cat-price')?.textContent.replace(/[^0-9.]/g, '') || 0);
+          if (val === 'price-low') return priceA - priceB;
+          if (val === 'price-high') return priceB - priceA;
+          return 0;
+        });
+        cards.forEach(card => productsGrid.appendChild(card));
+      });
+    }
+
+    document.querySelectorAll('.cat-pill-btn').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.cat-pill-btn').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        showToast(`Filtered by ${pill.textContent}`);
+      });
+    });
+
+    function openMobileNav() {
+      const drawer = document.getElementById('mobileNavDrawer');
+      const backdrop = document.getElementById('mobileNavBackdrop');
+      if (drawer) drawer.classList.add('active');
+      if (backdrop) backdrop.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileNav() {
+      const drawer = document.getElementById('mobileNavDrawer');
+      const backdrop = document.getElementById('mobileNavBackdrop');
+      if (drawer) drawer.classList.remove('active');
+      if (backdrop) backdrop.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    document.querySelectorAll('.mobile-menu-toggle').forEach(btn => {
+      btn.addEventListener('click', openMobileNav);
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateCartUI();
+    });
+  </script>
+  <script src="/static/js/preloader.js?v=20261012-loader10s"></script>
+</body>
+</html>

@@ -1,0 +1,356 @@
+{% extends 'seller_panel/base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+{% block page_heading %}Seller Studio Overview{% endblock %}
+
+{% block content %}
+
+<div class="seller-stats-grid-4" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 1.75rem;">
+
+    <div class="no-icon-card">
+        <div class="no-icon-card-header">TODAY'S SALES</div>
+        <div class="no-icon-card-value"><span class="seller-card-currency">₹</span>18,450</div>
+        <div class="no-icon-card-subtext"><span class="trend-up">↑ 12.4%</span> from yesterday</div>
+    </div>
+
+    <div class="no-icon-card">
+        <div class="no-icon-card-header">ORDERS</div>
+        <div class="no-icon-card-value">24</div>
+        <div class="no-icon-card-subtext">8 awaiting fulfillment</div>
+    </div>
+
+    <div class="no-icon-card">
+        <div class="no-icon-card-header">MY PRODUCTS</div>
+        <div class="no-icon-card-value">86</div>
+        <div class="no-icon-card-subtext"><span style="color: #d97706; font-weight:600;">7 low in stock</span></div>
+    </div>
+
+    <div class="no-icon-card">
+        <div class="no-icon-card-header">AVAILABLE BALANCE</div>
+        <div class="no-icon-card-value"><span class="seller-card-currency">₹</span>42,680</div>
+        <div class="no-icon-card-subtext">Next payout: <strong>10 Oct</strong></div>
+    </div>
+</div>
+
+<div class="action-center-card">
+    <div class="action-center-header">
+        <h2 class="action-center-title">Seller Action Center</h2>
+    </div>
+
+    <div class="action-item">
+        <div>
+            <div class="action-text-main">7 products are running low</div>
+            <div class="action-text-sub">Review inventory stock levels</div>
+        </div>
+        <a href="/seller-panel/inventory/low-stock/" class="btn btn-secondary btn-sm">View</a>
+    </div>
+
+    <div class="action-item">
+        <div>
+            <div class="action-text-main">8 orders need to be shipped</div>
+            <div class="action-text-sub">Dispatch before 6:00 PM today</div>
+        </div>
+        <a href="/seller-panel/orders/ready-to-ship/" class="btn btn-secondary btn-sm">View</a>
+    </div>
+
+    <div class="action-item">
+        <div>
+            <div class="action-text-main">3 new customer reviews</div>
+            <div class="action-text-sub">See customer feedback & ratings</div>
+        </div>
+        <a href="/seller-panel/customer/reviews/" class="btn btn-secondary btn-sm">View</a>
+    </div>
+
+    <div class="action-item">
+        <div>
+            <div class="action-text-main">₹18,450 sales recorded today</div>
+            <div class="action-text-sub">View daily turnover & earnings</div>
+        </div>
+        <a href="/seller-panel/finance/earnings/" class="btn btn-secondary btn-sm">View</a>
+    </div>
+</div>
+
+<div class="clothify-card" style="margin-bottom: 1.75rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-subtle); flex-wrap: wrap; gap: 0.75rem;">
+        <div>
+            <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.45rem; margin: 0; color: var(--primary);">Sales Performance</h3>
+            <span id="salesChartSubtitle" style="font-size: 0.8rem; color: var(--text-muted);">Daily gross revenue turnover &amp; units fulfilled</span>
+        </div>
+        <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+            <div class="btn-group" id="salesMetricGroup" style="display: flex; gap: 0.25rem; background: var(--bg-main, #f8f9fa); padding: 0.2rem; border-radius: 6px;">
+                <button type="button" class="btn btn-primary btn-sm sales-metric-btn active" data-metric="revenue" style="padding: 0.25rem 0.75rem; font-size: 0.76rem; font-weight: 600;">Revenue</button>
+                <button type="button" class="btn btn-secondary btn-sm sales-metric-btn" data-metric="orders" style="padding: 0.25rem 0.75rem; font-size: 0.76rem; font-weight: 600;">Orders</button>
+                <button type="button" class="btn btn-secondary btn-sm sales-metric-btn" data-metric="units" style="padding: 0.25rem 0.75rem; font-size: 0.76rem; font-weight: 600;">Units Sold</button>
+            </div>
+            <select id="salesPeriodSelect" class="form-control" style="width: 125px; font-size: 0.8rem; padding: 0.35rem 0.65rem; border-radius: 6px; cursor: pointer;">
+                <option value="7d" selected>7 Days</option>
+                <option value="30d">30 Days</option>
+                <option value="3m">3 Months</option>
+                <option value="1y">This Year</option>
+            </select>
+        </div>
+    </div>
+    <div style="padding: 1.5rem; position: relative;">
+        <canvas id="sellerSalesChart" style="max-height: 280px; width: 100%;"></canvas>
+    </div>
+</div>
+
+<div class="seller-dashboard-two-col" style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 1.75rem;">
+
+    <div class="clothify-card">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 1.4rem; border-bottom: 1px solid var(--border-subtle); background-color: #faf8f5;">
+            <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; margin: 0; color: var(--primary);">Top Performing Products</h3>
+            <a href="/seller-panel/products/" class="btn btn-secondary btn-sm" style="font-size: 0.78rem;">View All Products</a>
+        </div>
+        <div style="padding: 0;">
+            <table class="clothify-table" style="width: 100%; font-size: 0.86rem;">
+                <thead>
+                    <tr>
+                        <th style="padding: 0.75rem 1rem;">PRODUCT</th>
+                        <th style="padding: 0.75rem 1rem; text-align: center;">SOLD</th>
+                        <th style="padding: 0.75rem 1rem; text-align: right;">REVENUE</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in top_products %}
+                    <tr>
+                        <td style="padding: 0.75rem 1rem; font-weight: 600; color: var(--primary);">{{ p.name }}</td>
+                        <td style="padding: 0.75rem 1rem; text-align: center;">{{ p.sold }}</td>
+                        <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 600; color: var(--accent);">₹{{ p.revenue|floatformat:0 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="clothify-card">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 1.4rem; border-bottom: 1px solid var(--border-subtle); background-color: #faf8f5;">
+            <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; margin: 0; color: var(--primary);">Recent Orders</h3>
+            <a href="/seller-panel/orders/" class="btn btn-secondary btn-sm" style="font-size: 0.78rem;">View All Orders</a>
+        </div>
+        <div style="padding: 0;">
+            <table class="clothify-table" style="width: 100%; font-size: 0.86rem;">
+                <thead>
+                    <tr>
+                        <th style="padding: 0.75rem 1rem;">ORDER</th>
+                        <th style="padding: 0.75rem 1rem;">CUSTOMER</th>
+                        <th style="padding: 0.75rem 1rem; text-align: center;">ITEMS</th>
+                        <th style="padding: 0.75rem 1rem; text-align: right;">AMOUNT</th>
+                        <th style="padding: 0.75rem 1rem; text-align: center;">STATUS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for o in recent_orders %}
+                    <tr>
+                        <td style="padding: 0.75rem 1rem; font-weight: 700; color: var(--primary);">{{ o.order_number }}</td>
+                        <td style="padding: 0.75rem 1rem;">{{ o.customer }}</td>
+                        <td style="padding: 0.75rem 1rem; text-align: center;">{{ o.items }}</td>
+                        <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 600;">₹{{ o.amount|floatformat:0 }}</td>
+                        <td style="padding: 0.75rem 1rem; text-align: center;">
+                            <span class="badge-status {{ o.status_badge }}">{{ o.status }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const chartCanvas = document.getElementById('sellerSalesChart');
+        if (!chartCanvas) return;
+        const ctx = chartCanvas.getContext('2d');
+        const subtitleElem = document.getElementById('salesChartSubtitle');
+        const metricBtns = document.querySelectorAll('.sales-metric-btn');
+        const periodSelect = document.getElementById('salesPeriodSelect');
+
+        const chartDataSets = {
+            revenue: {
+                title: 'Gross Revenue Turnover',
+                prefix: '₹',
+                suffix: '',
+                '7d': {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    data: [12400, 14200, 15800, 14900, 16800, 17500, 18450],
+                    subtitle: 'Daily gross revenue turnover (Last 7 Days)'
+                },
+                '30d': {
+                    labels: ['1-5 Oct', '6-10 Oct', '11-15 Oct', '16-20 Oct', '21-25 Oct', '26-30 Oct'],
+                    data: [68400, 74200, 81900, 79400, 89500, 96800],
+                    subtitle: 'Aggregate 5-day gross revenue turnover (Last 30 Days)'
+                },
+                '3m': {
+                    labels: ['August', 'September', 'October'],
+                    data: [385000, 429000, 486500],
+                    subtitle: 'Monthly gross revenue turnover (Last 3 Months)'
+                },
+                '1y': {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    data: [240000, 265000, 310000, 345000, 390000, 415000, 430000, 455000, 470000, 495000, 520000, 560000],
+                    subtitle: 'Annual monthly gross revenue turnover (This Year)'
+                }
+            },
+            orders: {
+                title: 'Order Volume',
+                prefix: '',
+                suffix: ' orders',
+                '7d': {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    data: [14, 18, 22, 19, 25, 28, 31],
+                    subtitle: 'Daily confirmed orders fulfilled (Last 7 Days)'
+                },
+                '30d': {
+                    labels: ['1-5 Oct', '6-10 Oct', '11-15 Oct', '16-20 Oct', '21-25 Oct', '26-30 Oct'],
+                    data: [88, 104, 122, 116, 138, 152],
+                    subtitle: 'Aggregate 5-day orders fulfilled (Last 30 Days)'
+                },
+                '3m': {
+                    labels: ['August', 'September', 'October'],
+                    data: [540, 620, 715],
+                    subtitle: 'Monthly order fulfillment volume (Last 3 Months)'
+                },
+                '1y': {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    data: [320, 350, 410, 440, 490, 520, 540, 580, 620, 670, 715, 790],
+                    subtitle: 'Annual order volume trend (This Year)'
+                }
+            },
+            units: {
+                title: 'Units Sold & Dispatched',
+                prefix: '',
+                suffix: ' units',
+                '7d': {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    data: [22, 29, 36, 31, 42, 47, 54],
+                    subtitle: 'Daily garment units sold & dispatched (Last 7 Days)'
+                },
+                '30d': {
+                    labels: ['1-5 Oct', '6-10 Oct', '11-15 Oct', '16-20 Oct', '21-25 Oct', '26-30 Oct'],
+                    data: [142, 168, 195, 182, 218, 246],
+                    subtitle: 'Aggregate 5-day garment units sold (Last 30 Days)'
+                },
+                '3m': {
+                    labels: ['August', 'September', 'October'],
+                    data: [860, 985, 1145],
+                    subtitle: 'Monthly garment units sold (Last 3 Months)'
+                },
+                '1y': {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    data: [510, 560, 650, 700, 780, 830, 860, 920, 980, 1060, 1145, 1280],
+                    subtitle: 'Annual garment units sold (This Year)'
+                }
+            }
+        };
+
+        let currentMetric = 'revenue';
+        let currentPeriod = '7d';
+
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: chartDataSets.revenue['7d'].labels,
+                datasets: [{
+                    label: 'Daily Revenue (₹)',
+                    data: chartDataSets.revenue['7d'].data,
+                    borderColor: '#e47e56',
+                    backgroundColor: 'rgba(228, 126, 86, 0.08)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.35,
+                    pointBackgroundColor: '#e47e56',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#111111',
+                        titleFont: { size: 12, weight: 'bold' },
+                        bodyFont: { size: 13 },
+                        padding: 10,
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                const cfg = chartDataSets[currentMetric];
+                                const val = context.parsed.y;
+                                if (cfg.prefix) {
+                                    return ' ' + cfg.prefix + val.toLocaleString('en-IN');
+                                }
+                                return ' ' + val.toLocaleString('en-IN') + cfg.suffix;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        grid: { color: 'rgba(0, 0, 0, 0.04)' },
+                        ticks: {
+                            font: { size: 11 },
+                            maxTicksLimit: 6,
+                            callback: function(val) {
+                                const cfg = chartDataSets[currentMetric];
+                                if (cfg.prefix) {
+                                    return cfg.prefix + val.toLocaleString('en-IN');
+                                }
+                                return val.toLocaleString('en-IN') + cfg.suffix;
+                            }
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 11 } }
+                    }
+                }
+            }
+        });
+
+        function updateChartDisplay() {
+            const metricConfig = chartDataSets[currentMetric];
+            const periodConfig = metricConfig[currentPeriod];
+
+            if (subtitleElem) {
+                subtitleElem.textContent = periodConfig.subtitle;
+            }
+
+            chart.data.labels = periodConfig.labels;
+            chart.data.datasets[0].label = metricConfig.title;
+            chart.data.datasets[0].data = periodConfig.data;
+            chart.update();
+        }
+
+        metricBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                metricBtns.forEach(b => {
+                    b.classList.remove('btn-primary', 'active');
+                    b.classList.add('btn-secondary');
+                });
+                this.classList.remove('btn-secondary');
+                this.classList.add('btn-primary', 'active');
+
+                currentMetric = this.getAttribute('data-metric');
+                updateChartDisplay();
+            });
+        });
+
+        if (periodSelect) {
+            periodSelect.addEventListener('change', function() {
+                currentPeriod = this.value;
+                updateChartDisplay();
+            });
+        }
+    });
+</script>
+{% endblock %}

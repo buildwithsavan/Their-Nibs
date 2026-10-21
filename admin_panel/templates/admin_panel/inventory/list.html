@@ -1,0 +1,109 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Inventory Master Desk{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Inventory Master</h1>
+        <p class="page-subtitle">Warehouse reserves, live stock availability, and threshold tracking.</p>
+    </div>
+    <div class="page-actions">
+        <a href="/admin-panel/inventory/low-stock/" class="btn btn-danger btn-sm">
+            <span>⚠ View Low Stock (≤10)</span>
+        </a>
+    </div>
+</div>
+
+<form method="GET" class="filter-bar">
+    <div class="search-input">
+        <input type="text" name="q" value="{{ current_q }}" class="form-control" placeholder="Search product or SKU...">
+    </div>
+    <div style="min-width: 140px;">
+        <select name="status" class="form-select" onchange="this.form.submit()">
+            <option value="">All Stock Levels</option>
+            <option value="in_stock" {% if current_status == 'in_stock' %}selected{% endif %}>In Stock (>10)</option>
+            <option value="low_stock" {% if current_status == 'low_stock' %}selected{% endif %}>Low Stock (≤10)</option>
+            <option value="out_of_stock" {% if current_status == 'out_of_stock' %}selected{% endif %}>Out of Stock (0)</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
+    <a href="/admin-panel/inventory/" class="btn btn-secondary btn-sm">Reset</a>
+</form>
+
+<div class="clothify-card">
+    <div class="card-header">
+        <h3 class="card-title">Live Warehouse Inventory</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="clothify-table">
+            <thead>
+                <tr>
+                    <th>Product & SKU</th>
+                    <th>Brand / Category</th>
+                    <th>Current Stock</th>
+                    <th>Reserved</th>
+                    <th>Available to Sell</th>
+                    <th>Status</th>
+                    <th>Adjust Stock</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in products %}
+                <tr>
+                    <td>
+                        <strong style="color: var(--primary);">{{ p.name }}</strong>
+                        <div style="font-size:0.75rem; color:var(--text-muted); font-family:monospace;">{{ p.sku }}</div>
+                        {% if p.variants.all %}
+                        <div style="font-size:0.72rem; color:var(--accent); margin-top:2px;">
+                            {{ p.variants.count }} variant SKUs tracked
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div>{{ p.brand.name }}</div>
+                        <div style="font-size:0.75rem; color:var(--text-muted);">{{ p.category.name }}</div>
+                    </td>
+                    <td><strong class="stock-val-{{ p.id }}" style="font-size: 1rem; color: var(--primary);">{{ p.stock }}</strong></td>
+                    <td style="color: var(--text-muted);">{{ p.reserved_stock }}</td>
+                    <td><strong style="color: #10b981;">{{ p.available_stock }}</strong></td>
+                    <td>
+                        <span class="status-badge status-{{ p.stock_status|slugify }}">
+                            {{ p.stock_status }}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-secondary btn-sm" onclick="openQuickStockModal('{{ p.id }}', '{{ p.name|escapejs }}', '{{ p.stock }}')">
+                            Update Units
+                        </button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                        No items matching your stock query.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if products.has_other_pages %}
+    <div class="clothify-pagination">
+        <span style="font-size: 0.82rem; color: var(--text-muted);">
+            Page {{ products.number }} of {{ products.paginator.num_pages }}
+        </span>
+        <div class="pagination-links">
+            {% if products.has_previous %}
+            <a href="?page={{ products.previous_page_number }}&q={{ current_q }}&status={{ current_status }}" class="page-btn">Prev</a>
+            {% endif %}
+            <span class="page-btn active">{{ products.number }}</span>
+            {% if products.has_next %}
+            <a href="?page={{ products.next_page_number }}&q={{ current_q }}&status={{ current_status }}" class="page-btn">Next</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

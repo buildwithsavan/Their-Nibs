@@ -1,0 +1,67 @@
+{% load static %}
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="brand-name">Their Nibs</span>
+      <p>British-inspired boutique sleepwear &amp; loungewear brand designing beautiful prints to brighten up every cosy moment at home.</p>
+      <div class="footer-portal-buttons">
+        <a href="{% url 'admin_panel:login' %}" class="footer-portal-btn">
+          Admin Portal Login
+        </a>
+        <a href="{% url 'seller_login' %}" class="footer-portal-btn">
+          Seller Portal Login
+        </a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>ABOUT US</h4>
+      <ul>
+        <li><a href="{% url 'about_us' %}">About Us</a></li>
+        <li><a href="{% url 'size_guides' %}">Size guides</a></li>
+        <li><a href="{% url 'contact_us' %}">Contact us</a></li>
+        <li><a href="{% url 'their_nibs_stores' %}">Their Nibs Stores</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4><a href="{% url 'here_to_help' %}" style="color: inherit; text-decoration: none;">HERE TO HELP</a></h4>
+      <ul>
+        <li><a href="{% url 'delivery_returns' %}">Delivery &amp; returns</a></li>
+        <li><a href="{% url 'refund_policy' %}">Refund policy</a></li>
+        <li><a href="{% url 'terms_conditions' %}">Terms &amp; conditions</a></li>
+        <li><a href="{% url 'terms_of_service' %}">Terms of service</a></li>
+        <li><a href="{% url 'privacy_policy' %}">Privacy policy</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col footer-col-community">
+      <h4>JOIN OUR COMMUNITY</h4>
+      <p class="community-desc">Sign up to our email newsletter to get access to exclusive offers, giveaways and get involved in our antics behind-the-scenes!</p>
+      <form class="community-newsletter-form" onsubmit="event.preventDefault(); alert('Thank you for subscribing to Their Nibs!');">
+        <div class="community-input-wrap">
+          <input type="email" class="community-newsletter-input" placeholder="Enter your email" required aria-label="Email Address" value="{% if request.user.is_authenticated and request.user.email %}{{ request.user.email }}{% elif request.session.customer_email %}{{ request.session.customer_email }}{% elif request.user.is_authenticated and '@' in request.user.username %}{{ request.user.username }}{% endif %}">
+          <button type="submit" class="community-newsletter-btn">SUBSCRIBE</button>
+        </div>
+      </form>
+      <div class="footer-social-row">
+        <a href="https://www.facebook.com/theirnibs/" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="Facebook">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+          </svg>
+        </a>
+        <a href="https://www.instagram.com/theirnibs/" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="Instagram">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p class="footer-copyright">Copyright &copy; 2026, THEIR NIBS. All rights reserved. See our <a href="{% url 'terms_of_service' %}">terms of use</a> and <a href="{% url 'privacy_policy' %}">privacy notice</a>.</p>
+  </div>
+</footer>

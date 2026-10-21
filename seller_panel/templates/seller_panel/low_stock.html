@@ -1,0 +1,384 @@
+{% extends 'seller_panel/base.html' %}
+
+{% block title %}Low Stock Alerts{% endblock %}
+{% block page_heading %}Inventory — Low Stock &amp; Replenishment Alerts{% endblock %}
+
+{% block content %}
+<style>
+
+    .badge-critical {
+        background-color: #7f1d1d;
+        color: #ffffff;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.76rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+    }
+
+    .lowstock-card-clickable {
+        background: #ffffff;
+        border: 1px solid var(--border-subtle, #e2e8f0);
+        border-radius: var(--radius-md, 10px);
+        padding: 1.1rem 1.35rem;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .lowstock-card-clickable:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        border-color: #dc2626;
+    }
+
+    .custom-modal-backdrop {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(15, 23, 42, 0.55);
+        backdrop-filter: blur(3px);
+        z-index: 1050;
+        align-items: center;
+        justify-content: center;
+    }
+    .custom-modal-backdrop.show {
+        display: flex;
+    }
+    .custom-modal-dialog {
+        background: #ffffff;
+        border-radius: 10px;
+        width: 100%;
+        max-width: 520px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+        animation: modalSlideIn 0.25s ease-out;
+    }
+    @keyframes modalSlideIn {
+        from { transform: translateY(-15px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .btn-restock-theme {
+        background-color: #111111 !important;
+        color: #ffffff !important;
+        border: 1px solid #111111 !important;
+        border-radius: 6px;
+        padding: 6px 16px;
+        font-weight: 700;
+        font-size: 0.82rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        text-decoration: none;
+    }
+    .btn-restock-theme:hover {
+        background-color: #ba6853 !important;
+        border-color: #ba6853 !important;
+        color: #ffffff !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(186, 104, 83, 0.25);
+    }
+</style>
+
+<div style="margin-bottom: 1.25rem;">
+    <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; margin: 0; color: #111111; font-weight: 700;">
+        Low Stock Replenishment Center
+    </h2>
+    <span style="font-size: 0.88rem; color: var(--text-muted);">
+        Action center for products running low or out of stock that require immediate inventory replenishment.
+    </span>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+
+    <a href="/seller-panel/inventory/low-stock/?severity=all" class="lowstock-card-clickable" >
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); letter-spacing: 0.05em;">
+            Total Needing Restock
+        </div>
+        <div class="seller-card-value" style="color: #0f172a; margin-top: 4px;">
+            {{ total_attention_count }} <span class="seller-card-unit">Listings</span>
+        </div>
+        <div style="font-size: 0.78rem; color: #475569; font-weight: 600; margin-top: 6px;">
+            All Replenishment Items &rarr;
+        </div>
+    </a>
+
+    <a href="/seller-panel/inventory/low-stock/?severity=critical" class="lowstock-card-clickable" >
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #7f1d1d; letter-spacing: 0.05em;">
+            Critical Stock (1-3 units)
+        </div>
+        <div class="seller-card-value" style="color: #7f1d1d; margin-top: 4px;">
+            {{ critical_count }} <span class="seller-card-unit">Urgent Replenish</span>
+        </div>
+        <div style="font-size: 0.78rem; color: #7f1d1d; font-weight: 600; margin-top: 6px;">
+            Filter Critical &rarr;
+        </div>
+    </a>
+
+    <a href="/seller-panel/inventory/low-stock/?severity=low" class="lowstock-card-clickable" >
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #d97706; letter-spacing: 0.05em;">
+            Low Stock (4-10 units)
+        </div>
+        <div class="seller-card-value" style="color: #d97706; margin-top: 4px;">
+            {{ low_count }} <span class="seller-card-unit">Below Threshold</span>
+        </div>
+        <div style="font-size: 0.78rem; color: #d97706; font-weight: 600; margin-top: 6px;">
+            Filter Low Stock &rarr;
+        </div>
+    </a>
+
+    <a href="/seller-panel/inventory/low-stock/?severity=out" class="lowstock-card-clickable" >
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #dc2626; letter-spacing: 0.05em;">
+            Out of Stock (0 units)
+        </div>
+        <div class="seller-card-value" style="color: #dc2626; margin-top: 4px;">
+            {{ out_count }} <span class="seller-card-unit">Sold Out</span>
+        </div>
+        <div style="font-size: 0.78rem; color: #dc2626; font-weight: 600; margin-top: 6px;">
+            Filter Out of Stock &rarr;
+        </div>
+    </a>
+</div>
+
+<div class="clothify-card" style="margin-bottom: 1.5rem; padding: 1rem 1.25rem; background: #ffffff;">
+    <form method="GET" action="/seller-panel/inventory/low-stock/" style="display: flex; flex-wrap: wrap; gap: 0.85rem; align-items: flex-end;">
+        <div style="flex: 1.5; min-width: 230px;">
+            <label style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; display: block;">
+                Search Product or SKU
+            </label>
+            <input type="text" name="q" value="{{ current_q|default:'' }}" class="form-control" placeholder="Search low stock product or SKU..." style="width: 100%; height: 36px; font-size: 0.88rem;">
+        </div>
+
+        <div style="flex: 1; min-width: 170px;">
+            <label style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; display: block;">
+                Category
+            </label>
+            <select name="category" class="form-select" style="width: 100%; height: 36px; font-size: 0.88rem;">
+                <option value="">All Categories</option>
+                {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if current_category == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div style="flex: 1.2; min-width: 180px;">
+            <label style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; display: block;">
+                Stock Severity Filter
+            </label>
+            <select name="severity" class="form-select" style="width: 100%; height: 36px; font-size: 0.88rem;">
+                <option value="all" {% if current_severity == 'all' or not current_severity %}selected{% endif %}>All Attention Required (&le;10)</option>
+                <option value="critical" {% if current_severity == 'critical' %}selected{% endif %}>Critical Stock (1-3 units)</option>
+                <option value="low" {% if current_severity == 'low' %}selected{% endif %}>Low Stock (4-10 units)</option>
+                <option value="out" {% if current_severity == 'out' %}selected{% endif %}>Out of Stock (0 units)</option>
+            </select>
+        </div>
+
+        <div style="display: flex; gap: 6px; align-items: center;">
+            <button type="submit" class="btn btn-primary" style="height: 36px; padding: 0 16px; font-size: 0.88rem; font-weight: 600; background-color: #f1c4af; border-color: #f1c4af;">
+                <i class="bi bi-funnel"></i> Filter
+            </button>
+            {% if current_q or current_category or current_severity != 'all' %}
+                <a href="/seller-panel/inventory/low-stock/" class="btn btn-secondary" style="height: 36px; padding: 0 14px; font-size: 0.88rem; display: flex; align-items: center;">Reset</a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<div class="clothify-card" style="padding: 0; overflow: hidden; margin-bottom: 1.5rem;">
+    <div style="overflow-x: auto;">
+        <table class="clothify-table" style="width: 100%; font-size: 0.88rem; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #faf6f0; border-bottom: 2px solid var(--seller-border, #e5e7eb);">
+                    <th style="padding: 12px 16px; text-align: left; font-weight: 700; letter-spacing: 0.04em;">PRODUCT &amp; SKU</th>
+                    <th style="padding: 12px 14px; text-align: center; font-weight: 700; letter-spacing: 0.04em;">AVAILABLE STOCK</th>
+                    <th style="padding: 12px 14px; text-align: center; font-weight: 700; letter-spacing: 0.04em;">MIN THRESHOLD</th>
+                    <th style="padding: 12px 14px; text-align: center; font-weight: 700; letter-spacing: 0.04em;">SUGGESTED RESTOCK</th>
+                    <th style="padding: 12px 14px; text-align: center; font-weight: 700; letter-spacing: 0.04em;">STATUS</th>
+                    <th style="padding: 12px 18px; text-align: right; font-weight: 700; letter-spacing: 0.04em;">ACTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if products %}
+                    {% for p in products %}
+                    <tr style="border-bottom: 1px solid #f1f5f9; transition: background-color 0.15s ease;" onmouseover="this.style.backgroundColor='#fffbf7'" onmouseout="this.style.backgroundColor='transparent'">
+
+                        <td style="padding: 12px 16px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <img src="{{ p.image_url }}" alt="{{ p.name }}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0; flex-shrink: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
+                                <div>
+                                    <div style="font-weight: 700; color: #111111; font-size: 0.92rem; line-height: 1.3; margin-bottom: 3px;">
+                                        {{ p.name }}
+                                    </div>
+                                    <code style="font-size: 0.78rem; color: #78716c; background: #f5f5f4; padding: 2px 6px; border-radius: 4px;">{{ p.sku }}</code>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td style="padding: 12px 14px; text-align: center;">
+                            <span style="font-size: 1.05rem; font-weight: 800; color: {% if p.available_stock <= 0 %}#dc2626{% elif p.available_stock <= 3 %}#b91c1c{% else %}#d97706{% endif %};">
+                                {{ p.available_stock }} units
+                            </span>
+                        </td>
+
+                        <td style="padding: 12px 14px; text-align: center;">
+                            <span class="badge bg-light text-muted border" style="font-size: 0.8rem; font-weight: 600; padding: 4px 8px;">
+                                {{ p.min_threshold }} units
+                            </span>
+                        </td>
+
+                        <td style="padding: 12px 14px; text-align: center;">
+                            <span style="font-size: 0.88rem; font-weight: 700; color: #0284c7; background: #f0f9ff; border: 1px solid #bae6fd; padding: 3px 8px; border-radius: 4px;">
+                                +{{ p.suggested_restock }} units
+                            </span>
+                        </td>
+
+                        <td style="padding: 12px 14px; text-align: center;">
+                            <span class="badge-status {{ p.badge_class }}">{{ p.status_text }}</span>
+                        </td>
+
+                        <td style="padding: 12px 18px; text-align: right;">
+                            <button type="button" class="btn-restock-theme"
+                                    onclick="openRestockModal({{ p.id }}, '{{ p.name|escapejs }}', '{{ p.sku|escapejs }}', {{ p.available_stock }}, {{ p.suggested_restock }}, [
+                                        {% for v in p.variants %}{ id: {{ v.id }}, sku: '{{ v.sku|escapejs }}', color: '{{ v.color|escapejs }}', size: '{{ v.size|escapejs }}', stock: {{ v.stock }} },{% endfor %}
+                                    ])">
+                                <i class="bi bi-box-arrow-in-down"></i> Restock
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">
+                            All products currently have healthy stock levels! No items need replenishment.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="restockModal" class="custom-modal-backdrop">
+    <div class="custom-modal-dialog">
+        <form method="POST" action="/seller-panel/inventory/update-stock/">
+            {% csrf_token %}
+            <input type="hidden" name="product_id" id="restock_product_id">
+            <input type="hidden" name="adjustment_type" value="add">
+            <input type="hidden" name="redirect_to" value="low_stock">
+
+            <div style="padding: 1.1rem 1.4rem; border-bottom: 1px solid #e2e8f0; background: #faf6f0; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; margin: 0; color: #111111; font-weight: 700;" id="restock_product_title">
+                        Replenish Product Stock
+                    </h3>
+                    <div style="font-size: 0.82rem; color: #64748b; margin-top: 2px;">
+                        Base SKU: <code id="restock_product_sku" style="color: var(--primary); font-weight: 600;">--</code>
+                    </div>
+                </div>
+                <button type="button" onclick="closeRestockModal()" style="background: none; border: none; font-size: 1.4rem; color: #64748b; cursor: pointer;">&times;</button>
+            </div>
+
+            <div style="padding: 1.25rem 1.4rem;">
+
+                <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 10px 14px; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <div style="font-size: 0.78rem; text-transform: uppercase; color: #166534; font-weight: 700;">Current Available</div>
+                        <div style="font-size: 1.1rem; font-weight: 700; color: #15803d;" id="restock_current_display">0 units</div>
+                    </div>
+                    <div style="text-align: center; border-left: 1px solid #bbf7d0; border-right: 1px solid #bbf7d0; padding: 0 14px;">
+                        <div style="font-size: 0.78rem; text-transform: uppercase; color: #64748b; font-weight: 700;">Min Threshold</div>
+                        <div style="font-size: 1.1rem; font-weight: 700; color: #475569;">10 units</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 0.78rem; text-transform: uppercase; color: #0369a1; font-weight: 700;">Target Capacity</div>
+                        <div style="font-size: 1.1rem; font-weight: 700; color: #0284c7;">50 units</div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1rem;" id="restock_variant_container">
+                    <label style="display: block; font-size: 0.82rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">
+                        Select Variant / Size to Restock
+                    </label>
+                    <select name="variant_id" id="restock_variant_id" class="form-select" style="width: 100%; font-size: 0.88rem;">
+                        <option value="base">All Variants / Base Product Stock</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-size: 0.82rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">
+                        Quantity to Add (+ Units) *
+                    </label>
+                    <input type="number" name="quantity" id="restock_quantity_input" min="1" class="form-control" style="width: 100%; font-weight: 700; font-size: 1rem; color: #111111;" required>
+                    <span style="font-size: 0.78rem; color: #64748b; margin-top: 3px; display: block;">
+                        Pre-filled with suggested replenishment to reach target 50 units.
+                    </span>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-size: 0.82rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">
+                        Restock Source / Reason *
+                    </label>
+                    <select name="reason" class="form-select" style="width: 100%; font-size: 0.88rem;" required>
+                        <option value="Supplier Purchase Order Replenishment">Supplier Purchase Order Replenishment</option>
+                        <option value="Factory Production Batch Arrival">Factory Production Batch Arrival</option>
+                        <option value="Warehouse Reserve Transfer">Warehouse Reserve Transfer</option>
+                        <option value="Emergency Restock Reorder">Emergency Restock Reorder</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label style="display: block; font-size: 0.82rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">
+                        Supplier / PO Notes
+                    </label>
+                    <textarea name="notes" class="form-control" rows="2" placeholder="Enter supplier invoice or shipment tracking number..." style="width: 100%; font-size: 0.85rem;"></textarea>
+                </div>
+            </div>
+
+            <div style="padding: 1rem 1.4rem; background: #faf6f0; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 8px;">
+                <button type="button" onclick="closeRestockModal()" class="btn btn-secondary" style="padding: 7px 16px; font-size: 0.88rem;">Cancel</button>
+                <button type="submit" class="btn btn-restock-theme" style="padding: 8px 22px; font-size: 0.88rem; font-weight: 700;">
+                    Confirm Restock
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openRestockModal(productId, productName, productSku, currentStock, suggestedRestock, variants) {
+        document.getElementById('restock_product_id').value = productId;
+        document.getElementById('restock_product_title').textContent = 'Replenish Stock: ' + productName;
+        document.getElementById('restock_product_sku').textContent = productSku;
+        document.getElementById('restock_current_display').textContent = currentStock + ' units';
+        document.getElementById('restock_quantity_input').value = suggestedRestock > 0 ? suggestedRestock : 20;
+
+        const variantSelect = document.getElementById('restock_variant_id');
+        variantSelect.innerHTML = '<option value="base">All Variants / Base Product Stock</option>';
+
+        if (variants && variants.length > 0) {
+            variants.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = v.id;
+                opt.textContent = v.color + ' / ' + v.size + ' (SKU: ' + v.sku + ') — Current Stock: ' + v.stock + ' units';
+                variantSelect.appendChild(opt);
+            });
+        }
+
+        document.getElementById('restockModal').classList.add('show');
+    }
+
+    function closeRestockModal() {
+        document.getElementById('restockModal').classList.remove('show');
+    }
+
+    document.getElementById('restockModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeRestockModal();
+        }
+    });
+</script>
+{% endblock %}

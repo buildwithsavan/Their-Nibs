@@ -1,0 +1,26 @@
+{% extends 'seller_panel/base.html' %}
+{% block title %}Finance &amp; Earnings{% endblock %}
+{% block page_heading %}Finance — Earnings &amp; Payouts{% endblock %}
+{% block content %}
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 1.75rem;">
+    <div class="no-icon-card">
+        <div class="no-icon-card-header">TOTAL REVENUE</div>
+        <div class="no-icon-card-value"><span class="seller-card-currency">₹</span>1,42,850</div>
+        <div class="no-icon-card-subtext">Lifetime gross sales</div>
+    </div>
+    <div class="no-icon-card">
+        <div class="no-icon-card-header">COMMISSION (15%)</div>
+        <div class="no-icon-card-value"><span class="seller-card-currency">₹</span>21,427</div>
+        <div class="no-icon-card-subtext">Platform fees</div>
+    </div>
+    <div class="no-icon-card">
+        <div class="no-icon-card-header">NET SETTLED PAYOUTS</div>
+        <div class="no-icon-card-value"><span class="seller-card-currency">₹</span>1,21,423</div>
+        <div class="no-icon-card-subtext">Transferred to bank</div>
+    </div>
+</div>
+<div class="clothify-card" style="padding: 2rem; text-align: center;">
+    <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: var(--primary);">Payout &amp; Settlement History</h3>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">Weekly automated payouts are deposited directly to your registered bank account every Friday.</p>
+</div>
+{% endblock %}

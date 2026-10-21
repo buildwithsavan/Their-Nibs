@@ -1,0 +1,251 @@
+{% extends 'seller_panel/base.html' %}
+{% block title %}Add Product{% endblock %}
+{% block page_heading %}Catalog — Add New Product{% endblock %}
+
+{% block content %}
+<div style="max-width: 1040px; margin: 0 auto;">
+
+    <div style="margin-bottom: 1.5rem;">
+        <a href="/seller-panel/products/" style="font-size: 0.82rem; color: var(--text-muted); display: inline-flex; align-items: center; gap: 0.35rem; margin-bottom: 0.4rem; text-decoration: none;">
+            &larr; Back to Products Catalog
+        </a>
+        <h1 style="font-family: 'Cormorant Garamond', serif; font-size: 1.85rem; font-weight: 700; color: var(--primary); margin: 0;">Add New Product</h1>
+        <p style="font-size: 0.84rem; color: var(--text-muted); margin-top: 0.2rem;">Configure pricing, fashion taxonomy, stock inventory units, and specifications.</p>
+    </div>
+
+    <form method="POST" action="/seller-panel/products/add/" id="sellerProductForm">
+        {% csrf_token %}
+
+        <div class="clothify-card" style="margin-bottom: 1.5rem;">
+            <div class="card-header" style="padding: 1rem 1.4rem; border-bottom: 1px solid var(--border-subtle); background: #ffffff;">
+                <h3 class="card-title" style="font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; margin: 0; color: var(--primary);">1. General Product Identification</h3>
+            </div>
+            <div class="card-body" style="padding: 1.5rem 1.4rem;">
+                <div style="margin-bottom: 1.25rem;">
+                    <label style="display: block; font-weight: 700; font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.45rem; color: var(--text-secondary);">PRODUCT NAME / TITLE *</label>
+                    <input type="text" name="name" class="form-control" placeholder="e.g. Their Nibs Handcrafted Satin Rose Nightdress" required style="width: 100%;">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+                    <div>
+                        <label style="display: block; font-weight: 700; font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.45rem; color: var(--text-secondary);">SKU IDENTIFIER *</label>
+                        <input type="text" name="sku" class="form-control" placeholder="e.g. TN-SLP-102" style="width: 100%; font-family: monospace;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 700; font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.45rem; color: var(--text-secondary);">TARGET GENDER *</label>
+                        <select name="gender" class="form-control" style="width: 100%;" required>
+                            <option value="women" selected>Women</option>
+                            <option value="men">Men</option>
+                            <option value="unisex">Unisex</option>
+                            <option value="kids">Kids</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                    <div>
+                        <label style="display: block; font-weight: 700; font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.45rem; color: var(--text-secondary);">CATEGORY *</label>
+                        <select name="category" class="form-control" style="width: 100%;" required>
+                            <option value="">- Select Category -</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat.id }}" {% if forloop.first %}selected{% endif %}>{{ cat.name }}</option>
+                            {% empty %}
+                                <option value="1" selected>Sleepwear &amp; Nightwear</option>
+                                <option value="2">Loungewear &amp; Robes</option>
+                                <option value="3">Pyjama Sets</option>
+                                <option value="4">Nightdresses &amp; Chemises</option>
+                                <option value="5">Kimonos &amp; Kaftans</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 700; font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.45rem; color: var(--text-secondary);">SUBCATEGORY</label>
+                        <select name="subcategory" class="form-control" style="width: 100%;">
+                            <option value="">- Select Subcategory -</option>
+                            <option value="Satin Nightdress" selected>Satin Nightdress</option>
+                            <option value="Silk Pyjama Set">Silk Pyjama Set</option>
+                            <option value="Cotton Sleepshirt">Cotton Sleepshirt</option>
+                            <option value="Fleece Robe">Fleece Robe</option>
+                            <option value="Long Kimono">Long Kimono</option>
+                            <option value="Camisole Top">Camisole Top</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="clothify-card" style="margin-bottom: 1.5rem;">
+            <div class="card-header" style="padding: 1rem 1.4rem; border-bottom: 1px solid var(--border-subtle); background: #ffffff;">
+                <h3 class="card-title" style="font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; margin: 0; color: var(--primary);">2. Pricing &amp; Stock Inventory</h3>
+            </div>
+            <div class="card-body" style="padding: 1.5rem 1.4rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1.25rem;">
+                    <div>
+                        <label style="display: block; font-weight: 700; font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.45rem; color: var(--text-secondary);">BASE RETAIL PRICE (₹) *</label>
+                        <input type="number" step="0.01" name="price" class="form-control" placeholder="1899" required style="width: 100%;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 700; font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.45rem; color: var(--text-secondary);">OFFER / SALE PRICE (₹)</label>
+                        <input type="number" step="0.01" name="offer_price" class="form-control" placeholder="1499" style="width: 100%;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 700; font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.45rem; color: var(--text-secondary);">INITIAL STOCK UNITS *</label>
+                        <input type="number" name="stock" class="form-control" placeholder="50" required style="width: 100%;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 700; font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.45rem; color: var(--text-secondary);">LOW STOCK THRESHOLD</label>
+                        <input type="number" name="low_stock_limit" class="form-control" placeholder="5" value="5" style="width: 100%;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="clothify-card" style="margin-bottom: 1.5rem;">
+            <div class="card-header" style="padding: 1rem 1.4rem; border-bottom: 1px solid var(--border-subtle); background: #ffffff;">
+                <h3 class="card-title" style="font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; margin: 0; color: var(--primary);">3. Size Range &amp; Color Specifications</h3>
+            </div>
+            <div class="card-body" style="padding: 1.5rem 1.4rem;">
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; font-weight: 700; font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.65rem; color: var(--text-secondary);">TILL WHAT SIZES CAN YOU PROVIDE THIS PRODUCT? *</label>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+                        <label style="display: flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.85rem; background: #faf7f2; border: 1px solid var(--border-subtle); border-radius: 6px; font-size: 0.85rem; cursor: pointer;">
+                            <input type="checkbox" name="sizes" value="XS" checked> <strong>XS</strong>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.85rem; background: #faf7f2; border: 1px solid var(--border-subtle); border-radius: 6px; font-size: 0.85rem; cursor: pointer;">
+                            <input type="checkbox" name="sizes" value="S" checked> <strong>S</strong>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.85rem; background: #faf7f2; border: 1px solid var(--border-subtle); border-radius: 6px; font-size: 0.85rem; cursor: pointer;">
+                            <input type="checkbox" name="sizes" value="M" checked> <strong>M</strong>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.85rem; background: #faf7f2; border: 1px solid var(--border-subtle); border-radius: 6px; font-size: 0.85rem; cursor: pointer;">
+                            <input type="checkbox" name="sizes" value="L" checked> <strong>L</strong>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.85rem; background: #faf7f2; border: 1px solid var(--border-subtle); border-radius: 6px; font-size: 0.85rem; cursor: pointer;">
+                            <input type="checkbox" name="sizes" value="XL" checked> <strong>XL</strong>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.85rem; background: #faf7f2; border: 1px solid var(--border-subtle); border-radius: 6px; font-size: 0.85rem; cursor: pointer;">
+                            <input type="checkbox" name="sizes" value="XXL"> <strong>XXL</strong>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.85rem; background: #faf7f2; border: 1px solid var(--border-subtle); border-radius: 6px; font-size: 0.85rem; cursor: pointer;">
+                            <input type="checkbox" name="sizes" value="3XL"> <strong>3XL</strong>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.85rem; background: #faf7f2; border: 1px solid var(--border-subtle); border-radius: 6px; font-size: 0.85rem; cursor: pointer;">
+                            <input type="checkbox" name="sizes" value="Custom Tailored"> <strong>Custom Tailored Sizing</strong>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label style="display: block; font-weight: 700; font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.45rem; color: var(--text-secondary);">COLOR VARIANT *</label>
+                    <select name="color" class="form-control" style="width: 100%;" required>
+                        <option value="Rose Pink" selected>Rose Pink</option>
+                        <option value="Pink">Pink</option>
+                        <option value="Red">Red</option>
+                        <option value="Wine">Wine</option>
+                        <option value="Crimson">Crimson</option>
+                        <option value="Midnight Navy">Midnight Navy</option>
+                        <option value="Navy Blue">Navy Blue</option>
+                        <option value="Sky Blue">Sky Blue</option>
+                        <option value="Powder Blue">Powder Blue</option>
+                        <option value="Emerald Green">Emerald Green</option>
+                        <option value="Sage Green">Sage Green</option>
+                        <option value="Olive">Olive</option>
+                        <option value="Champagne">Champagne</option>
+                        <option value="Ivory">Ivory</option>
+                        <option value="Cream">Cream</option>
+                        <option value="White">White</option>
+                        <option value="Black">Black</option>
+                        <option value="Gold">Gold</option>
+                        <option value="Silver">Silver</option>
+                        <option value="Purple">Purple</option>
+                        <option value="Lavender">Lavender</option>
+                        <option value="Peach">Peach</option>
+                        <option value="Coral">Coral</option>
+                        <option value="Yellow">Yellow</option>
+                        <option value="Grey">Grey</option>
+                        <option value="Brown">Brown</option>
+                        <option value="Multi-Color">Multi-Color</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="clothify-card" style="margin-bottom: 1.5rem;">
+            <div class="card-header" style="padding: 1rem 1.4rem; border-bottom: 1px solid var(--border-subtle); background: #ffffff;">
+                <h3 class="card-title" style="font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; margin: 0; color: var(--primary);">4. Material &amp; Style Details</h3>
+            </div>
+            <div class="card-body" style="padding: 1.5rem 1.4rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem;">
+                    <div>
+                        <label style="display: block; font-weight: 700; font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.45rem; color: var(--text-secondary);">MATERIAL TYPE *</label>
+                        <select name="material" class="form-control" style="width: 100%;" required>
+                            <option value="Silk" selected>Silk</option>
+                            <option value="Cotton">Cotton</option>
+                            <option value="Satin">Satin</option>
+                            <option value="Linen">Linen</option>
+                            <option value="Velvet">Velvet</option>
+                            <option value="Fleece">Fleece</option>
+                            <option value="Rayon">Rayon</option>
+                            <option value="Modal">Modal</option>
+                            <option value="Cotton-Satin Blend">Cotton-Satin Blend</option>
+                            <option value="Silk Blend">Silk Blend</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 700; font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.45rem; color: var(--text-secondary);">PATTERN / PRINT TYPE</label>
+                        <select name="pattern" class="form-control" style="width: 100%;">
+                            <option value="Floral Botanical Print" selected>Floral Botanical Print</option>
+                            <option value="Solid Color">Solid Color</option>
+                            <option value="Contrast Piping Detail">Contrast Piping Detail</option>
+                            <option value="Jacquard Weave">Jacquard Weave</option>
+                            <option value="Striped Pattern">Striped Pattern</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 700; font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.45rem; color: var(--text-secondary);">GARMENT FIT STYLE</label>
+                        <select name="fit" class="form-control" style="width: 100%;">
+                            <option value="Relaxed Comfort Fit" selected>Relaxed Comfort Fit</option>
+                            <option value="Tailored Fit">Tailored Fit</option>
+                            <option value="Loose Wrap / Adjustable Belt">Loose Wrap / Adjustable Belt</option>
+                            <option value="Oversized Flowing">Oversized Flowing</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="clothify-card" style="margin-bottom: 1.5rem;">
+            <div class="card-header" style="padding: 1rem 1.4rem; border-bottom: 1px solid var(--border-subtle); background: #ffffff;">
+                <h3 class="card-title" style="font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; margin: 0; color: var(--primary);">5. Description, Care &amp; Media</h3>
+            </div>
+            <div class="card-body" style="padding: 1.5rem 1.4rem;">
+                <div style="margin-bottom: 1.25rem;">
+                    <label style="display: block; font-weight: 700; font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.45rem; color: var(--text-secondary);">DETAILED PRODUCT DESCRIPTION *</label>
+                    <textarea name="description" class="form-control" rows="4" style="width: 100%;" placeholder="Describe fabric softness, breathability, tailoring finish, fit, and styling recommendations..." required></textarea>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                    <div>
+                        <label style="display: block; font-weight: 700; font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.45rem; color: var(--text-secondary);">WASHING &amp; CARE INSTRUCTIONS</label>
+                        <input type="text" name="care" class="form-control" placeholder="e.g. Gentle Cold Hand Wash or Dry Clean Only" style="width: 100%;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 700; font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.45rem; color: var(--text-secondary);">GARMENT IMAGE URL</label>
+                        <input type="url" name="image_url" class="form-control" placeholder="https://..." style="width: 100%;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="clothify-card" style="padding: 1.25rem 1.4rem; background: #ffffff; display: flex; justify-content: flex-end; align-items: center; gap: 1rem;">
+            <a href="/seller-panel/products/" class="btn btn-secondary" style="padding: 0.65rem 1.25rem; border: 1px solid var(--border-subtle); color: var(--text-primary); border-radius: 4px; text-decoration: none;">
+                Cancel
+            </a>
+            <button type="submit" class="btn btn-primary" style="padding: 0.65rem 1.6rem; font-weight: 700; background: #000000; color: #ffffff; border: none; border-radius: 4px; cursor: pointer;">
+                Save &amp; Create Product
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

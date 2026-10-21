@@ -1,0 +1,315 @@
+{% extends 'seller_panel/base.html' %}
+
+{% block title %}Shipping &amp; In-Transit{% endblock %}
+{% block page_heading %}Orders &amp; Fulfillment — In-Transit Shipping{% endblock %}
+
+{% block content %}
+<style>
+
+    .live-status-text {
+        background: transparent !important;
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        font-weight: 700;
+        font-size: 0.86rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        letter-spacing: 0.02em;
+    }
+    .live-status-out {
+        color: #b45309 !important; 
+    }
+    .live-status-transit {
+        color: #0369a1 !important; 
+    }
+
+    .track-modal-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 1050;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+    .track-modal-backdrop.show {
+        display: flex;
+    }
+    .track-modal-dialog {
+        background: #ffffff;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 520px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+        animation: trackSlideIn 0.22s ease-out;
+    }
+    @keyframes trackSlideIn {
+        from { transform: translateY(-16px) scale(0.98); opacity: 0; }
+        to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .track-timeline {
+        position: relative;
+        padding-left: 28px;
+        margin-top: 14px;
+    }
+    .track-timeline::before {
+        content: '';
+        position: absolute;
+        left: 9px;
+        top: 6px;
+        bottom: 6px;
+        width: 2px;
+        background: #e2e8f0;
+    }
+    .timeline-step {
+        position: relative;
+        margin-bottom: 20px;
+    }
+    .timeline-step:last-child {
+        margin-bottom: 0;
+    }
+    .timeline-node {
+        position: absolute;
+        left: -28px;
+        top: 2px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #ffffff;
+        border: 2px solid #94a3b8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.65rem;
+    }
+    .timeline-step.completed .timeline-node {
+        background: #16a34a;
+        border-color: #16a34a;
+        color: #ffffff;
+    }
+    .timeline-step.active .timeline-node {
+        background: #b45309;
+        border-color: #b45309;
+        color: #ffffff;
+        box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.2);
+    }
+</style>
+
+<div style="margin-bottom: 1.25rem;">
+    <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; margin: 0 0 0.5rem 0; color: var(--primary); font-weight: 700;">
+        In-Transit Shipping &amp; Live Tracking
+    </h2>
+    <span style="font-size: 0.88rem; color: var(--text-muted); display: block;">
+        Track live shipment locations, courier dispatch status, and expected delivery timelines.
+    </span>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+    <div class="clothify-card" style="padding: 1rem 1.25rem; background: #ffffff;">
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted);">Active In Transit</div>
+        <div class="seller-card-value" style="color: #0284c7; margin-top: 4px;">
+            {{ in_transit_count }} <span class="seller-card-unit">Shipments</span>
+        </div>
+    </div>
+    <div class="clothify-card" style="padding: 1rem 1.25rem; background: #ffffff;">
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted);">Out of Delivery Today</div>
+        <div class="seller-card-value" style="color: #b45309; margin-top: 4px;">
+            {{ out_for_delivery_count }} <span class="seller-card-unit">Packages</span>
+        </div>
+    </div>
+</div>
+
+<div class="clothify-card" style="padding: 0; overflow: hidden;">
+    <div style="overflow-x: auto;">
+        <table class="clothify-table" style="width: 100%; font-size: 0.88rem; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #faf6f0; border-bottom: 1px solid var(--seller-border, #e5e7eb);">
+                    <th style="padding: 11px 14px; text-align: left; font-weight: 700;">ORDER REF</th>
+                    <th style="padding: 11px 14px; text-align: left; font-weight: 700;">CUSTOMER &amp; CITY</th>
+                    <th style="padding: 11px 14px; text-align: left; font-weight: 700;">SHIPPED GARMENT ITEM</th>
+                    <th style="padding: 11px 14px; text-align: left; font-weight: 700;">COURIER &amp; AWB</th>
+                    <th style="padding: 11px 14px; text-align: center; font-weight: 700;">DISPATCHED</th>
+                    <th style="padding: 11px 14px; text-align: center; font-weight: 700;">EST. DELIVERY</th>
+                    <th style="padding: 11px 14px; text-align: center; font-weight: 700;">LIVE STATUS</th>
+                    <th style="padding: 11px 14px; text-align: right; font-weight: 700;">ACTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if shipping_orders %}
+                    {% for o in shipping_orders %}
+                    <tr style="border-bottom: 1px solid #f1f5f9; transition: background-color 0.15s ease;">
+                        <td style="padding: 12px 14px; font-weight: 700; color: var(--primary);">
+                            {{ o.order_number }}
+                        </td>
+                        <td style="padding: 12px 14px;">
+                            <div style="font-weight: 600; color: #1e293b;">{{ o.customer }}</div>
+                            <div style="font-size: 0.78rem; color: #64748b;">{{ o.city }}</div>
+                        </td>
+                        <td style="padding: 12px 14px; font-weight: 500; color: #334155;">
+                            {{ o.items }}
+                        </td>
+                        <td style="padding: 12px 14px;">
+                            <div style="font-weight: 600; color: #1e293b;">{{ o.courier }}</div>
+                            <code style="font-size: 0.78rem; color: var(--primary); background: #f8fafc; padding: 2px 6px; border-radius: 4px;">{{ o.awb }}</code>
+                        </td>
+                        <td style="padding: 12px 14px; text-align: center; font-size: 0.82rem; color: #64748b;">
+                            {{ o.dispatched_date }}
+                        </td>
+                        <td style="padding: 12px 14px; text-align: center; font-size: 0.82rem; font-weight: 600; color: #166534;">
+                            {{ o.est_delivery }}
+                        </td>
+
+                        <td style="padding: 12px 14px; text-align: center;">
+                            {% if 'out' in o.live_status|lower %}
+                                <span class="live-status-text live-status-out">
+                                    <i class="bi bi-bicycle"></i> Out of delivery
+                                </span>
+                            {% else %}
+                                <span class="live-status-text live-status-transit">
+                                    <i class="bi bi-truck"></i> In Transit
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td style="padding: 12px 14px; text-align: right;">
+                            <button type="button" class="btn btn-secondary btn-sm" style="font-size: 0.8rem; padding: 5px 12px; font-weight: 600;"
+                                    onclick="openTrackModal('{{ o.order_number|escapejs }}', '{{ o.courier|escapejs }}', '{{ o.awb|escapejs }}', '{{ o.customer|escapejs }}', '{{ o.city|escapejs }}', '{% if 'out' in o.live_status|lower %}Out of delivery{% else %}In Transit{% endif %}', '{{ o.est_delivery|escapejs }}')">
+                                <i class="bi bi-geo-alt"></i> Track Live
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center py-4 text-muted">
+                            No shipments currently in transit.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="liveTrackModal" class="track-modal-backdrop">
+    <div class="track-modal-dialog">
+        <div style="padding: 1.1rem 1.4rem; background: #faf6f0; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; margin: 0; color: #111111; font-weight: 700;">
+                    Live Carrier Shipment Tracking
+                </h3>
+                <span style="font-size: 0.78rem; color: #64748b;">Real-time GPS checkpoint milestones</span>
+            </div>
+            <button type="button" onclick="closeTrackModal()" style="background: none; border: none; font-size: 1.4rem; color: #64748b; cursor: pointer;">&times;</button>
+        </div>
+
+        <div style="padding: 1.35rem 1.4rem;">
+
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 1.25rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <div>
+                        <span style="font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 700;">Carrier</span>
+                        <div style="font-weight: 800; color: #111111; font-size: 0.95rem;" id="trackCourierName">--</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 700;">AWB Number</span>
+                        <div style="font-family: monospace; font-weight: 700; color: var(--primary);" id="trackAwbCode">--</div>
+                    </div>
+                </div>
+                <div style="border-top: 1px dashed #cbd5e1; padding-top: 6px; margin-top: 6px; display: flex; justify-content: space-between; font-size: 0.8rem;">
+                    <span>Order: <strong id="trackOrderNum">--</strong></span>
+                    <span>Destination: <strong id="trackDestination">--</strong></span>
+                </div>
+            </div>
+
+            <div style="font-size: 0.82rem; font-weight: 700; text-transform: uppercase; color: #475569; letter-spacing: 0.04em;">
+                Shipment Milestones
+            </div>
+
+            <div class="track-timeline">
+                <div class="timeline-step completed">
+                    <div class="timeline-node"><i class="bi bi-check"></i></div>
+                    <div style="font-weight: 700; color: #111111; font-size: 0.86rem;">Dispatched from Atelier</div>
+                    <div style="font-size: 0.78rem; color: #64748b;">Parcel scanned and handed over to carrier hub &bull; Verified</div>
+                </div>
+                <div class="timeline-step completed" id="stepTransit">
+                    <div class="timeline-node"><i class="bi bi-check"></i></div>
+                    <div style="font-weight: 700; color: #111111; font-size: 0.86rem;">In Transit — Regional Sorting Hub</div>
+                    <div style="font-size: 0.78rem; color: #64748b;">Package arrived and processed at sorting destination facility</div>
+                </div>
+                <div class="timeline-step" id="stepOutForDelivery">
+                    <div class="timeline-node" id="stepOutNode"><i class="bi bi-bicycle"></i></div>
+                    <div style="font-weight: 700; color: #111111; font-size: 0.86rem;">Out of delivery</div>
+                    <div style="font-size: 0.78rem; color: #64748b;">Courier delivery associate assigned and en-route to address</div>
+                </div>
+                <div class="timeline-step" id="stepDelivered">
+                    <div class="timeline-node"><i class="bi bi-house"></i></div>
+                    <div style="font-weight: 700; color: #64748b; font-size: 0.86rem;">Delivery Expected</div>
+                    <div style="font-size: 0.78rem; color: #94a3b8;" id="trackEstDelivery">Expected on scheduled date</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="padding: 1rem 1.4rem; background: #faf6f0; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+            <a id="trackFullPageLink" href="/seller-panel/orders/track/" class="btn btn-outline-secondary btn-sm" style="font-size: 0.82rem; font-weight: 600; text-decoration: none;">
+                <i class="bi bi-diagram-3"></i> View 5-Stage Details
+            </a>
+            <button type="button" onclick="closeTrackModal()" class="btn btn-primary" style="padding: 7px 20px; font-size: 0.88rem; font-weight: 700; background-color: #111111; border-color: #111111;">
+                Close Tracking
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openTrackModal(orderNum, courier, awb, customer, city, liveStatus, estDelivery) {
+        document.getElementById('trackOrderNum').textContent = orderNum;
+        document.getElementById('trackCourierName').textContent = courier;
+        document.getElementById('trackAwbCode').textContent = awb;
+        document.getElementById('trackDestination').textContent = city;
+        document.getElementById('trackEstDelivery').textContent = 'Estimated delivery: ' + estDelivery;
+
+        const cleanNum = (orderNum || '').replace('#', '');
+        const fullLink = document.getElementById('trackFullPageLink');
+        if (fullLink) {
+            fullLink.href = '/seller-panel/orders/track/' + cleanNum + '/';
+        }
+
+        const outStep = document.getElementById('stepOutForDelivery');
+        const outNode = document.getElementById('stepOutNode');
+
+        if (liveStatus === 'Out of delivery') {
+            outStep.className = 'timeline-step active';
+            outNode.innerHTML = '<i class="bi bi-arrow-repeat"></i>';
+        } else {
+            outStep.className = 'timeline-step';
+            outNode.innerHTML = '<i class="bi bi-bicycle"></i>';
+        }
+
+        document.getElementById('liveTrackModal').classList.add('show');
+    }
+
+    function closeTrackModal() {
+        document.getElementById('liveTrackModal').classList.remove('show');
+    }
+
+    document.getElementById('liveTrackModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeTrackModal();
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeTrackModal();
+        }
+    });
+</script>
+{% endblock %}

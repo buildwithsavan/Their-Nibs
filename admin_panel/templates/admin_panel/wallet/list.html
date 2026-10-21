@@ -1,0 +1,59 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Customer Wallets{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Customer Wallets</h1>
+        <p class="page-subtitle">Prepaid digital balances, cashback reserves, and customer wallet ledgers.</p>
+    </div>
+</div>
+
+<div class="clothify-card">
+    <div class="card-header">
+        <h3 class="card-title">Customer Wallet Accounts</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="clothify-table">
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Current Balance</th>
+                    <th>Total Credited</th>
+                    <th>Total Debited</th>
+                    <th>Last Active</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for w in wallets %}
+                <tr>
+                    <td>
+                        <strong style="color: #fff;">{{ w.user.get_full_name|default:w.user.username }}</strong>
+                        <div style="font-size:0.75rem; color:var(--text-muted);">@{{ w.user.username }} • {{ w.user.email }}</div>
+                    </td>
+                    <td><strong style="color: #10b981; font-size: 1.1rem;">₹{{ w.balance }}</strong></td>
+                    <td style="color: var(--success);">+ ₹{{ w.total_credited }}</td>
+                    <td style="color: var(--danger);">- ₹{{ w.total_debited }}</td>
+                    <td style="font-size: 0.8rem; color: var(--text-muted);">{{ w.updated_at|date:"M d, Y" }}</td>
+                    <td>
+                        <span class="status-badge status-{{ w.status }}">{{ w.get_status_display }}</span>
+                    </td>
+                    <td style="text-align: right;">
+                        <a href="/admin-panel/wallet/{{ w.id }}/" class="btn btn-secondary btn-sm">Ledger & Adjust</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                        No customer wallets created yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

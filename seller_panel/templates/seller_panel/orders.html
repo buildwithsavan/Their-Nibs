@@ -1,0 +1,136 @@
+{% extends 'seller_panel/base.html' %}
+
+{% block title %}Orders{% endblock %}
+{% block page_heading %}Orders &amp; Fulfillment — Customer Orders{% endblock %}
+
+{% block content %}
+<style>
+    .filter-tab-btn {
+        padding: 6px 16px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border-radius: 6px;
+        border: 1px solid #cbd5e1;
+        background-color: #ffffff;
+        color: #475569;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+    }
+    .filter-tab-btn:hover {
+        background-color: #f1f5f9;
+        color: #0f172a;
+    }
+    .filter-tab-btn.active {
+        background-color: #f1c4af;
+        color: #111111;
+        border-color: #f1c4af;
+    }
+    .filter-tab-btn .badge-count {
+        background: rgba(0,0,0,0.1);
+        padding: 2px 6px;
+        border-radius: 10px;
+        font-size: 0.75rem;
+    }
+    .filter-tab-btn.active .badge-count {
+        background: rgba(255,255,255,0.25);
+    }
+</style>
+
+<div style="margin-bottom: 1.25rem;">
+    <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; margin: 0 0 0.5rem 0; color: var(--primary); font-weight: 700;">
+        Customer Orders Overview
+    </h2>
+    <span style="font-size: 0.88rem; color: var(--text-muted); display: block; margin-bottom: 1rem;">
+        Track all customer orders across various fulfillment stages in real time.
+    </span>
+
+    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+        <a href="/seller-panel/orders/?status=all" class="filter-tab-btn {% if current_status == 'all' or not current_status %}active{% endif %}">
+            All Orders <span class="badge-count">{{ all_orders_count }}</span>
+        </a>
+        <a href="/seller-panel/orders/?status=pending" class="filter-tab-btn {% if current_status == 'pending' %}active{% endif %}">
+            Pending <span class="badge-count">{{ pending_count }}</span>
+        </a>
+        <a href="/seller-panel/orders/?status=processing" class="filter-tab-btn {% if current_status == 'processing' %}active{% endif %}">
+            Processing / Ready <span class="badge-count">{{ processing_count }}</span>
+        </a>
+        <a href="/seller-panel/orders/?status=shipped" class="filter-tab-btn {% if current_status == 'shipped' %}active{% endif %}">
+            Shipped <span class="badge-count">{{ shipped_count }}</span>
+        </a>
+        <a href="/seller-panel/orders/?status=delivered" class="filter-tab-btn {% if current_status == 'delivered' %}active{% endif %}">
+            Delivered <span class="badge-count">{{ delivered_count }}</span>
+        </a>
+        <a href="/seller-panel/orders/?status=returned" class="filter-tab-btn {% if current_status == 'returned' %}active{% endif %}">
+            Returned <span class="badge-count">{{ returned_count }}</span>
+        </a>
+    </div>
+</div>
+
+<div class="clothify-card" style="padding: 0; overflow: hidden;">
+    <div style="overflow-x: auto;">
+        <table class="clothify-table" style="width: 100%; font-size: 0.88rem; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #faf6f0; border-bottom: 1px solid var(--seller-border, #e5e7eb);">
+                    <th style="padding: 10px 14px; text-align: left;">ORDER REF</th>
+                    <th style="padding: 10px 14px; text-align: left;">CUSTOMER &amp; CITY</th>
+                    <th style="padding: 10px 14px; text-align: left;">GARMENT ITEM</th>
+                    <th style="padding: 10px 14px; text-align: right;">TOTAL (₹)</th>
+                    <th style="padding: 10px 14px; text-align: center;">PAYMENT</th>
+                    <th style="padding: 10px 14px; text-align: center;">ORDER DATE</th>
+                    <th style="padding: 10px 14px; text-align: center;">STATUS</th>
+                    <th style="padding: 10px 14px; text-align: right;">ACTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if orders %}
+                    {% for o in orders %}
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                        <td style="padding: 10px 14px; font-weight: 700; color: var(--primary);">
+                            {{ o.order_number }}
+                        </td>
+                        <td style="padding: 10px 14px;">
+                            <div style="font-weight: 600; color: #1e293b;">{{ o.customer }}</div>
+                            <div style="font-size: 0.78rem; color: #64748b;">{{ o.city }}</div>
+                        </td>
+                        <td style="padding: 10px 14px; font-weight: 500; color: #334155;">
+                            {{ o.items }}
+                        </td>
+                        <td style="padding: 10px 14px; text-align: right; font-weight: 700; color: var(--primary);">
+                            ₹{{ o.amount|floatformat:2 }}
+                        </td>
+                        <td style="padding: 10px 14px; text-align: center; font-size: 0.82rem; font-weight: 500;">
+                            {{ o.payment }}
+                        </td>
+                        <td style="padding: 10px 14px; text-align: center; font-size: 0.82rem; color: #64748b;">
+                            {{ o.date }}
+                        </td>
+                        <td style="padding: 10px 14px; text-align: center;">
+                            <span class="badge-status {{ o.status_badge }}">{{ o.status }}</span>
+                        </td>
+                        <td style="padding: 10px 14px; text-align: right; white-space: nowrap;">
+                            <a href="/seller-panel/orders/track/{{ o.order_number|cut:'#' }}/" class="btn btn-secondary btn-sm" style="font-size: 0.8rem; padding: 4px 10px; display: inline-flex; align-items: center; gap: 4px; text-decoration: none; margin-right: 4px;">
+                                <i class="bi bi-geo-alt"></i> Track Order
+                            </a>
+                            {% if o.status == 'Processing' %}
+                                <a href="/seller-panel/orders/ready-to-ship/" class="btn btn-primary btn-sm" style="font-size: 0.8rem; padding: 4px 10px; text-decoration: none;">Dispatch</a>
+                            {% else %}
+                                <a href="/seller-panel/orders/track/{{ o.order_number|cut:'#' }}/" class="btn btn-outline-secondary btn-sm" style="font-size: 0.8rem; padding: 4px 8px; text-decoration: none;">Details</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center py-4 text-muted">
+                            No orders found for selected status filter.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

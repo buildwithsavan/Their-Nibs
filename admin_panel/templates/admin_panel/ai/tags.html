@@ -1,0 +1,111 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}AI Product Tag Generator{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <div class="ai-pill" style="margin-bottom: 0.5rem;">
+            <span>✨ Gemini Fashion Classifier</span>
+        </div>
+        <h1 class="page-title">AI Product Tag Generator</h1>
+        <p class="page-subtitle">Generate trend, fit, occasion, and fabric taxonomy tags to empower natural search.</p>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+
+    <div class="clothify-card">
+        <div class="card-header">
+            <h3 class="card-title">1. Target Garment</h3>
+        </div>
+        <div class="card-body">
+            <form method="GET" style="margin-bottom: 1.5rem;">
+                <label class="form-label">Select Product</label>
+                <div style="display: flex; gap: 0.5rem;">
+                    <select name="product_id" id="ai-product-selector" class="form-select">
+                        <option value="">-- Choose Product --</option>
+                        {% for prod in products %}
+                        <option value="{{ prod.id }}" {% if selected_product.id == prod.id %}selected{% endif %}>
+                            {{ prod.name }} ({{ prod.brand.name }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-secondary btn-sm">Load</button>
+                </div>
+            </form>
+
+            {% if selected_product %}
+            <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                <h4 style="font-size: 1rem; color: #fff;">{{ selected_product.name }}</h4>
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">Current Tags: {{ selected_product.tags|default:"None" }}</div>
+                <button type="button" class="btn btn-ai" id="btn-generate-ai-tags" style="width: 100%; margin-top: 0.5rem;">
+                    ✨ Generate Tags with Gemini
+                </button>
+            </div>
+            {% else %}
+            <p style="color: var(--text-muted); text-align: center; padding: 2rem;">Select a product to begin tag synthesis.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="clothify-card">
+        <div class="card-header">
+            <h3 class="card-title">2. Tag Review & Approval</h3>
+        </div>
+        <div class="card-body">
+            <div id="ai-tags-result" style="display: none;">
+                <input type="hidden" id="ai-tags-draft-id" value="">
+
+                <label class="form-label">Synthesized Tags</label>
+                <div id="ai-tags-display" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; padding: 1rem; background: rgba(0,0,0,0.25); border-radius: 8px;"></div>
+
+                <div class="form-group">
+                    <label class="form-label">Comma-Separated Tags (Edit/Add/Remove)</label>
+                    <input type="text" id="ai-tags-input" class="form-control" placeholder="Casual, Summer, Cotton, Comfortable...">
+                </div>
+
+                <div style="display: flex; gap: 0.75rem; margin-top: 1rem;">
+                    <button type="button" class="btn btn-success" onclick="approveCustomTags()" style="flex: 1;">
+                        ✓ Apply Tags to Product
+                    </button>
+                </div>
+            </div>
+
+            <div id="no-tags-placeholder" style="text-align: center; color: var(--text-muted); padding: 3rem 1rem;">
+                Select a product and click 'Generate Tags' to view Gemini classifications.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function approveCustomTags() {
+        const draftId = document.getElementById('ai-tags-draft-id').value;
+        const tags = document.getElementById('ai-tags-input').value;
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]') ? document.querySelector('[name=csrfmiddlewaretoken]').value : '';
+
+        try {
+            const formData = new FormData();
+            formData.append('draft_id', draftId);
+            formData.append('action', 'approve');
+            formData.append('edited_content', tags);
+
+            const res = await fetch('/admin-panel/api/ai/approve-content/', {
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrftoken },
+                body: formData
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert(data.message);
+                window.location.reload();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        } catch (e) {
+            alert('Request failed: ' + e);
+        }
+    }
+</script>
+{% endblock %}

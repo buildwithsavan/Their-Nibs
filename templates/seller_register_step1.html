@@ -1,0 +1,434 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Their Nibs Seller Registration &ndash; Step 1: Personal Details &amp; Verification</title>
+
+  <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg?v=crown2026">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/images/favicon-32.png?v=crown2026">
+  <link rel="icon" type="image/png" sizes="192x192" href="/static/images/favicon-192.png?v=crown2026">
+  <link rel="apple-touch-icon" href="/static/images/favicon.png?v=crown2026">
+  <link rel="shortcut icon" type="image/x-icon" href="/static/images/favicon.ico?v=crown2026">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
+  <link rel="stylesheet" href="{% static 'css/seller_register.css' %}">
+  <link rel="stylesheet" href="{% static 'css/preloader.css' %}?v=20261012-loader10s">
+</head>
+<body>
+
+  <div id="clothifyTopProgress" class="clothify-top-progress"></div>
+  <div id="clothifyPageLoader" class="clothify-preloader">
+    <div class="preloader-content">
+      <div class="preloader-image-wrap">
+        <img src="/static/images/loader-logo.png" 
+             alt="Their Nibs" 
+             class="preloader-custom-img" 
+             onerror="this.onerror=null; this.src='/static/images/loader-logo-square.png';">
+      </div>
+      <h2 class="preloader-brand-title">Their Nibs</h2>
+      <div class="preloader-brand-subtitle">Luxury Sleepwear &amp; Loungewear</div>
+      <div class="preloader-bar-wrap">
+        <div class="preloader-bar-inner"></div>
+      </div>
+      <div class="preloader-status-text" id="preloaderStatusText">Entering Boutique...</div>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="header-container">
+      <a href="{% url 'homepage' %}" class="brand-logo" aria-label="Their Nibs Home">
+        <div class="brand-emblem" aria-hidden="true">
+          <svg width="24" height="18" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 14L4 4L9 9L12 2L15 9L20 4L22 14H2Z"/>
+            <circle cx="12" cy="2" r="1" fill="currentColor"/>
+            <circle cx="4" cy="4" r="1" fill="currentColor"/>
+            <circle cx="20" cy="4" r="1" fill="currentColor"/>
+            <line x1="2" y1="16" x2="22" y2="16"/>
+          </svg>
+        </div>
+        <span class="brand-name">Their Nibs</span>
+      </a>
+
+      <div class="header-actions">
+        <a href="{% url 'homepage' %}" class="btn-secondary" style="padding: 6px 16px; font-size: 0.85rem;">&larr; Back to Home</a>
+        <a href="{% url 'customer_register' %}" class="btn-create-account">Create Account</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="registration-container">
+
+    <div class="stepper-wrapper">
+      <div class="stepper-header">
+        <h1>Their Nibs Seller Registration</h1>
+        <p>Complete your 3-step registration to start selling fashion &amp; apparel on Their Nibs</p>
+      </div>
+
+      <div class="stepper-steps">
+        <div class="step-item active">
+          <div class="step-badge">1</div>
+          <span class="step-label">Personal &amp; ID Details</span>
+        </div>
+        <div class="step-item">
+          <div class="step-badge">2</div>
+          <span class="step-label">Business Details</span>
+        </div>
+        <div class="step-item">
+          <div class="step-badge">3</div>
+          <span class="step-label">Policy &amp; Agreement</span>
+        </div>
+      </div>
+    </div>
+
+    {% if saved %}
+    <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 14px 20px; border-radius: 6px; margin-bottom: 24px; font-weight: 500;">
+      ✓ Step 1 Personal Information &amp; Identity Verification details saved successfully! Proceeding to Step 2 (Business Details)...
+    </div>
+    {% endif %}
+
+    <form class="form-card" method="POST" action="{% url 'seller_register_step1' %}" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="hidden" id="mobile_verified" name="mobile_verified" value="{% if step1_data.mobile_verified %}true{% else %}false{% endif %}">
+      <input type="hidden" id="email_verified" name="email_verified" value="{% if step1_data.email_verified %}true{% else %}false{% endif %}">      
+
+      <div class="section-banner">
+        <span>Personal Details</span>
+      </div>
+
+      <div class="section-body">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="full_name">Full Legal Name <span class="required">*</span></label>
+            <input type="text" id="full_name" name="full_name" class="form-control" placeholder="Enter as per official ID proof" required value="{{ step1_data.full_name|default:'' }}">
+          </div>
+
+          <div class="form-group">
+            <label for="dob">Date of Birth <span class="required">*</span></label>
+            <input type="date" id="dob" name="dob" class="form-control" required value="{{ step1_data.dob|default:'' }}">
+          </div>
+        </div>
+
+        <div class="form-group full-width" style="margin-bottom: 20px;">
+          <label>Gender <span class="required">*</span></label>
+          <div class="gender-radio-group">
+            <label class="radio-card-label" style="padding: 8px 16px;">
+              <input type="radio" name="gender" value="Male" {% if not step1_data.gender or step1_data.gender == 'Male' %}checked{% endif %}>
+              <span>Male</span>
+            </label>
+
+            <label class="radio-card-label" style="padding: 8px 16px;">
+              <input type="radio" name="gender" value="Female" {% if step1_data.gender == 'Female' %}checked{% endif %}>
+              <span>Female</span>
+            </label>
+
+            <label class="radio-card-label" style="padding: 8px 16px;">
+              <input type="radio" name="gender" value="Other" {% if step1_data.gender == 'Other' %}checked{% endif %}>
+              <span>Other</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group full-width" style="margin-bottom: 24px;">
+          <label>Profile Photo</label>
+          <div class="profile-upload-wrapper">
+            <div class="avatar-preview-box" id="avatarPreviewBox">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+            <div class="upload-instructions" style="flex: 1;">
+              <h5>Upload Seller Profile Photo</h5>
+              <p>JPG, PNG, or WEBP. Max file size 2MB.</p>
+              <input type="file" id="profile_photo" name="profile_photo" accept="image/*" class="form-control" style="margin-top: 8px; font-size: 0.82rem;">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid-2" style="margin-bottom: 24px;">
+          <div class="form-group full-width">
+            <label for="mobile">Mobile Number <span class="required">*</span></label>
+            <div class="otp-input-group">
+              <input type="tel" id="mobile" name="mobile" class="form-control" placeholder="Enter 10-digit mobile number" required value="{{ step1_data.mobile|default:'' }}">
+
+              <button type="button" id="mobileOtpBtn" class="btn-send-otp">OTP</button>
+
+              <div class="otp-verification-field" id="mobileOtpGroup">
+                <input type="text" id="mobile_otp_input" class="form-control" placeholder="Enter received OTP" maxlength="6">
+                <span class="otp-status-badge" id="mobileStatusBadge" style="display: none;">Verified ✓</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group full-width">
+            <label for="email">Email Address <span class="required">*</span></label>
+            <div class="otp-input-group">
+              <input type="email" id="email" name="email" class="form-control" placeholder="seller@business.com" required value="{{ step1_data.email|default:'' }}">
+
+              <button type="button" id="emailOtpBtn" class="btn-send-otp">OTP</button>
+
+              <div class="otp-verification-field" id="emailOtpGroup">
+                <input type="text" id="email_otp_input" class="form-control" placeholder="Enter received OTP" maxlength="6">
+                <span class="otp-status-badge" id="emailStatusBadge" style="display: none;">Verified ✓</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid-2" style="margin-top: 18px;">
+          <div class="form-group">
+            <label for="password">Create Password <span class="required">*</span></label>
+            <div class="password-toggle-wrap" style="position: relative; width: 100%;">
+              <input type="password" id="password" name="password" class="form-control" placeholder="Enter secure password" required style="width: 100%; padding-right: 44px; box-sizing: border-box;" value="{{ step1_data.password|default:'' }}">
+              <button type="button" class="password-toggle-btn" aria-label="Toggle Password Visibility" onclick="togglePasswordVisibility('password', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: #666; cursor: pointer; padding: 6px; display: flex; align-items: center; justify-content: center;">
+                <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirm_password">Confirm Password <span class="required">*</span></label>
+            <div class="password-toggle-wrap" style="position: relative; width: 100%;">
+              <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="Re-enter password" required style="width: 100%; padding-right: 44px; box-sizing: border-box;" value="{{ step1_data.password|default:'' }}">
+              <button type="button" class="password-toggle-btn" aria-label="Toggle Password Visibility" onclick="togglePasswordVisibility('confirm_password', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: #666; cursor: pointer; padding: 6px; display: flex; align-items: center; justify-content: center;">
+                <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+            <div id="passwordMatchError" style="display: none; color: #dc2626; font-size: 0.82rem; margin-top: 6px; font-weight: 500;">
+              ⚠ Passwords do not match. Please make sure both fields are identical.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-banner">
+        <span>Communication Details</span>
+      </div>
+
+      <div class="section-body">
+        <div class="address-split-grid">
+
+          <div class="address-column">
+            <h4 class="address-col-heading">Present Address</h4>
+
+            <div class="form-group">
+              <label for="present_address">Present Address <span class="required">*</span></label>
+              <textarea id="present_address" name="present_address" class="form-control" rows="3" placeholder="Enter House No, Building, Street, Area" required>{{ step1_data.present_address|default:'' }}</textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="present_state">State <span class="required">*</span></label>
+              <select id="present_state" name="present_state" class="form-control" required>
+                <option value="" disabled {% if not step1_data.present_state %}selected{% endif %}>Select State</option>
+                <option value="GUJARAT" {% if step1_data.present_state == 'GUJARAT' or not step1_data.present_state %}selected{% endif %}>GUJARAT</option>
+                <option value="MAHARASHTRA" {% if step1_data.present_state == 'MAHARASHTRA' %}selected{% endif %}>MAHARASHTRA</option>
+                <option value="DELHI" {% if step1_data.present_state == 'DELHI' %}selected{% endif %}>DELHI</option>
+                <option value="RAJASTHAN" {% if step1_data.present_state == 'RAJASTHAN' %}selected{% endif %}>RAJASTHAN</option>
+                <option value="KARNATAKA" {% if step1_data.present_state == 'KARNATAKA' %}selected{% endif %}>KARNATAKA</option>
+                <option value="TAMIL NADU" {% if step1_data.present_state == 'TAMIL NADU' %}selected{% endif %}>TAMIL NADU</option>
+                <option value="UTTAR PRADESH" {% if step1_data.present_state == 'UTTAR PRADESH' %}selected{% endif %}>UTTAR PRADESH</option>
+                <option value="OTHER" {% if step1_data.present_state == 'OTHER' %}selected{% endif %}>OTHER</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="present_district">District <span class="required">*</span></label>
+              <select id="present_district" name="present_district" class="form-control" required>
+                <option value="" disabled {% if not step1_data.present_district %}selected{% endif %}>Select District</option>
+                <option value="Ahmedabad" {% if step1_data.present_district == 'Ahmedabad' %}selected{% endif %}>Ahmedabad</option>
+                <option value="Surat" {% if step1_data.present_district == 'Surat' %}selected{% endif %}>Surat</option>
+                <option value="Vadodara" {% if step1_data.present_district == 'Vadodara' %}selected{% endif %}>Vadodara</option>
+                <option value="Rajkot" {% if step1_data.present_district == 'Rajkot' %}selected{% endif %}>Rajkot</option>
+                <option value="Gandhinagar" {% if step1_data.present_district == 'Gandhinagar' %}selected{% endif %}>Gandhinagar</option>
+                <option value="Mumbai" {% if step1_data.present_district == 'Mumbai' %}selected{% endif %}>Mumbai</option>
+                <option value="Pune" {% if step1_data.present_district == 'Pune' %}selected{% endif %}>Pune</option>
+                <option value="Other District" {% if step1_data.present_district == 'Other District' %}selected{% endif %}>Other District</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="present_pincode">PIN Code <span class="required">*</span></label>
+              <input type="text" id="present_pincode" name="present_pincode" class="form-control" placeholder="Enter 6-digit PIN Code" maxlength="6" required value="{{ step1_data.present_pincode|default:'' }}">
+            </div>
+          </div>
+
+          <div class="address-column">
+            <div class="address-col-header-row">
+              <h4 class="address-col-heading" style="margin-bottom: 0;">Permanent Address</h4>
+              <label class="same-address-checkbox">
+                <input type="checkbox" id="same_as_present" name="same_as_present">
+                <span>Same as Present Address</span>
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label for="permanent_address">Permanent Address <span class="required">*</span></label>
+              <textarea id="permanent_address" name="permanent_address" class="form-control" rows="3" placeholder="Enter Permanent Address details" required>{{ step1_data.permanent_address|default:'' }}</textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="permanent_state">State <span class="required">*</span></label>
+              <select id="permanent_state" name="permanent_state" class="form-control" required>
+                <option value="" disabled {% if not step1_data.permanent_state %}selected{% endif %}>Select State</option>
+                <option value="GUJARAT" {% if step1_data.permanent_state == 'GUJARAT' or not step1_data.permanent_state %}selected{% endif %}>GUJARAT</option>
+                <option value="MAHARASHTRA" {% if step1_data.permanent_state == 'MAHARASHTRA' %}selected{% endif %}>MAHARASHTRA</option>
+                <option value="DELHI" {% if step1_data.permanent_state == 'DELHI' %}selected{% endif %}>DELHI</option>
+                <option value="RAJASTHAN" {% if step1_data.permanent_state == 'RAJASTHAN' %}selected{% endif %}>RAJASTHAN</option>
+                <option value="KARNATAKA" {% if step1_data.permanent_state == 'KARNATAKA' %}selected{% endif %}>KARNATAKA</option>
+                <option value="TAMIL NADU" {% if step1_data.permanent_state == 'TAMIL NADU' %}selected{% endif %}>TAMIL NADU</option>
+                <option value="UTTAR PRADESH" {% if step1_data.permanent_state == 'UTTAR PRADESH' %}selected{% endif %}>UTTAR PRADESH</option>
+                <option value="OTHER" {% if step1_data.permanent_state == 'OTHER' %}selected{% endif %}>OTHER</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="permanent_district">District <span class="required">*</span></label>
+              <select id="permanent_district" name="permanent_district" class="form-control" required>
+                <option value="" disabled {% if not step1_data.permanent_district %}selected{% endif %}>Select District</option>
+                <option value="Ahmedabad" {% if step1_data.permanent_district == 'Ahmedabad' %}selected{% endif %}>Ahmedabad</option>
+                <option value="Surat" {% if step1_data.permanent_district == 'Surat' %}selected{% endif %}>Surat</option>
+                <option value="Vadodara" {% if step1_data.permanent_district == 'Vadodara' %}selected{% endif %}>Vadodara</option>
+                <option value="Rajkot" {% if step1_data.permanent_district == 'Rajkot' %}selected{% endif %}>Rajkot</option>
+                <option value="Gandhinagar" {% if step1_data.permanent_district == 'Gandhinagar' %}selected{% endif %}>Gandhinagar</option>
+                <option value="Mumbai" {% if step1_data.permanent_district == 'Mumbai' %}selected{% endif %}>Mumbai</option>
+                <option value="Pune" {% if step1_data.permanent_district == 'Pune' %}selected{% endif %}>Pune</option>
+                <option value="Other District" {% if step1_data.permanent_district == 'Other District' %}selected{% endif %}>Other District</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="permanent_pincode">PIN Code <span class="required">*</span></label>
+              <input type="text" id="permanent_pincode" name="permanent_pincode" class="form-control" placeholder="Enter 6-digit PIN Code" maxlength="6" required value="{{ step1_data.permanent_pincode|default:'' }}">
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="section-banner">
+        <span>Identity Verification</span>
+      </div>
+
+      <div class="section-body">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="id_type">ID Type <span class="required">*</span></label>
+            <select id="id_type" name="id_type" class="form-control" required>
+              <option value="" disabled {% if not step1_data.id_type %}selected{% endif %}>Select ID Type</option>
+              <option value="Aadhaar" {% if step1_data.id_type == 'Aadhaar' %}selected{% endif %}>Aadhaar</option>
+              <option value="PAN" {% if step1_data.id_type == 'PAN' %}selected{% endif %}>PAN</option>
+              <option value="Passport" {% if step1_data.id_type == 'Passport' %}selected{% endif %}>Passport</option>
+              <option value="Driving Licence" {% if step1_data.id_type == 'Driving Licence' %}selected{% endif %}>Driving Licence</option>
+              <option value="Voter ID" {% if step1_data.id_type == 'Voter ID' %}selected{% endif %}>Voter ID</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="id_number">ID Number <span class="required">*</span></label>
+            <input type="text" id="id_number" name="id_number" class="form-control" placeholder="Enter selected ID Number" required value="{{ step1_data.id_number|default:'' }}">
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label>Upload ID Document Proof <span class="required">*</span></label>
+          <div class="file-dropzone" onclick="document.getElementById('id_document').click();">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color: var(--color-primary); margin-bottom: 6px;">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            <p class="dropzone-text">Click to upload or drag &amp; drop official ID document (PDF, JPG, PNG)</p>
+            <div class="file-preview-info"></div>
+            <input type="file" id="id_document" name="id_document" class="form-control" style="display: none;" accept=".pdf,.png,.jpg,.jpeg">
+          </div>
+        </div>
+      </div>
+
+      <div class="section-banner">
+        <span>Applicant's Role &amp; Business Relationship</span>
+      </div>
+
+      <div class="section-body">
+        <div class="form-group full-width">
+          <label>Relationship with Business <span class="required">*</span></label>
+          <div class="role-radio-group">
+            <label class="radio-card-label">
+              <input type="radio" name="applicant_role" value="Owner" {% if not step1_data.applicant_role or step1_data.applicant_role == 'Owner' %}checked{% endif %}>
+              <span>Owner</span>
+            </label>
+
+            <label class="radio-card-label">
+              <input type="radio" name="applicant_role" value="Partner" {% if step1_data.applicant_role == 'Partner' %}checked{% endif %}>
+              <span>Partner</span>
+            </label>
+
+            <label class="radio-card-label">
+              <input type="radio" name="applicant_role" value="Authorized Representative" {% if step1_data.applicant_role == 'Authorized Representative' %}checked{% endif %}>
+              <span>Authorized Representative</span>
+            </label>
+
+            <label class="radio-card-label">
+              <input type="radio" name="applicant_role" value="Other" {% if step1_data.applicant_role == 'Other' %}checked{% endif %}>
+              <span>Other</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="conditional-field-box" id="authorizationLetterBox">
+          <div class="form-group full-width">
+            <label for="authorization_letter" style="color: var(--color-primary);">
+              Authorization Letter Upload <span class="required">*</span>
+            </label>
+            <p style="font-size: 0.82rem; color: var(--color-text-meta); margin-bottom: 10px;">
+              As an Authorized Representative, please attach an official signed Authorization Letter / Power of Attorney from the company owner/board.
+            </p>
+            <div class="file-dropzone" onclick="document.getElementById('authorization_letter').click();">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color: var(--color-primary); margin-bottom: 4px;">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              <p class="dropzone-text">Click or drag &amp; drop Authorization Letter (PDF, DOCX, JPG)</p>
+              <div class="file-preview-info"></div>
+              <input type="file" id="authorization_letter" name="authorization_letter" class="form-control" style="display: none;" accept=".pdf,.doc,.docx,.jpg,.png">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions-footer">
+        <button type="reset" class="btn-secondary">Clear All</button>
+        <button type="submit" class="btn-submit-step">
+          Save &amp; Continue
+        </button>
+      </div>
+
+    </form>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-bottom" style="border-top: none; max-width: 1100px; margin: 0 auto;">
+      <p>&copy; 2026 Their Nibs Ltd. All Rights Reserved. Merchant Onboarding Portal.</p>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/seller_register_step1.js' %}?v=20261013-otpfix"></script>
+  <script src="{% static 'js/preloader.js' %}?v=20261012-loader10s"></script>
+</body>
+</html>

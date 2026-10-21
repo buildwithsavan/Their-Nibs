@@ -1,0 +1,120 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Wallet: {{ wallet.user.username }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <a href="/admin-panel/wallet/" style="font-size: 0.82rem; color: var(--text-muted); display: inline-flex; align-items: center; gap: 0.35rem; margin-bottom: 0.5rem;">
+            ← Back to Wallets
+        </a>
+        <h1 class="page-title">Wallet Ledger: {{ wallet.user.get_full_name|default:wallet.user.username }}</h1>
+        <p class="page-subtitle">Account @{{ wallet.user.username }} • Never permits negative balances</p>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem;">
+
+    <div>
+        <div class="clothify-card">
+            <div class="card-header">
+                <h3 class="card-title">Live Balance</h3>
+            </div>
+            <div class="card-body" style="text-align: center; padding: 2rem 1.5rem;">
+                <div style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;">Available Funds</div>
+                <div style="font-size: 2.5rem; font-weight: 800; color: #10b981; margin: 0.5rem 0 1.5rem;">
+                    ₹{{ wallet.balance }}
+                </div>
+
+                <div style="display: flex; justify-content: space-around; padding-top: 1rem; border-top: 1px solid var(--border-subtle); font-size: 0.88rem;">
+                    <div>
+                        <div style="color: var(--text-muted); font-size: 0.75rem;">Total Credited</div>
+                        <strong style="color: var(--success);">+ ₹{{ wallet.total_credited }}</strong>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-muted); font-size: 0.75rem;">Total Debited</div>
+                        <strong style="color: var(--danger);">- ₹{{ wallet.total_debited }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="clothify-card">
+            <div class="card-header">
+                <h3 class="card-title">Manual Balance Adjustment</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="form-label">Adjustment Type *</label>
+                        {{ form.transaction_type }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Amount (₹) *</label>
+                        {{ form.amount }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Internal Reason / Memo *</label>
+                        {{ form.description }}
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        Apply Wallet Adjustment
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="clothify-card">
+        <div class="card-header">
+            <h3 class="card-title">Ledger Transaction History</h3>
+        </div>
+        <div class="table-responsive">
+            <table class="clothify-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Balance After</th>
+                        <th>Description / Reference</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for txn in transactions %}
+                    <tr>
+                        <td style="font-size: 0.8rem; color: var(--text-muted);">
+                            {{ txn.created_at|date:"M d, Y H:i" }}
+                        </td>
+                        <td>
+                            <span class="status-badge {% if txn.transaction_type == 'credit' or txn.transaction_type == 'refund_credit' %}status-active{% else %}status-cancelled{% endif %}">
+                                {{ txn.get_transaction_type_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <strong style="color: {% if txn.transaction_type == 'credit' or txn.transaction_type == 'refund_credit' %}#10b981{% else %}#f43f5e{% endif %}; font-size: 0.95rem;">
+                                {% if txn.transaction_type == 'credit' or txn.transaction_type == 'refund_credit' %}+{% else %}-{% endif %} ₹{{ txn.amount }}
+                            </strong>
+                        </td>
+                        <td><strong>₹{{ txn.balance_after }}</strong></td>
+                        <td style="font-size: 0.85rem; color: var(--text-secondary);">
+                            {{ txn.description }}
+                            {% if txn.reference_id %}
+                            <div style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace;">Ref: {{ txn.reference_id }}</div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                            No wallet transactions on record.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

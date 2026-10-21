@@ -1,0 +1,72 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Low Stock Alert Desk{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Low Stock & Restock Alerts</h1>
+        <p class="page-subtitle">Critical inventory alerts for items at or below threshold (≤ {{ threshold }} units).</p>
+    </div>
+    <div class="page-actions">
+        <a href="/admin-panel/inventory/" class="btn btn-secondary">
+            <span>← Full Inventory</span>
+        </a>
+    </div>
+</div>
+
+<div class="clothify-card">
+    <div class="card-header">
+        <h3 class="card-title">
+            <span class="status-badge status-low-stock" style="margin-right: 0.5rem;">Urgent Restock</span>
+            Depleted Inventory Products
+        </h3>
+    </div>
+    <div class="table-responsive">
+        <table class="clothify-table">
+            <thead>
+                <tr>
+                    <th>Product Name & SKU</th>
+                    <th>Category</th>
+                    <th>Current Units</th>
+                    <th>Status</th>
+                    <th>Instant Restock</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in products %}
+                <tr>
+                    <td>
+                        <strong style="color: var(--primary); font-size: 0.95rem;">{{ p.name }}</strong>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace;">{{ p.sku }}</div>
+                    </td>
+                    <td>{{ p.category.name }}</td>
+                    <td>
+                        <strong style="color: var(--danger); font-size: 1.1rem;">{{ p.stock }}</strong>
+                    </td>
+                    <td>
+                        <span class="status-badge status-{{ p.stock_status|slugify }}">
+                            {{ p.stock_status }}
+                        </span>
+                    </td>
+                    <td>
+                        <form method="POST" style="display: flex; align-items: center; gap: 0.5rem;">
+                            {% csrf_token %}
+                            <input type="hidden" name="product_id" value="{{ p.id }}">
+                            <input type="number" name="stock" value="{{ p.stock }}" min="0" class="form-control" style="width: 100px; padding: 0.35rem 0.6rem; font-size: 0.85rem;">
+                            <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                        Excellent! No items are currently below the low stock threshold.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

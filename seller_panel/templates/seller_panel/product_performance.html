@@ -1,0 +1,139 @@
+{% extends 'seller_panel/base.html' %}
+
+{% block title %}Product Performance{% endblock %}
+{% block page_heading %}Analytics — Product Performance &amp; Conversion Insights{% endblock %}
+
+{% block content %}
+<style>
+    .status-pill {
+        display: inline-block;
+        padding: 0.2rem 0.55rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    .badge-in-stock { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+    .badge-reserved { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+    .badge-out-stock { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+</style>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; margin: 0; color: var(--primary, #2b5329); font-weight: 700;">
+            Product Performance &amp; Visitor Conversion
+        </h2>
+        <span style="font-size: 0.88rem; color: var(--text-muted, #64748b);">
+            Evaluate item-level metrics: page views, add-to-cart rates, conversion percentages, units sold, and return rates.
+        </span>
+    </div>
+</div>
+
+<div class="clothify-card" style="padding: 1.1rem 1.25rem; background: #ffffff; margin-bottom: 1.5rem;">
+    <form method="GET" action="{% url 'seller_panel:product_performance' %}" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 240px;">
+            <input type="text" name="q" value="{{ current_q }}" class="form-control" placeholder="Search product name or SKU..." style="font-size: 0.88rem;">
+        </div>
+
+        <div style="width: 200px;">
+            <select name="category" class="form-select" style="font-size: 0.88rem;">
+                <option value="all" {% if current_category == 'all' %}selected{% endif %}>All Categories</option>
+                <option value="nightwear" {% if current_category == 'nightwear' %}selected{% endif %}>Nightwear &amp; Pyjamas</option>
+                <option value="robes" {% if current_category == 'robes' %}selected{% endif %}>Kimono Robes</option>
+                <option value="nightdresses" {% if current_category == 'nightdresses' %}selected{% endif %}>Nightdresses</option>
+                <option value="loungewear" {% if current_category == 'loungewear' %}selected{% endif %}>Loungewear Accessories</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn" style="background: #2b5329; color: #ffffff; font-size: 0.88rem; font-weight: 600; padding: 6px 18px;">
+            <i class="bi bi-funnel me-1"></i> Filter
+        </button>
+        <a href="{% url 'seller_panel:product_performance' %}" class="btn" style="background: #f1f5f9; color: #475569; font-size: 0.88rem; font-weight: 600; padding: 6px 16px;">
+            Reset
+        </a>
+    </form>
+</div>
+
+<div class="clothify-card" style="background: #ffffff; padding: 0; overflow: hidden; margin-bottom: 2rem;">
+    <div style="padding: 1.1rem 1.35rem; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between;">
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; margin: 0; font-weight: 700; color: var(--primary, #2b5329);">
+            Comprehensive Product Performance Metrics
+        </h3>
+        <span style="font-size: 0.82rem; color: #64748b; font-weight: 500;">
+            Showing {{ performance_rows|length }} product item(s)
+        </span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table align-middle" style="margin-bottom: 0; font-size: 0.88rem;">
+            <thead style="background-color: #f8fafc; text-transform: uppercase; font-size: 0.73rem; letter-spacing: 0.05em; color: #64748b;">
+                <tr>
+                    <th style="padding: 0.9rem 1.2rem;">Product Details</th>
+                    <th style="padding: 0.9rem 1rem; text-align: center;">Views</th>
+                    <th style="padding: 0.9rem 1rem; text-align: center;">ATC Rate</th>
+                    <th style="padding: 0.9rem 1rem; text-align: center;">Conv. Rate</th>
+                    <th style="padding: 0.9rem 1rem; text-align: center;">Units Sold</th>
+                    <th style="padding: 0.9rem 1.2rem; text-align: right;">Revenue</th>
+                    <th style="padding: 0.9rem 1rem; text-align: center;">Return Rate</th>
+                    <th style="padding: 0.9rem 1.2rem; text-align: center;">Stock Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in performance_rows %}
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 0.9rem 1.2rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 44px; height: 44px; border-radius: 6px; background: #f8fafc; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid #e2e8f0; flex-shrink: 0;">
+                                <i class="bi bi-image text-muted" style="font-size: 1.2rem;"></i>
+                            </div>
+                            <div>
+                                <strong style="color: #1e293b; display: block; font-size: 0.9rem;">{{ row.name }}</strong>
+                                <span style="font-size: 0.78rem; color: #64748b;">SKU: {{ row.sku }} | {{ row.category }}</span>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td style="padding: 0.9rem 1rem; text-align: center; color: #334155; font-weight: 600;">
+                        {{ row.views }}
+                    </td>
+
+                    <td style="padding: 0.9rem 1rem; text-align: center; color: #0284c7; font-weight: 600;">
+                        {{ row.atc_rate }}
+                    </td>
+
+                    <td style="padding: 0.9rem 1rem; text-align: center; color: #16a34a; font-weight: 700;">
+                        {{ row.conv_rate }}
+                    </td>
+
+                    <td style="padding: 0.9rem 1rem; text-align: center; font-weight: 700; color: #0f172a;">
+                        {{ row.units_sold }}
+                        <div style="font-size: 0.72rem; color: #94a3b8; font-weight: 400;">{{ row.orders }} orders</div>
+                    </td>
+
+                    <td style="padding: 0.9rem 1.2rem; text-align: right; font-weight: 700; color: #2b5329;">
+                        ₹{{ row.revenue|floatformat:2 }}
+                    </td>
+
+                    <td style="padding: 0.9rem 1rem; text-align: center;">
+                        <span style="font-weight: 600; color: {% if row.return_rate == '12.5%' %}#dc2626{% else %}#475569{% endif %};">
+                            {{ row.return_rate }}
+                        </span>
+                    </td>
+
+                    <td style="padding: 0.9rem 1.2rem; text-align: center;">
+                        <span class="status-pill {{ row.badge_class }}">{{ row.stock_status }}</span>
+                        <div style="font-size: 0.75rem; color: #64748b; margin-top: 2px;">({{ row.available_stock }} units)</div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 2.5rem; color: #64748b;">
+                        No product performance records found matching your filters.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

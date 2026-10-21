@@ -1,0 +1,137 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Payments & Gateway Logs{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Payments & Gateway Transactions</h1>
+        <p class="page-subtitle">Track payment records from UPI, Credit/Debit cards, Net Banking, and Wallets. (PCI-DSS compliant: no card PANs stored).</p>
+    </div>
+    <div class="page-actions">
+        <a href="/admin-panel/refunds/" class="btn btn-secondary">
+            <span>Manage Refunds</span>
+        </a>
+    </div>
+</div>
+
+<div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
+    <a href="/admin-panel/payments/" class="btn btn-sm {% if not current_status %}btn-primary{% else %}btn-secondary{% endif %}" style="padding: 0.35rem 0.85rem; font-size: 0.82rem;">
+        <span>All Payments</span>
+    </a>
+    <a href="/admin-panel/payments/?status=success" class="btn btn-sm {% if current_status == 'success' %}btn-primary{% else %}btn-secondary{% endif %}" style="padding: 0.35rem 0.85rem; font-size: 0.82rem;">
+        <span>Completed</span>
+    </a>
+    <a href="/admin-panel/payments/?status=pending" class="btn btn-sm {% if current_status == 'pending' %}btn-primary{% else %}btn-secondary{% endif %}" style="padding: 0.35rem 0.85rem; font-size: 0.82rem;">
+        <span>Pending</span>
+    </a>
+    <a href="/admin-panel/payments/?status=failed" class="btn btn-sm {% if current_status == 'failed' %}btn-primary{% else %}btn-secondary{% endif %}" style="padding: 0.35rem 0.85rem; font-size: 0.82rem;">
+        <span>Failed</span>
+    </a>
+    <a href="/admin-panel/refunds/" class="btn btn-sm btn-secondary" style="padding: 0.35rem 0.85rem; font-size: 0.82rem;">
+        <span>Refunds</span>
+    </a>
+</div>
+
+<form method="GET" class="filter-bar">
+    <div class="search-input">
+        <input type="text" name="q" value="{{ current_q }}" class="form-control" placeholder="Search payment ID, order number, txn ID...">
+    </div>
+    <div style="min-width: 140px;">
+        <select name="method" class="form-select" onchange="this.form.submit()">
+            <option value="">All Payment Methods</option>
+            <option value="upi" {% if current_method == 'upi' %}selected{% endif %}>UPI</option>
+            <option value="credit_card" {% if current_method == 'credit_card' %}selected{% endif %}>Credit Card</option>
+            <option value="debit_card" {% if current_method == 'debit_card' %}selected{% endif %}>Debit Card</option>
+            <option value="net_banking" {% if current_method == 'net_banking' %}selected{% endif %}>Net Banking</option>
+            <option value="wallet" {% if current_method == 'wallet' %}selected{% endif %}>Wallet</option>
+            <option value="cod" {% if current_method == 'cod' %}selected{% endif %}>Cash on Delivery</option>
+        </select>
+    </div>
+    <div style="min-width: 140px;">
+        <select name="status" class="form-select" onchange="this.form.submit()">
+            <option value="">All Statuses</option>
+            <option value="success" {% if current_status == 'success' %}selected{% endif %}>Success</option>
+            <option value="pending" {% if current_status == 'pending' %}selected{% endif %}>Pending</option>
+            <option value="processing" {% if current_status == 'processing' %}selected{% endif %}>Processing</option>
+            <option value="failed" {% if current_status == 'failed' %}selected{% endif %}>Failed</option>
+            <option value="refunded" {% if current_status == 'refunded' %}selected{% endif %}>Refunded</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
+    <a href="/admin-panel/payments/" class="btn btn-secondary btn-sm">Reset</a>
+</form>
+
+<div class="clothify-card">
+    <div class="card-header">
+        <h3 class="card-title">Transaction Audit Table</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="clothify-table">
+            <thead>
+                <tr>
+                    <th>Payment ID</th>
+                    <th>Order Ref</th>
+                    <th>Customer</th>
+                    <th>Amount</th>
+                    <th>Payment Method</th>
+                    <th>Gateway Txn ID</th>
+                    <th>Status</th>
+                    <th>Date & Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pay in payments %}
+                <tr>
+                    <td><strong style="color: #fff; font-family: monospace;">{{ pay.payment_id }}</strong></td>
+                    <td>
+                        <a href="/admin-panel/orders/{{ pay.order.id }}/">
+                            {{ pay.order.order_number }}
+                        </a>
+                    </td>
+                    <td>{{ pay.user.username }}</td>
+                    <td><strong style="color: #fff; font-size: 0.95rem;">₹{{ pay.amount }}</strong></td>
+                    <td>
+                        <span class="status-badge status-info">{{ pay.get_payment_method_display }}</span>
+                    </td>
+                    <td style="font-family: monospace; font-size: 0.78rem; color: var(--text-muted);">
+                        {{ pay.transaction_id|default:"N/A" }}
+                    </td>
+                    <td>
+                        <span class="status-badge status-{{ pay.payment_status }}">
+                            {{ pay.get_payment_status_display }}
+                        </span>
+                    </td>
+                    <td style="font-size: 0.8rem; color: var(--text-muted);">
+                        {{ pay.created_at|date:"M d, Y H:i" }}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                        No payment records found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if payments.has_other_pages %}
+    <div class="clothify-pagination">
+        <span style="font-size: 0.82rem; color: var(--text-muted);">
+            Page {{ payments.number }} of {{ payments.paginator.num_pages }}
+        </span>
+        <div class="pagination-links">
+            {% if payments.has_previous %}
+            <a href="?page={{ payments.previous_page_number }}&q={{ current_q }}&method={{ current_method }}&status={{ current_status }}" class="page-btn">Prev</a>
+            {% endif %}
+            <span class="page-btn active">{{ payments.number }}</span>
+            {% if payments.has_next %}
+            <a href="?page={{ payments.next_page_number }}&q={{ current_q }}&method={{ current_method }}&status={{ current_status }}" class="page-btn">Next</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

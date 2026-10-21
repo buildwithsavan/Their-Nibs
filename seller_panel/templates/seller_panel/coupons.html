@@ -1,0 +1,309 @@
+{% extends 'seller_panel/base.html' %}
+
+{% block title %}Discount Coupons{% endblock %}
+{% block page_heading %}Marketing — Checkout Discount Coupons{% endblock %}
+
+{% block content %}
+<style>
+    .coupon-card-stat {
+        background: #ffffff;
+        border: 1px solid var(--border-subtle, #e2e8f0);
+        border-radius: var(--radius-md, 10px);
+        padding: 1.1rem 1.35rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .status-pill {
+        display: inline-block;
+        padding: 0.25rem 0.65rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .badge-in-stock { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+    .badge-reserved { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+    .badge-out-stock { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+    .code-box {
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        background: #f8fafc;
+        border: 1px dashed #cbd5e1;
+        padding: 4px 10px;
+        border-radius: 4px;
+        color: #0f172a;
+        display: inline-block;
+    }
+
+    .clothify-modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(15, 23, 42, 0.55);
+        backdrop-filter: blur(3px);
+        z-index: 99999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        overflow-y: auto;
+    }
+    .clothify-modal-backdrop.active {
+        display: flex !important;
+    }
+    .clothify-modal-dialog {
+        background: #ffffff;
+        border-radius: 12px;
+        max-width: 720px;
+        width: 100%;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+        animation: modalSlideIn 0.2s ease-out;
+        margin: auto;
+    }
+    @keyframes modalSlideIn {
+        from { opacity: 0; transform: translateY(-15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; margin: 0; color: var(--primary, #2b5329); font-weight: 700;">
+            Seller Coupon Discount Codes
+        </h2>
+        <span style="font-size: 0.88rem; color: var(--text-muted, #64748b);">
+            Create custom promo codes that buyers can apply during checkout for instant cart savings.
+        </span>
+    </div>
+
+    <div>
+        <button type="button" class="btn" style="background: #2b5329; color: #ffffff; font-weight: 600; font-size: 0.88rem; padding: 10px 20px; border-radius: 6px;" onclick="openModal('createCouponModal')">
+            <i class="bi bi-plus-circle me-1"></i> + Create Coupon
+        </button>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+    <div class="coupon-card-stat" >
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #64748b;">Active Coupons</div>
+        <div class="seller-card-value" style="color: #16a34a; margin-top: 4px;">
+            {{ active_count }}
+        </div>
+        <div style="font-size: 0.8rem; color: #16a34a; margin-top: 4px; font-weight: 500;">Ready for checkout redemption</div>
+    </div>
+
+    <div class="coupon-card-stat" >
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #64748b;">Scheduled Coupons</div>
+        <div class="seller-card-value" style="color: #2563eb; margin-top: 4px;">
+            {{ scheduled_count }}
+        </div>
+        <div style="font-size: 0.8rem; color: #2563eb; margin-top: 4px; font-weight: 500;">Future launch dates</div>
+    </div>
+
+    <div class="coupon-card-stat" >
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #64748b;">Expired Coupons</div>
+        <div class="seller-card-value" style="color: #64748b; margin-top: 4px;">
+            {{ expired_count }}
+        </div>
+        <div style="font-size: 0.8rem; color: #64748b; margin-top: 4px; font-weight: 500;">Validity period passed</div>
+    </div>
+
+    <div class="coupon-card-stat" >
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #64748b;">Total Redemptions</div>
+        <div class="seller-card-value" style="color: #8b5cf6; margin-top: 4px;">
+            {{ total_redemptions }}
+        </div>
+        <div style="font-size: 0.8rem; color: #8b5cf6; margin-top: 4px; font-weight: 500;">Times applied by buyers</div>
+    </div>
+</div>
+
+<div class="clothify-card" style="padding: 1.1rem 1.25rem; background: #ffffff; margin-bottom: 1.5rem;">
+    <form method="GET" action="{% url 'seller_panel:coupons' %}" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 240px;">
+            <input type="text" name="q" value="{{ current_q }}" class="form-control" placeholder="Search coupon code e.g. FASHION10..." style="font-size: 0.88rem;">
+        </div>
+
+        <div style="width: 180px;">
+            <select name="status" class="form-select" style="font-size: 0.88rem;">
+                <option value="all" {% if current_status == 'all' %}selected{% endif %}>All Statuses</option>
+                <option value="active" {% if current_status == 'active' %}selected{% endif %}>Active</option>
+                <option value="scheduled" {% if current_status == 'scheduled' %}selected{% endif %}>Scheduled</option>
+                <option value="expired" {% if current_status == 'expired' %}selected{% endif %}>Expired</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn" style="background: #2b5329; color: #ffffff; font-size: 0.88rem; font-weight: 600; padding: 6px 18px;">
+            <i class="bi bi-funnel me-1"></i> Filter
+        </button>
+        <a href="{% url 'seller_panel:coupons' %}" class="btn" style="background: #f1f5f9; color: #475569; font-size: 0.88rem; font-weight: 600; padding: 6px 16px;">
+            Reset
+        </a>
+    </form>
+</div>
+
+<div class="clothify-card" style="background: #ffffff; padding: 0; overflow: hidden; margin-bottom: 2rem;">
+    <div style="padding: 1.1rem 1.35rem; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between;">
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; margin: 0; font-weight: 700; color: var(--primary, #2b5329);">
+            Active &amp; Configured Discount Coupons
+        </h3>
+        <span style="font-size: 0.82rem; color: #64748b; font-weight: 500;">
+            Showing {{ coupons|length }} coupon code(s)
+        </span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table align-middle" style="margin-bottom: 0; font-size: 0.88rem;">
+            <thead style="background-color: #f8fafc; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; color: #64748b;">
+                <tr>
+                    <th style="padding: 0.9rem 1.2rem;">Coupon Code</th>
+                    <th style="padding: 0.9rem 1.2rem;">Discount Value</th>
+                    <th style="padding: 0.9rem 1.2rem;">Min Order</th>
+                    <th style="padding: 0.9rem 1.2rem;">Max Discount Cap</th>
+                    <th style="padding: 0.9rem 1.2rem; text-align: center;">Uses / Limit</th>
+                    <th style="padding: 0.9rem 1.2rem;">Validity Period</th>
+                    <th style="padding: 0.9rem 1.2rem; text-align: center;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for coupon in coupons %}
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 0.9rem 1.2rem;">
+                        <span class="code-box">{{ coupon.code }}</span>
+                    </td>
+                    <td style="padding: 0.9rem 1.2rem;">
+                        <strong style="color: #2b5329; font-size: 0.92rem;">{{ coupon.discount }}</strong>
+                    </td>
+                    <td style="padding: 0.9rem 1.2rem; color: #475569;">
+                        {{ coupon.min_order }}
+                    </td>
+                    <td style="padding: 0.9rem 1.2rem; color: #475569;">
+                        {{ coupon.max_cap }}
+                    </td>
+                    <td style="padding: 0.9rem 1.2rem; text-align: center;">
+                        <span style="font-weight: 700; color: #0f172a;">{{ coupon.uses }}</span>
+                        <span style="color: #94a3b8; font-size: 0.8rem;">/ {{ coupon.max_uses }}</span>
+                    </td>
+                    <td style="padding: 0.9rem 1.2rem; color: #64748b; font-size: 0.82rem;">
+                        <i class="bi bi-clock-history me-1"></i> {{ coupon.validity }}
+                    </td>
+                    <td style="padding: 0.9rem 1.2rem; text-align: center;">
+                        <span class="status-pill {{ coupon.badge_class }}">{{ coupon.status }}</span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 2.5rem; color: #64748b;">
+                        No coupon codes match your search query.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="clothify-modal-backdrop" id="createCouponModal">
+    <div class="clothify-modal-dialog">
+        <div style="background: #faf6f0; border-bottom: 1px solid #e2e8f0; padding: 1.2rem 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+            <h5 style="font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 1.4rem; color: #2b5329; margin: 0;">
+                Create New Discount Coupon Code
+            </h5>
+            <button type="button" style="background: transparent; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b; line-height: 1;" onclick="closeModal('createCouponModal')">&times;</button>
+        </div>
+
+        <form method="POST" action="{% url 'seller_panel:add_coupon_action' %}">
+            {% csrf_token %}
+            <div style="padding: 1.5rem; font-size: 0.88rem;">
+
+                <div class="mb-3">
+                    <label class="form-label" style="font-weight: 600; color: #334155; margin-bottom: 4px; display: block;">COUPON CODE *</label>
+                    <input type="text" name="code" class="form-control" placeholder="E.G. FESTIVE20" required style="text-transform: uppercase; font-family: monospace; font-weight: 700; font-size: 0.95rem;">
+                    <span style="font-size: 0.78rem; color: #64748b; margin-top: 2px; display: block;">Customers will enter this code at checkout.</span>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label" style="font-weight: 600; color: #334155; margin-bottom: 4px; display: block;">DISCOUNT TYPE *</label>
+                        <select name="discount_type" class="form-select" style="font-size: 0.88rem;">
+                            <option value="percentage">Percentage Discount (%)</option>
+                            <option value="fixed">Fixed Flat Discount (₹)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" style="font-weight: 600; color: #334155; margin-bottom: 4px; display: block;">DISCOUNT VALUE *</label>
+                        <input type="number" name="discount_value" class="form-control" placeholder="e.g. 15 or 200" required min="1" style="font-size: 0.88rem;">
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label" style="font-weight: 600; color: #334155; margin-bottom: 4px; display: block;">MINIMUM ORDER AMOUNT (₹)</label>
+                        <input type="number" name="min_order" class="form-control" placeholder="0" value="0" style="font-size: 0.88rem;">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" style="font-weight: 600; color: #334155; margin-bottom: 4px; display: block;">MAXIMUM DISCOUNT CAP (₹)</label>
+                        <input type="number" name="max_cap" class="form-control" placeholder="0" value="0" style="font-size: 0.88rem;">
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label" style="font-weight: 600; color: #334155; margin-bottom: 4px; display: block;">START DATE *</label>
+                        <input type="date" name="start_date" class="form-control" required style="font-size: 0.88rem;">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" style="font-weight: 600; color: #334155; margin-bottom: 4px; display: block;">EXPIRY DATE *</label>
+                        <input type="date" name="expiry_date" class="form-control" required style="font-size: 0.88rem;">
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label" style="font-weight: 600; color: #334155; margin-bottom: 4px; display: block;">TOTAL USAGE LIMIT</label>
+                        <input type="number" name="max_uses" class="form-control" placeholder="100" value="100" style="font-size: 0.88rem;">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" style="font-weight: 600; color: #334155; margin-bottom: 4px; display: block;">PER CUSTOMER LIMIT</label>
+                        <input type="number" name="per_customer_limit" class="form-control" placeholder="1" value="1" style="font-size: 0.88rem;">
+                    </div>
+                </div>
+
+            </div>
+            <div style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 1rem 1.5rem; display: flex; justify-content: flex-end; gap: 0.75rem;">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('createCouponModal')" style="font-size: 0.88rem; font-weight: 600; padding: 8px 16px;">Cancel</button>
+                <button type="submit" class="btn" style="background: #2b5329; color: #ffffff; font-size: 0.88rem; font-weight: 600; padding: 8px 20px;">
+                    Save &amp; Activate Coupon
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openModal(id) {
+    var modal = document.getElementById(id);
+    if(modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+function closeModal(id) {
+    var modal = document.getElementById(id);
+    if(modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+window.addEventListener('click', function(event) {
+    var modal = document.getElementById('createCouponModal');
+    if (event.target === modal) {
+        closeModal('createCouponModal');
+    }
+});
+</script>
+{% endblock %}

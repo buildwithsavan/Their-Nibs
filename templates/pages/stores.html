@@ -1,0 +1,421 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Their Nibs Stores & Stockists – Find Us in Person{% endblock %}
+
+{% block extra_css %}
+<style>
+  .stores-page-container {
+    max-width: 1040px;
+    margin: 40px auto 90px;
+    padding: 0 24px;
+    font-family: var(--font-body, 'Poppins', sans-serif);
+    color: #1d1d1b;
+  }
+
+  .stores-breadcrumbs {
+    font-size: 13px;
+    color: #71717a;
+    margin-bottom: 24px;
+  }
+  .stores-breadcrumbs a {
+    color: #1d1d1b;
+    text-decoration: none;
+  }
+  .stores-breadcrumbs a:hover {
+    text-decoration: underline;
+  }
+
+  .stores-hero {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .stores-tagline {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #8b5e3c;
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: inline-block;
+  }
+  .stores-hero h1 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    font-size: 2.8rem;
+    font-weight: 400;
+    line-height: 1.25;
+    margin: 0 0 16px;
+    color: #111111;
+  }
+  .stores-hero .lead-p {
+    font-size: 16.5px;
+    line-height: 1.7;
+    color: #4a4a4a;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .flagship-card {
+    background: #faf8f5;
+    border: 1px solid #ede8e1;
+    border-radius: 8px;
+    padding: 40px;
+    margin-bottom: 48px;
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 36px;
+    align-items: center;
+  }
+  .flagship-content h2 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    font-size: 2rem;
+    font-weight: 500;
+    margin: 0 0 14px;
+    color: #111111;
+  }
+  .flagship-content p {
+    font-size: 15px;
+    line-height: 1.65;
+    color: #444444;
+    margin-bottom: 16px;
+  }
+  .flagship-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: #1d1d1b;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-radius: 3px;
+    margin-bottom: 16px;
+  }
+
+  .hours-box {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    padding: 24px 28px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+  }
+  .hours-box h3 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    font-size: 1.25rem;
+    margin: 0 0 16px;
+    color: #111111;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 10px;
+  }
+  .hours-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px;
+    font-size: 14px;
+  }
+  .hours-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 7px 0;
+    border-bottom: 1px dashed #f0f0f0;
+    color: #444444;
+  }
+  .hours-list li:last-child {
+    border-bottom: none;
+  }
+  .hours-list li strong {
+    color: #111111;
+  }
+  .address-block {
+    font-size: 14px;
+    color: #444444;
+    line-height: 1.5;
+  }
+  .address-block strong {
+    color: #111111;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .stockists-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 56px;
+  }
+  .stockist-card {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    padding: 32px;
+  }
+  .stockist-card h3 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    font-size: 1.5rem;
+    margin: 0 0 12px;
+    color: #111111;
+  }
+  .stockist-card p {
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: #555555;
+    margin-bottom: 16px;
+  }
+  .stockist-card ul {
+    padding-left: 20px;
+    margin: 0 0 16px;
+    font-size: 14px;
+    color: #444444;
+    line-height: 1.6;
+  }
+
+  .stories-section {
+    border-top: 1px solid #e5e5e5;
+    padding-top: 48px;
+  }
+  .stories-section h3 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    font-size: 1.8rem;
+    text-align: center;
+    margin: 0 0 8px;
+    color: #111111;
+  }
+  .stories-section .stories-sub {
+    text-align: center;
+    color: #666666;
+    font-size: 14.5px;
+    margin-bottom: 32px;
+  }
+  .stories-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+  .story-card {
+    border: 1px solid #ececec;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #fff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+  }
+  .story-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.06);
+  }
+  .story-card-body {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .story-meta {
+    font-size: 12px;
+    color: #888888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+  .story-title {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    font-size: 1.25rem;
+    margin: 0 0 10px;
+    color: #111111;
+    line-height: 1.35;
+  }
+  .story-excerpt {
+    font-size: 13.5px;
+    color: #555555;
+    line-height: 1.55;
+    flex: 1;
+    margin-bottom: 16px;
+  }
+  .story-link {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1d1d1b;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .cta-visit-banner {
+    background: #faf8f5;
+    border-radius: 6px;
+    padding: 32px;
+    text-align: center;
+    margin-top: 56px;
+    border: 1px solid #eae5de;
+  }
+  .cta-visit-banner h4 {
+    font-family: var(--font-heading, 'Playfair Display', serif);
+    font-size: 1.5rem;
+    margin: 0 0 10px;
+  }
+  .cta-visit-banner p {
+    font-size: 14.5px;
+    color: #555555;
+    margin: 0 0 18px;
+  }
+  .cta-btn {
+    display: inline-block;
+    padding: 12px 28px;
+    background: #1d1d1b;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    border-radius: 3px;
+    transition: background 0.2s ease;
+  }
+  .cta-btn:hover {
+    background: #333333;
+  }
+
+  @media (max-width: 768px) {
+    .flagship-card {
+      grid-template-columns: 1fr;
+    }
+    .stockists-grid {
+      grid-template-columns: 1fr;
+    }
+    .stores-hero h1 {
+      font-size: 2.1rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="stores-page-container">
+  <div class="stores-breadcrumbs">
+    <a href="{% url 'homepage' %}">Home</a> &rsaquo; <span>Their Nibs Stores</span>
+  </div>
+
+  <div class="stores-hero">
+    <span class="stores-tagline">Behind the Seams &bull; Oct 2, 2026</span>
+    <h1>Find Your Nibs: Come and See Us in Store</h1>
+    <p class="lead-p">
+      There’s something lovely about discovering your next favourite pair of pyjamas in person. Feeling the fabric, taking a closer look at the print and finding the colours that make you smile.
+      While our online shop is always there for a browse from the sofa, you can also find Their Nibs out in the world, including at our very own shop in Kensal Rise.
+    </p>
+  </div>
+
+  <section class="flagship-card">
+    <div class="flagship-content">
+      <span class="flagship-badge">Our Flagship Store</span>
+      <h2>Our own little corner of Kensal Rise</h2>
+      <p>
+        We’ve opened the doors to our new store at <strong>103 Chamberlayne Road, Kensal Rise, London, NW10 3NS</strong>, right opposite Kensal Rise station.
+      </p>
+      <p>
+        It’s a little piece of the Their Nibs world, where you can explore our prints up close, feel our fabrics and get a helping hand choosing something lovely. Whether you’re treating yourself, searching for a thoughtful gift or simply passing through the neighbourhood, we’d love you to pop in.
+      </p>
+      <p>
+        As an independent, female-founded brand, having a space where we can meet our customers means so much to us. We’re looking forward to familiar faces, new neighbours and plenty of conversations about pyjamas.
+      </p>
+    </div>
+
+    <div class="hours-box">
+      <h3>Opening Times</h3>
+      <ul class="hours-list">
+        <li><span>Monday &amp; Tuesday</span> <strong>Closed</strong></li>
+        <li><span>Wednesday to Saturday</span> <strong>10am – 6pm</strong></li>
+        <li><span>Sunday</span> <strong>12noon – 4pm</strong></li>
+      </ul>
+
+      <div class="address-block">
+        <strong>Visit Us:</strong>
+        103 Chamberlayne Road<br>
+        Kensal Rise, London<br>
+        NW10 3NS, United Kingdom<br>
+        <span style="font-size: 12px; color: #71717a;">(Right opposite Kensal Rise Overground Station)</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="stockists-grid">
+
+    <div class="stockist-card">
+      <h3>Find us in 14 John Lewis stores</h3>
+      <p>
+        Further afield, you can discover Their Nibs in 14 John Lewis stores across the United Kingdom, making it easier to browse a selection of our signature nightwear in person.
+      </p>
+      <ul>
+        <li>John Lewis Oxford Street, London</li>
+        <li>Peter Jones, Sloane Square, London</li>
+        <li>John Lewis Edinburgh, St James Quarter</li>
+        <li>John Lewis Trafford Centre, Manchester</li>
+        <li>John Lewis Leeds, Victoria Gate</li>
+        <li>Plus 9 further boutique John Lewis departments nationwide</li>
+      </ul>
+    </div>
+
+    <div class="stockist-card">
+      <h3>Discover us at independent boutiques</h3>
+      <p>
+        You’ll also find Their Nibs in a selection of independent boutiques. We love being part of these shops, where thoughtfully chosen collections and personal service make finding something special a pleasure.
+      </p>
+      <p>
+        Shopping with our independent stockists supports both their businesses and ours and is a lovely way to keep independent retail thriving.
+      </p>
+      <p>
+        Interested in stocking Their Nibs? Contact our wholesale team at <a href="mailto:wholesale@their-nibs.com" style="color: #1d1d1b; font-weight: 500;">wholesale@their-nibs.com</a>.
+      </p>
+    </div>
+  </div>
+
+  <section class="stories-section">
+    <h3>Featured Stories from Behind the Seams</h3>
+    <p class="stories-sub">Stories from our design studio, fabric discoveries, and creative collaborations.</p>
+
+    <div class="stories-cards-grid">
+
+      <article class="story-card">
+        <div class="story-card-body">
+          <div class="story-meta">Sep 19, 2026 &bull; Collaboration</div>
+          <h4 class="story-title">Read My Lips: The Story Behind the Print</h4>
+          <p class="story-excerpt">
+            Bold, playful and ready for its close-up, Read My Lips is one of two exclusive prints from the Their Nibs x Sophie Ellis-Bextor collection. Named after Sophie’s 2001 debut album...
+          </p>
+          <a href="{% url 'behind_the_seams' %}" class="story-link">Read more &rarr;</a>
+        </div>
+      </article>
+
+      <article class="story-card">
+        <div class="story-card-body">
+          <div class="story-meta">Oct 2, 2026 &bull; Stores</div>
+          <h4 class="story-title">Find Your Nibs: Come and See Us in Store</h4>
+          <p class="story-excerpt">
+            There’s something lovely about discovering your next favourite pair of pyjamas in person. Feeling the fabric, taking a closer look at the print and finding the colours that make you smile...
+          </p>
+          <a href="{% url 'behind_the_seams' %}" class="story-link">Read more &rarr;</a>
+        </div>
+      </article>
+
+      <article class="story-card">
+        <div class="story-card-body">
+          <div class="story-meta">Aug 28, 2026 &bull; Craftsmanship</div>
+          <h4 class="story-title">The Art of Hand-Drawn British Prints</h4>
+          <p class="story-excerpt">
+            From the initial watercolours sketched in our London studio to the softest organic cotton and liquid silky satin, explore how each Their Nibs print comes to life...
+          </p>
+          <a href="{% url 'behind_the_seams' %}" class="story-link">Read more &rarr;</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <div class="cta-visit-banner">
+    <h4>We’d love to see you</h4>
+    <p>
+      From a visit to Kensal Rise to a browse in John Lewis or a discovery at your local boutique, there’s more than one way to find your Nibs.<br>
+      And if you’re wondering where to find us near you, get in touch with our team on <a href="mailto:info@their-nibs.com" style="color: #111; font-weight: 600;">info@their-nibs.com</a>, we’ll be happy to help.
+    </p>
+    <p style="font-family: var(--font-heading, 'Playfair Display', serif); font-style: italic; font-size: 1.15rem; color: #111; margin-bottom: 20px;">
+      "Come for a browse. Leave with something to dream in."
+    </p>
+    <a href="{% url 'collection_detail' 'new-in-1' %}" class="cta-btn">Browse Online Collection</a>
+  </div>
+</div>
+{% endblock %}

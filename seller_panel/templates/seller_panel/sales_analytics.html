@@ -1,0 +1,321 @@
+{% extends 'seller_panel/base.html' %}
+
+{% block title %}Sales Analytics{% endblock %}
+{% block page_heading %}Analytics — Sales &amp; Revenue Trends{% endblock %}
+
+{% block content %}
+<style>
+    .analytics-card {
+        background: #ffffff;
+        border: 1px solid var(--border-subtle, #e2e8f0);
+        border-radius: var(--radius-md, 10px);
+        padding: 1.1rem 1.35rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .chart-range-btn {
+        padding: 4px 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border-radius: 4px;
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+        color: #475569;
+        cursor: pointer;
+    }
+    .chart-range-btn.active {
+        background: #2b5329;
+        color: #ffffff;
+        border-color: #2b5329;
+    }
+</style>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; margin: 0; color: var(--primary, #2b5329); font-weight: 700;">
+            Sales Analytics &amp; Revenue Insights
+        </h2>
+        <span style="font-size: 0.88rem; color: var(--text-muted, #64748b);">
+            Analyze ordering velocity, category breakdowns, daily revenue patterns, and cancellation metrics.
+        </span>
+    </div>
+
+    <div>
+        <button type="button" class="btn" style="background: #ffffff; color: #334155; border: 1px solid #cbd5e1; font-weight: 600; font-size: 0.88rem; padding: 8px 16px;" id="exportSalesCsvBtn">
+            <i class="bi bi-download me-1"></i> Export Sales CSV
+        </button>
+    </div>
+</div>
+
+<div class="clothify-card" style="padding: 0.9rem 1.25rem; background: #ffffff; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #475569;">Time Period:</span>
+        <a href="?range=7d" class="chart-range-btn {% if date_range == '7d' %}active{% endif %}">Last 7 Days</a>
+        <a href="?range=30d" class="chart-range-btn {% if date_range == '30d' or not date_range %}active{% endif %}">Last 30 Days</a>
+        <a href="?range=month" class="chart-range-btn {% if date_range == 'month' %}active{% endif %}">This Month</a>
+        <a href="?range=year" class="chart-range-btn {% if date_range == 'year' %}active{% endif %}">This Year</a>
+    </div>
+
+    <div style="font-size: 0.82rem; color: #64748b;">
+        <i class="bi bi-shield-check text-success me-1"></i> Live store financial metrics refreshed
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+    <div class="analytics-card" >
+        <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: #64748b;">Total Sales</div>
+        <div class="seller-card-value" style="color: #2b5329; margin-top: 4px;">
+            <span class="seller-card-currency">₹</span>{{ total_sales_formatted|default:"2,48,900" }}
+        </div>
+        <div style="font-size: 0.78rem; color: #16a34a; margin-top: 4px; font-weight: 600;">+14.2% growth</div>
+    </div>
+
+    <div class="analytics-card" >
+        <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: #64748b;">Net Earnings</div>
+        <div class="seller-card-value" style="color: #16a34a; margin-top: 4px;">
+            <span class="seller-card-currency">₹</span>{{ total_net_formatted|default:"2,11,565" }}
+        </div>
+        <div style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">After deductions</div>
+    </div>
+
+    <div class="analytics-card" >
+        <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: #64748b;">Total Orders</div>
+        <div class="seller-card-value" style="color: #2563eb; margin-top: 4px;">
+            {{ total_orders }}
+        </div>
+        <div style="font-size: 0.78rem; color: #2563eb; margin-top: 4px; font-weight: 500;">Completed transactions</div>
+    </div>
+
+    <div class="analytics-card" >
+        <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: #64748b;">Units Sold</div>
+        <div class="seller-card-value" style="color: #8b5cf6; margin-top: 4px;">
+            {{ units_sold }}
+        </div>
+        <div style="font-size: 0.78rem; color: #8b5cf6; margin-top: 4px; font-weight: 500;">Product items shipped</div>
+    </div>
+
+    <div class="analytics-card" >
+        <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: #64748b;">Avg Order Value</div>
+        <div class="seller-card-value" style="color: #d97706; margin-top: 4px;">
+            <span class="seller-card-currency">₹</span>{{ avg_order_val_formatted|default:"1,753" }}
+        </div>
+        <div style="font-size: 0.78rem; color: #d97706; margin-top: 4px; font-weight: 500;">Per order average</div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+
+    <div class="col-lg-8">
+        <div class="clothify-card" style="padding: 1.25rem 1.5rem; background: #ffffff; height: 100%;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                <div>
+                    <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; margin: 0; color: var(--primary, #2b5329); font-weight: 700;">
+                        Sales Trends Over Time
+                    </h3>
+                    <span style="font-size: 0.8rem; color: #64748b;">Daily &amp; weekly revenue progression</span>
+                </div>
+            </div>
+            <div style="position: relative; height: 280px; width: 100%;">
+                <canvas id="salesTrendChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="clothify-card" style="padding: 1.25rem 1.5rem; background: #ffffff; height: 100%;">
+            <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; margin: 0 0 0.25rem 0; color: var(--primary, #2b5329); font-weight: 700;">
+                Category Breakdown
+            </h3>
+            <span style="font-size: 0.8rem; color: #64748b; display: block; margin-bottom: 1rem;">Revenue split across product lines</span>
+
+            <div style="position: relative; height: 180px; margin-bottom: 1rem;">
+                <canvas id="categoryPieChart"></canvas>
+            </div>
+
+            <div style="font-size: 0.82rem;">
+                {% for cat in category_sales %}
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span style="width: 10px; height: 10px; border-radius: 50%; background-color: {{ cat.color }};"></span>
+                        <span style="color: #334155; font-weight: 500;">{{ cat.name }}</span>
+                    </div>
+                    <span style="font-weight: 700; color: #0f172a;">₹{{ cat.sales|floatformat:0 }} ({{ cat.percentage }}%)</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+
+    <div class="col-lg-8">
+        <div class="clothify-card" style="padding: 0; background: #ffffff; overflow: hidden;">
+            <div style="padding: 1.1rem 1.35rem; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between;">
+                <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; margin: 0; font-weight: 700; color: var(--primary, #2b5329);">
+                    Top-Selling Products Leaderboard
+                </h3>
+                <span style="font-size: 0.82rem; color: #64748b;">Sorted by revenue generated</span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table align-middle" style="margin-bottom: 0; font-size: 0.88rem;">
+                    <thead style="background-color: #f8fafc; text-transform: uppercase; font-size: 0.75rem; color: #64748b;">
+                        <tr>
+                            <th style="padding: 0.8rem 1.2rem;">Product</th>
+                            <th style="padding: 0.8rem 1.2rem; text-align: center;">Units Sold</th>
+                            <th style="padding: 0.8rem 1.2rem; text-align: right;">Revenue Generated</th>
+                            <th style="padding: 0.8rem 1.2rem; text-align: center;">Growth</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for prod in top_products %}
+                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                            <td style="padding: 0.8rem 1.2rem;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <div style="width: 40px; height: 40px; border-radius: 6px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid #e2e8f0;">
+                                        <i class="bi bi-image text-muted"></i>
+                                    </div>
+                                    <div>
+                                        <strong style="color: #1e293b; display: block; font-size: 0.9rem;">{{ prod.name }}</strong>
+                                        <span style="font-size: 0.78rem; color: #64748b;">SKU: {{ prod.sku }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="padding: 0.8rem 1.2rem; text-align: center; font-weight: 700; color: #0f172a;">
+                                {{ prod.units_sold }}
+                            </td>
+                            <td style="padding: 0.8rem 1.2rem; text-align: right; font-weight: 700; color: #16a34a;">
+                                ₹{{ prod.revenue|floatformat:2 }}
+                            </td>
+                            <td style="padding: 0.8rem 1.2rem; text-align: center;">
+                                <span style="font-size: 0.78rem; font-weight: 700; color: #16a34a; background: #f0fdf4; padding: 2px 8px; border-radius: 4px;">
+                                    {{ prod.growth }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="clothify-card" style="padding: 1.25rem 1.5rem; background: #ffffff; height: 100%;">
+            <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; margin: 0 0 0.25rem 0; color: var(--primary, #2b5329); font-weight: 700;">
+                Cancellation &amp; Return Summary
+            </h3>
+            <span style="font-size: 0.8rem; color: #64748b; display: block; margin-bottom: 1.25rem;">Impact of non-fulfilled orders</span>
+
+            <div style="background: #fff5f5; border: 1px solid #fed7d7; border-radius: var(--radius-md, 10px); padding: 1rem; margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <span style="font-size: 0.82rem; font-weight: 600; color: #9b2c2c;">Cancelled Orders</span>
+                    <span style="font-size: 1.1rem; font-weight: 700; color: #9b2c2c;">{{ cancellation_count }}</span>
+                </div>
+                <div style="font-size: 0.78rem; color: #c53030;">Rate: <strong>{{ cancellation_rate }}</strong> of total orders</div>
+            </div>
+
+            <div style="background: #fffaf0; border: 1px solid #feebc8; border-radius: var(--radius-md, 10px); padding: 1rem; margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <span style="font-size: 0.82rem; font-weight: 600; color: #c05621;">Returned Orders</span>
+                    <span style="font-size: 1.1rem; font-weight: 700; color: #c05621;">{{ return_count }}</span>
+                </div>
+                <div style="font-size: 0.78rem; color: #dd6b20;">Rate: <strong>{{ return_rate }}</strong> of total orders</div>
+            </div>
+
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-md, 10px); padding: 1rem;">
+                <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #64748b; margin-bottom: 4px;">Net Refund Financial Impact</div>
+                <div style="font-size: 1.4rem; font-weight: 700; color: #dc2626; font-family: 'Cormorant Garamond', serif;">
+                    - ₹{{ refund_impact|floatformat:2 }}
+                </div>
+                <div style="font-size: 0.78rem; color: #64748b; margin-top: 2px;">Total refunds issued to customers</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    const ctxTrend = document.getElementById('salesTrendChart').getContext('2d');
+    new Chart(ctxTrend, {
+        type: 'line',
+        data: {
+            labels: ['Oct 01', 'Oct 02', 'Oct 03', 'Oct 04', 'Oct 05', 'Oct 06', 'Oct 07', 'Oct 08'],
+            datasets: [{
+                label: 'Sales Revenue (₹)',
+                data: [18500, 24200, 29800, 31000, 38500, 42100, 49800, 54800],
+                borderColor: '#2b5329',
+                backgroundColor: 'rgba(43, 83, 41, 0.08)',
+                fill: true,
+                tension: 0.35,
+                borderWidth: 2.5,
+                pointBackgroundColor: '#2b5329',
+                pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) { return '₹' + value.toLocaleString(); }
+                    }
+                }
+            }
+        }
+    });
+
+    const ctxPie = document.getElementById('categoryPieChart').getContext('2d');
+    new Chart(ctxPie, {
+        type: 'doughnut',
+        data: {
+            labels: ['Nightwear & Pyjamas', 'Kimono Robes', 'Nightdresses', 'Loungewear Accessories'],
+            datasets: [{
+                data: [112000, 62225, 49780, 24895],
+                backgroundColor: ['#2b5329', '#8b5cf6', '#f59e0b', '#06b6d4'],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            cutout: '65%'
+        }
+    });
+
+    document.getElementById('exportSalesCsvBtn').addEventListener('click', function() {
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += "Metric,Value\n";
+        csvContent += "Total Sales,₹248900.00\n";
+        csvContent += "Net Earnings,₹211565.00\n";
+        csvContent += "Total Orders,142\n";
+        csvContent += "Units Sold,210\n";
+        csvContent += "Avg Order Value,₹1752.81\n\n";
+
+        csvContent += "Product Name,SKU,Units Sold,Revenue Generated\n";
+        csvContent += "Celestial Star Satin Pyjama Set,TN-CEL-SAT-01,48,₹91152.00\n";
+        csvContent += "Blossom Floral Cotton Pyjamas,TN-BLO-COT-02,35,₹52465.00\n";
+        csvContent += "Royal Peacock Velvet Robe,TN-PEA-VEL-03,22,₹54978.00\n";
+        csvContent += "Vintage Rose Nightdress,TN-ROS-NIG-04,18,₹26982.00\n";
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "seller_sales_analytics_report.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+});
+</script>
+{% endblock %}

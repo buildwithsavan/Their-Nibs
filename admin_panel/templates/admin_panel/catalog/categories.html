@@ -1,0 +1,146 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Category Management{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+    <div>
+        <h1 class="page-title">Category Management</h1>
+        <p class="page-subtitle">Configure primary fashion departments: Men, Women, Kids, Footwear, Accessories.</p>
+    </div>
+    <div class="page-actions">
+        <button type="button" class="btn btn-primary" onclick="openAddModal()">
+            <span>Add New Category</span>
+        </button>
+    </div>
+</div>
+
+<div class="clothify-card" style="width: 100%;">
+    <div class="card-header" style="display: flex; align-items: center; justify-content: space-between;">
+        <h3 class="card-title">Existing Primary Categories</h3>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">{{ categories|length }} categories recorded</span>
+    </div>
+    <div class="table-responsive">
+        <table class="clothify-table" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th style="width: 8%;">Order</th>
+                    <th style="width: 25%;">Name</th>
+                    <th style="width: 20%;">Slug</th>
+                    <th style="width: 14%;">Subcategories</th>
+                    <th style="width: 14%;">Products</th>
+                    <th style="width: 9%;">Status</th>
+                    <th style="text-align: right; width: 10%;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cat in categories %}
+                <tr>
+                    <td><strong>{{ cat.display_order }}</strong></td>
+                    <td>
+                        <strong style="color: var(--primary); font-size: 0.92rem;">{{ cat.name }}</strong>
+                    </td>
+                    <td style="color: var(--text-muted); font-family: monospace;">{{ cat.slug }}</td>
+                    <td>
+                        <span class="status-badge status-info">{{ cat.subcategories.count }}</span>
+                    </td>
+                    <td>
+                        <strong>{{ cat.products.count }}</strong> items
+                    </td>
+                    <td>
+                        {% if cat.is_active %}
+                        <span class="status-badge status-active">Active</span>
+                        {% else %}
+                        <span class="status-badge status-cancelled">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: right; white-space: nowrap;">
+                        <div style="display: inline-flex; align-items: center; justify-content: flex-end; gap: 0.45rem;">
+                            <a href="/admin-panel/categories/{{ cat.id }}/edit/" class="btn btn-secondary btn-sm" style="padding: 0.32rem 0.68rem; font-size: 0.76rem; border-radius: 4px; text-decoration: none;">Edit</a>
+                            <a href="/admin-panel/categories/{{ cat.id }}/delete/" class="btn btn-danger btn-sm" data-confirm="Delete category '{{ cat.name }}'?" style="padding: 0.32rem 0.68rem; font-size: 0.76rem; border-radius: 4px; text-decoration: none;">Delete</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                        No categories defined.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="addCategoryModal" style="display: {% if form.errors %}flex{% else %}none{% endif %}; position: fixed; inset: 0; background: rgba(30, 38, 50, 0.65); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(5px); padding: 1rem;">
+    <div style="background: #ffffff; border-radius: 12px; width: 100%; max-width: 520px; box-shadow: 0 25px 50px rgba(0,0,0,0.25); overflow: hidden; border: 1px solid var(--border-subtle); max-height: 90vh; display: flex; flex-direction: column;">
+        <div style="padding: 1.15rem 1.4rem; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; background: #fdfaf6;">
+            <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: var(--primary);">Add New Category</h3>
+            <button type="button" onclick="closeAddModal()" style="background: none; border: none; font-size: 1.35rem; cursor: pointer; color: var(--text-muted); line-height: 1;">✕</button>
+        </div>
+        <form method="POST" style="padding: 1.4rem; overflow-y: auto;">
+            {% csrf_token %}
+            {% if form.errors %}
+            <div style="background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 0.65rem 0.85rem; border-radius: 6px; font-size: 0.82rem; margin-bottom: 1rem;">
+                Please correct the errors indicated below.
+            </div>
+            {% endif %}
+            <div class="form-group" style="margin-bottom: 0.85rem;">
+                <label class="form-label" style="display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.35rem;">Category Name *</label>
+                {{ form.name }}
+            </div>
+            <div class="form-group" style="margin-bottom: 0.85rem;">
+                <label class="form-label" style="display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.35rem;">Slug (Optional)</label>
+                {{ form.slug }}
+            </div>
+            <div class="form-group" style="margin-bottom: 0.85rem;">
+                <label class="form-label" style="display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.35rem;">Image URL</label>
+                {{ form.image_url }}
+            </div>
+            <div class="form-group" style="margin-bottom: 0.85rem;">
+                <label class="form-label" style="display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.35rem;">Display Order</label>
+                {{ form.display_order }}
+            </div>
+            <div class="form-group" style="margin-bottom: 0.85rem;">
+                <label class="form-label" style="display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.35rem;">Description</label>
+                {{ form.description }}
+            </div>
+            <div class="form-group" style="margin-bottom: 1.25rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-primary); cursor: pointer;">
+                    {{ form.is_active }}
+                    <span>Active Category</span>
+                </label>
+            </div>
+            <div style="display: flex; gap: 0.75rem; justify-content: flex-end; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle);">
+                <button type="button" onclick="closeAddModal()" class="btn btn-secondary">Cancel</button>
+                <button type="submit" class="btn btn-primary">Create Category</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openAddModal() {
+    const modal = document.getElementById('addCategoryModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+}
+function closeAddModal() {
+    const modal = document.getElementById('addCategoryModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+window.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeAddModal();
+});
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('addCategoryModal');
+    if (e.target === modal) closeAddModal();
+});
+</script>
+{% endblock %}

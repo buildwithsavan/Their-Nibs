@@ -1,0 +1,340 @@
+{% extends 'seller_panel/base.html' %}
+
+{% block title %}
+  {% if tab == 'bank' %}Bank & Payment Settings{% elif tab == 'notifications' %}Notification Center{% else %}Store & Personal Profile{% endif %}
+{% endblock %}
+
+{% block page_heading %}
+  {% if tab == 'bank' %}Settings — Bank &amp; Payment Details{% elif tab == 'notifications' %}Notification Center{% else %}Settings — Store &amp; Personal Profile{% endif %}
+{% endblock %}
+
+{% block content %}
+
+{% if tab == 'bank' %}
+
+<div class="clothify-card" style="max-width: 860px; margin: 0 auto; padding: 2rem;">
+    <div style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 1rem;">
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.7rem; margin: 0; color: var(--primary);">Bank &amp; Settlement Account Details</h2>
+        <span style="font-size: 0.85rem; color: var(--text-muted);">Manage payout bank accounts, IFSC code, and direct deposit preferences.</span>
+    </div>
+
+    <form method="POST" action="/seller-panel/settings/bank/">
+        {% csrf_token %}
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+            <div>
+                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Account Holder Name *</label>
+                <input type="text" name="account_holder_name" value="{% if request.user.get_full_name %}{{ request.user.get_full_name }}{% else %}{{ seller.store_name|default:'Account Holder' }}{% endif %}" class="form-control" style="width: 100%;" required>
+            </div>
+            <div>
+                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Bank Name *</label>
+                <input type="text" name="bank_name" value="{{ seller.bank_name|default:'State Bank of India' }}" class="form-control" style="width: 100%;" required>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+            <div>
+                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Bank Account Number *</label>
+                <input type="text" name="account_number" value="{{ seller.account_number|default:'123456789012' }}" class="form-control" style="width: 100%; font-family: monospace;" required>
+            </div>
+            <div>
+                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">IFSC Code *</label>
+                <input type="text" name="ifsc_code" value="{{ seller.ifsc_code|default:'SBIN0001234' }}" class="form-control" style="width: 100%; font-family: monospace; text-transform: uppercase;" required>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.75rem;">
+            <div>
+                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Branch Name / Location</label>
+                <input type="text" name="branch_name" value="{{ seller.city|default:'Main Branch' }}" class="form-control" style="width: 100%;">
+            </div>
+            <div>
+                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Account Type</label>
+                <select name="account_type" class="form-control" style="width: 100%;">
+                    <option value="current" selected>Current Account / Business</option>
+                    <option value="savings">Savings Account</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+            <button type="submit" class="btn btn-primary">Save Bank &amp; Payment Details</button>
+        </div>
+    </form>
+</div>
+
+{% elif tab == 'notifications' %}
+
+<div>
+
+    <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h1 style="font-family: 'Cormorant Garamond', serif; font-size: 2.1rem; margin: 0 0 0.25rem 0; color: var(--primary); font-weight: 700; line-height: 1.2;">
+                Notification Center
+            </h1>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">
+                Real-time alerts for incoming orders, low inventory, refund claims, and AI review queues.
+            </p>
+        </div>
+        <div>
+            <form method="POST" action="/seller-panel/settings/notifications/">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="mark_all_read">
+                <button type="submit" class="btn btn-secondary btn-sm" style="padding: 7px 18px; font-weight: 600; font-size: 0.85rem; background: #ffffff; border: 1px solid #cbd5e1; color: #1e293b; cursor: pointer; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                    Mark All as Read
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="clothify-card" style="padding: 0; overflow: hidden; background: #ffffff; border-radius: var(--radius-md, 10px); border: 1px solid #e2e8f0; max-width: 840px;">
+        <div style="padding: 1.1rem 1.4rem; border-bottom: 1px solid #e2e8f0; background: #ffffff;">
+            <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; margin: 0; color: var(--primary); font-weight: 700;">
+                Recent Alerts &amp; Triggers
+            </h3>
+        </div>
+
+        <div style="padding: 0;">
+            {% if notifications %}
+                {% for n in notifications %}
+                <div style="padding: 1.25rem 1.4rem; border-bottom: 1px solid #e2e8f0; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; {% if not n.is_read %}background: #f4f6fd;{% else %}background: #ffffff;{% endif %}">
+                    <div style="display: flex; gap: 1.25rem; align-items: flex-start; flex: 1;">
+                        <div style="margin-top: 2px;">
+                            <span style="{{ n.badge_style }} font-size: 0.76rem; font-weight: 700; padding: 3px 10px; border-radius: 4px; display: inline-block;">
+                                {{ n.type }}
+                            </span>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 0.95rem; font-weight: 600; color: #1e293b; margin: 0 0 0.25rem 0;">
+                                {{ n.title }}
+                            </h4>
+                            <p style="font-size: 0.86rem; color: #475569; margin: 0 0 0.35rem 0; line-height: 1.4;">
+                                {{ n.message }}
+                            </p>
+                            <div style="font-size: 0.76rem; color: #94a3b8;">
+                                {{ n.date }}
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <a href="{{ n.link|default:'#' }}" class="btn btn-secondary btn-sm" style="padding: 5px 16px; font-size: 0.84rem; font-weight: 600; background: #ffffff; border: 1px solid #cbd5e1; color: #1e293b; text-decoration: none; border-radius: 4px;">
+                            View
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div style="text-align: center; color: var(--text-muted); padding: 4rem 1rem;">
+                    No notifications at this time. You're all caught up!
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% else %}
+
+<div class="clothify-card" style="max-width: 960px; margin: 0 auto; padding: 2rem;">
+    <div style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 1rem;">
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; margin: 0; color: var(--primary);">Personal &amp; Store Registration Profile</h2>
+        <span style="font-size: 0.85rem; color: var(--text-muted);">View and update all personal, contact, address, business, and tax information entered during seller registration.</span>
+    </div>
+
+    <form method="POST" action="/seller-panel/settings/profile/">
+        {% csrf_token %}
+
+        <div style="margin-bottom: 2rem;">
+            <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; color: var(--primary); border-bottom: 2px solid var(--border-accent); padding-bottom: 0.4rem; margin-bottom: 1.25rem;">
+                1. Personal Information
+            </h3>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+                <div>
+                    <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Full Name *</label>
+                    <input type="text" name="full_name" value="{% if request.user.get_full_name %}{{ request.user.get_full_name }}{% else %}{{ seller.store_name|default:'Proprietor Name' }}{% endif %}" class="form-control" style="width: 100%;" required>
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Mobile Number *</label>
+                    <input type="text" name="phone" value="{{ seller.phone|default:'+91 98765 43210' }}" class="form-control" style="width: 100%;" required>
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Email Address *</label>
+                    <input type="email" name="email" value="{% if seller.email %}{{ seller.email }}{% else %}{{ request.user.email|default:'seller@theirnibs.com' }}{% endif %}" class="form-control" style="width: 100%;" required>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+                <div>
+                    <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Date of Birth</label>
+                    <input type="date" name="dob" value="1992-05-15" class="form-control" style="width: 100%;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Gender</label>
+                    <select name="gender" class="form-control" style="width: 100%;">
+                        <option value="male">Male</option>
+                        <option value="female" selected>Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Applicant Role</label>
+                    <input type="text" name="applicant_role" value="Proprietor / Owner" class="form-control" style="width: 100%;">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+                <div>
+                    <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Present Residential Address</label>
+                    <input type="text" name="present_address" value="42 Atelier Boutique Street, Suite 100" class="form-control" style="width: 100%;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">State</label>
+                    <input type="text" name="state" value="{{ seller.state|default:'Maharashtra' }}" class="form-control" style="width: 100%;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">City / District</label>
+                    <input type="text" name="city" value="{{ seller.city|default:'Mumbai' }}" class="form-control" style="width: 100%;">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem;">
+                <div>
+                    <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Identity Document Type</label>
+                    <select name="id_type" class="form-control" style="width: 100%;">
+                        <option value="aadhaar" selected>Aadhaar Card</option>
+                        <option value="passport">Passport</option>
+                        <option value="voter_id">Voter ID</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">ID Document Number</label>
+                    <input type="text" name="id_number" value="9876-5432-1098" class="form-control" style="width: 100%; font-family: monospace;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Pincode</label>
+                    <input type="text" name="pincode" value="400001" class="form-control" style="width: 100%;">
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 2rem;">
+            <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; color: var(--primary); border-bottom: 2px solid var(--border-accent); padding-bottom: 0.4rem; margin-bottom: 1.25rem;">
+                2. Business &amp; Store Details
+            </h3>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+                <div>
+                    <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Store / Business Name *</label>
+                    <input type="text" name="store_name" value="{{ seller.store_name|default:'Their Nibs Boutique Partner' }}" class="form-control" style="width: 100%;" required>
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Company / Legal Name</label>
+                    <input type="text" name="company_name" value="{% if seller.company_name %}{{ seller.company_name }}{% else %}{{ seller.store_name|default:'Their Nibs Ltd' }}{% endif %}" class="form-control" style="width: 100%;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Business Entity Type</label>
+                    <select name="business_type" class="form-control" style="width: 100%;">
+                        <option value="sole_proprietorship" selected>Sole Proprietorship</option>
+                        <option value="llp">LLP / Partnership</option>
+                        <option value="private_limited">Private Limited</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+                <div>
+                    <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">PAN Number</label>
+                    <input type="text" name="pan_number" value="ABCDE1234F" class="form-control" style="width: 100%; font-family: monospace; text-transform: uppercase;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">GSTIN Number</label>
+                    <input type="text" name="gst_number" value="{{ seller.gst_number|default:'27ABCDE1234F1Z5' }}" class="form-control" style="width: 100%; font-family: monospace; text-transform: uppercase;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Year Established</label>
+                    <input type="text" name="year_started" value="2020" class="form-control" style="width: 100%;">
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Store Description &amp; Brand Bio</label>
+                <textarea name="store_description" class="form-control" rows="3" style="width: 100%;">{{ seller.store_description|default:'Boutique sleepwear & loungewear handcrafted with organic satin and cotton.' }}</textarea>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.25rem;">
+                <div>
+                    <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Registered Warehouse Pickup Address</label>
+                    <input type="text" name="business_address" value="Plot 18, Commercial Fashion Zone, Industrial Area" class="form-control" style="width: 100%;">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Years of Retail Experience</label>
+                    <input type="text" name="years_experience" value="5+ Years" class="form-control" style="width: 100%;">
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; border-top: 1px solid var(--border-subtle); padding-top: 1.25rem;">
+            <button type="submit" class="btn btn-primary">Save Personal &amp; Store Details</button>
+        </div>
+    </form>
+</div>
+
+<div class="clothify-card" style="max-width: 860px; margin: 1.5rem auto 0 auto; padding: 1.6rem 2rem; border: 1px solid var(--border-subtle); background: #ffffff;">
+    <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; color: var(--primary); margin: 0 0 0.5rem 0;">
+        3. Selling Status &amp; Store Controls
+    </h3>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0 0 1.25rem 0;">
+        Pause customer orders temporarily when going on holiday or restocking, and reactivate your storefront when you are ready to sell.
+    </p>
+
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; background: #faf8f5; border: 1px solid var(--border-subtle); border-radius: 8px; margin-bottom: 1.25rem;">
+        <div>
+            <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 0.2rem;">Current Boutique Status</div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                {% if seller.status == 'approved' %}
+                <span class="status-badge status-delivered" style="font-size: 0.85rem;">✓ Active &amp; Taking Orders</span>
+                {% elif seller.status == 'suspended' %}
+                <span class="status-badge status-cancelled" style="font-size: 0.85rem;">⚠️ Paused (Vacation Mode)</span>
+                {% else %}
+                <span class="status-badge status-pending" style="font-size: 0.85rem;">⏳ {{ seller.status|title }}</span>
+                {% endif %}
+            </div>
+        </div>
+        <div>
+            {% if seller.status == 'approved' %}
+            <form method="POST" action="/seller-panel/settings/profile/" style="display: inline;" onsubmit="return confirm('Temporarily pause your store and stop receiving new orders?');">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="pause_selling">
+                <button type="submit" class="btn btn-secondary btn-sm" style="color: #b45309;">
+                    ⏸️ Pause Store (Vacation Mode)
+                </button>
+            </form>
+            {% else %}
+            <form method="POST" action="/seller-panel/settings/profile/" style="display: inline;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="resume_selling">
+                <button type="submit" class="btn btn-primary btn-sm" style="background: #15803d; border-color: #15803d;">
+                    ▶️ Resume Selling &amp; Go Live
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <div style="border-top: 1px solid #fee2e2; padding-top: 1rem; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+            <strong style="font-size: 0.85rem; color: #dc2626;">Deactivate &amp; Close Seller Store</strong>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0.15rem 0 0 0;">Permanently close your boutique shop on Their Nibs. This will remove your catalog and seller profile.</p>
+        </div>
+        <form method="POST" action="/seller-panel/settings/profile/" onsubmit="return confirm('WARNING: Are you sure you want to permanently delete and close your seller store? This cannot be undone.');">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="delete_seller_account">
+            <button type="submit" class="btn btn-sm" style="background: #dc2626; color: #ffffff; border: none; font-size: 0.78rem; padding: 0.4rem 0.85rem; border-radius: 4px;">
+                🗑️ Close Store
+            </button>
+        </form>
+    </div>
+</div>
+
+{% endif %}
+
+{% endblock %}

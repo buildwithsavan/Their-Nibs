@@ -1,0 +1,93 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}{% if is_edit %}Edit Coupon {{ coupon.code }}{% else %}Create Coupon{% endif %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <a href="/admin-panel/coupons/" style="font-size: 0.82rem; color: var(--text-muted); display: inline-flex; align-items: center; gap: 0.35rem; margin-bottom: 0.5rem;">
+            ← Back to Coupons
+        </a>
+        <h1 class="page-title">{% if is_edit %}Edit Coupon {{ coupon.code }}{% else %}Create Promo Coupon{% endif %}</h1>
+    </div>
+</div>
+
+<div class="clothify-card" style="max-width: 720px;">
+    <div class="card-body">
+        <form method="POST">
+            {% csrf_token %}
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Coupon Code (e.g. SUMMER30) *</label>
+                    {{ form.code }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    {{ form.description }}
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Discount Type *</label>
+                    {{ form.discount_type }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Discount Value *</label>
+                    {{ form.discount_value }}
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Minimum Order Spend (₹)</label>
+                    {{ form.min_order_amount }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Max Discount Cap (₹)</label>
+                    {{ form.max_discount }}
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Start Date *</label>
+                    {{ form.start_date }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">End Date *</label>
+                    {{ form.end_date }}
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Global Usage Limit</label>
+                    {{ form.usage_limit }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Per-User Usage Limit</label>
+                    {{ form.user_usage_limit }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Applicable Categories (Hold Ctrl/Cmd to select multiple)</label>
+                {{ form.applicable_categories }}
+            </div>
+
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 0.5rem; color: #fff;">
+                    {{ form.is_active }}
+                    <span>Active Coupon</span>
+                </label>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                <button type="submit" class="btn btn-primary">Save Coupon</button>
+                <a href="/admin-panel/coupons/" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

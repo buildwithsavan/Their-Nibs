@@ -1,0 +1,3041 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout &ndash; Their Nibs</title>
+
+  <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg?v=crown2026">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/images/favicon-32.png?v=crown2026">
+  <link rel="icon" type="image/png" sizes="192x192" href="/static/images/favicon-192.png?v=crown2026">
+  <link rel="apple-touch-icon" href="/static/images/favicon.png?v=crown2026">
+  <link rel="shortcut icon" type="image/x-icon" href="/static/images/favicon.ico?v=crown2026">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/preloader.css' %}?v=20261012-loader10s">
+
+  <style>
+    :root {
+      --color-brand-black: #1d1d1b;
+      --color-brand-border: #d9d9d9;
+      --color-input-border: #d9d9d9;
+      --color-input-focus: #1d1d1b;
+      --color-text-main: #333333;
+      --color-text-sub: #737373;
+      --color-bg-summary: #fafafa;
+      --color-razorpay-blue: #0c2340;
+      --color-razorpay-burgundy: #602322;
+      --color-accent-peach: #fbf3ee;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #ffffff;
+      color: var(--color-text-main);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.4;
+      -webkit-font-smoothing: antialiased;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .rzp-test-mode-ribbon {
+      display: none !important;
+    }
+
+    @media (min-width: 993px) {
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 50vw;
+        height: 100vh;
+        background-color: var(--color-bg-summary);
+        border-left: 1px solid #e1e1e1;
+        z-index: 0;
+        pointer-events: none;
+      }
+    }
+
+    .checkout-container {
+      display: flex;
+      min-height: 100vh;
+      max-width: 1440px;
+      margin: 0 auto;
+      align-items: flex-start; 
+      position: relative;
+      z-index: 1;
+    }
+
+    .checkout-main {
+      flex: 1 1 56%;
+      min-width: 0;
+      padding: 40px 60px 80px 80px;
+      background-color: #ffffff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .checkout-sidebar {
+      flex: 0 0 44%;
+      width: 44%;
+      min-width: 380px;
+      background-color: var(--color-bg-summary);
+      border-left: 1px solid #e1e1e1;
+      padding: 40px 70px 80px 50px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+
+    .checkout-brand-header {
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    .checkout-brand-header .brand-logo {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-decoration: none;
+      color: #1d1d1b;
+      line-height: 1;
+      transition: opacity 0.15s ease;
+    }
+
+    .checkout-brand-header .brand-logo:hover {
+      opacity: 0.88;
+    }
+
+    .checkout-brand-header .brand-emblem {
+      display: flex;
+      justify-content: flex-start;
+      margin-bottom: 3px;
+      color: #1d1d1b;
+    }
+
+    .checkout-brand-header .brand-emblem svg {
+      width: 24px;
+      height: 16px;
+    }
+
+    .checkout-brand-header .brand-name {
+      font-family: var(--font-logo, 'Playfair Display', Georgia, serif);
+      font-size: 1.95rem;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      line-height: 1.05;
+      font-style: italic;
+      color: #1d1d1b;
+    }
+
+    .checkout-breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      margin-bottom: 28px;
+      color: var(--color-text-sub);
+    }
+
+    .crumb-item {
+      color: var(--color-text-sub);
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.15s ease;
+      font-weight: 400;
+    }
+
+    .crumb-item:hover {
+      color: var(--color-brand-black);
+      text-decoration: underline;
+    }
+
+    .crumb-item.active {
+      color: var(--color-brand-black);
+      font-weight: 600;
+      cursor: default;
+      text-decoration: none;
+    }
+
+    .crumb-sep {
+      color: #a3a3a3;
+      font-size: 0.75rem;
+      user-select: none;
+    }
+
+    .express-checkout-wrap {
+      margin-bottom: 26px;
+    }
+
+    .express-checkout-title {
+      font-size: 0.82rem;
+      color: var(--color-text-sub);
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .express-buttons-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn-express {
+      height: 48px;
+      border-radius: 5px;
+      border: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.15s ease, opacity 0.2s ease, box-shadow 0.2s;
+    }
+
+    .btn-express:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+
+    .btn-express-razorpay {
+      background-color: var(--color-razorpay-blue);
+      color: #ffffff;
+    }
+
+    .btn-express-cod {
+      background-color: #1d1d1b;
+      color: #ffffff;
+      border: 1px solid #1d1d1b;
+    }
+
+    .btn-express-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .or-divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 22px 0;
+      color: var(--color-text-sub);
+      font-size: 0.78rem;
+      letter-spacing: 0.05em;
+    }
+
+    .or-divider::before,
+    .or-divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .or-divider span {
+      padding: 0 16px;
+    }
+
+    .checkout-subtitle-note {
+      font-size: 0.85rem;
+      color: var(--color-text-sub);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .form-section {
+      margin-bottom: 28px;
+    }
+
+    .section-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .section-heading {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--color-brand-black);
+    }
+
+    .section-link {
+      font-size: 0.84rem;
+      color: var(--color-text-sub);
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .section-link:hover {
+      color: var(--color-brand-black);
+    }
+
+    .input-field-wrap {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .form-control-input,
+    .form-control-select {
+      width: 100%;
+      height: 48px;
+      padding: 14px 14px 4px;
+      font-size: 0.92rem;
+      border: 1px solid var(--color-input-border);
+      border-radius: 5px;
+      background: #ffffff;
+      color: var(--color-brand-black);
+      font-family: inherit;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .form-control-input:focus,
+    .form-control-select:focus {
+      outline: none;
+      border-color: var(--color-input-focus);
+      box-shadow: 0 0 0 1px var(--color-input-focus);
+    }
+
+    .floating-label {
+      position: absolute;
+      top: 6px;
+      left: 14px;
+      font-size: 0.72rem;
+      color: var(--color-text-sub);
+      pointer-events: none;
+      transition: all 0.15s ease;
+    }
+
+    .input-icon-info {
+      position: absolute;
+      top: 50%;
+      right: 14px;
+      transform: translateY(-50%);
+      color: #999;
+      cursor: help;
+      display: flex;
+      align-items: center;
+    }
+
+    .select-arrow {
+      position: absolute;
+      top: 50%;
+      right: 14px;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: #666;
+    }
+
+    .form-row-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checkbox-row input[type="checkbox"] {
+      width: 17px;
+      height: 17px;
+      border: 1px solid var(--color-input-border);
+      border-radius: 4px;
+      cursor: pointer;
+      accent-color: var(--color-brand-black);
+    }
+
+    .checkbox-row label {
+      font-size: 0.84rem;
+      color: #444;
+      cursor: pointer;
+    }
+
+    .checkout-actions-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 32px;
+      padding-top: 10px;
+    }
+
+    .btn-return-cart {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.88rem;
+      color: var(--color-brand-black);
+      text-decoration: none;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .btn-return-cart:hover {
+      text-decoration: underline;
+    }
+
+    .btn-continue-step {
+      background-color: var(--color-brand-black);
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      padding: 16px 28px;
+      font-size: 0.94rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.15s ease, transform 0.15s ease;
+    }
+
+    .btn-continue-step:hover {
+      background-color: #000000;
+      transform: translateY(-1px);
+    }
+
+    .checkout-policy-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 60px;
+      padding-top: 20px;
+      border-top: 1px solid #f0f0f0;
+      font-size: 0.78rem;
+    }
+
+    .checkout-policy-links a {
+      color: var(--color-text-sub);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .checkout-policy-links a:hover {
+      color: var(--color-brand-black);
+    }
+
+    .checkout-summary-box {
+      border: 1px solid #e1e1e1;
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      background: #ffffff;
+      font-size: 0.86rem;
+    }
+
+    .summary-box-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+    }
+
+    .summary-box-row:not(:last-child) {
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .summary-box-label {
+      color: var(--color-text-sub);
+      width: 75px;
+      flex-shrink: 0;
+    }
+
+    .summary-box-val {
+      flex: 1;
+      color: var(--color-brand-black);
+      padding: 0 10px;
+      word-break: break-all;
+    }
+
+    .summary-box-action {
+      color: var(--color-text-sub);
+      font-size: 0.8rem;
+      text-decoration: underline;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .summary-box-action:hover {
+      color: var(--color-brand-black);
+    }
+
+    .shipping-options-list {
+      border: 1px solid #e1e1e1;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .shipping-option-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 18px;
+      cursor: pointer;
+      background: #ffffff;
+      transition: background 0.15s;
+    }
+
+    .shipping-option-item:not(:last-child) {
+      border-bottom: 1px solid #e1e1e1;
+    }
+
+    .shipping-option-item.selected {
+      background: #fdfaf7;
+    }
+
+    .shipping-option-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .shipping-option-left input[type="radio"] {
+      accent-color: var(--color-brand-black);
+      width: 17px;
+      height: 17px;
+    }
+
+    .shipping-option-title {
+      font-weight: 500;
+      color: var(--color-brand-black);
+    }
+
+    .shipping-option-time {
+      font-size: 0.78rem;
+      color: var(--color-text-sub);
+    }
+
+    .shipping-option-price {
+      font-weight: 600;
+      color: var(--color-brand-black);
+    }
+
+    .payment-options-wrap {
+      border: 1px solid #e1e1e1;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .payment-option-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 18px;
+      cursor: pointer;
+      background: #ffffff;
+      border-bottom: 1px solid #e1e1e1;
+      transition: background 0.15s;
+    }
+
+    .payment-option-header.selected {
+      background: #fdfaf7;
+    }
+
+    .payment-option-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .payment-option-left input[type="radio"] {
+      accent-color: var(--color-brand-black);
+      width: 17px;
+      height: 17px;
+    }
+
+    .payment-option-body {
+      background: #fdfaf7;
+      padding: 20px;
+      border-bottom: 1px solid #e1e1e1;
+      display: none;
+    }
+
+    .payment-option-body.active {
+      display: block;
+    }
+
+    .payment-icons-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .pay-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 6px;
+      background: #ffffff;
+      border: 1px solid #d9d9d9;
+      border-radius: 3px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .order-items-scroll {
+      max-height: calc(100vh - 350px);
+      overflow-y: auto;
+      padding-right: 6px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid #e1e1e1;
+      padding-bottom: 18px;
+    }
+
+    .order-summary-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .item-thumbnail-wrap {
+      position: relative;
+      width: 64px;
+      height: 64px;
+      flex-shrink: 0;
+      border: 1px solid #e1e1e1;
+      border-radius: 8px;
+      background-color: #ffffff;
+      overflow: visible;
+    }
+
+    .item-thumbnail-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 7px;
+      display: block;
+    }
+
+    .item-badge-count {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background-color: rgba(74, 74, 74, 0.9);
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 600;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+
+    .item-details-col {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .item-title-text {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--color-brand-black);
+      line-height: 1.25;
+      margin-bottom: 4px;
+    }
+
+    .item-variant-text {
+      font-size: 0.78rem;
+      color: var(--color-text-sub);
+    }
+
+    .btn-checkout-remove-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 6px;
+      padding: 0;
+      background: none;
+      border: none;
+      color: #991b1b;
+      font-size: 0.76rem;
+      font-family: var(--font-sans);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: color 0.15s ease, opacity 0.15s ease;
+    }
+
+    .btn-checkout-remove-item:hover {
+      color: #dc2626;
+      opacity: 0.85;
+    }
+
+    .item-price-col {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-brand-black);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .discount-input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid #e1e1e1;
+      padding-bottom: 24px;
+    }
+
+    .discount-text-input {
+      flex: 1;
+      height: 44px;
+      padding: 0 14px;
+      border: 1px solid var(--color-input-border);
+      border-radius: 5px;
+      font-size: 0.9rem;
+      background: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .discount-text-input:focus {
+      outline: none;
+      border-color: var(--color-brand-black);
+    }
+
+    .btn-apply-discount {
+      padding: 0 18px;
+      height: 44px;
+      background: #eaeaea;
+      color: #333333;
+      border: none;
+      border-radius: 5px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-apply-discount:hover {
+      background: #dadada;
+    }
+
+    .coupons-popover {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      box-shadow: 0 12px 28px -4px rgba(0,0,0,0.18), 0 6px 12px -3px rgba(0,0,0,0.1);
+      z-index: 1050;
+      max-height: 290px;
+      overflow-y: auto;
+      padding: 12px;
+      animation: popoverFadeIn 0.2s ease-out;
+      margin-top: 6px;
+    }
+    @keyframes popoverFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .coupons-popover-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 7px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #334155;
+    }
+    .coupons-popover-close {
+      background: none;
+      border: none;
+      font-size: 1.15rem;
+      line-height: 1;
+      cursor: pointer;
+      color: #94a3b8;
+      padding: 0;
+    }
+    .coupons-popover-close:hover {
+      color: #1e293b;
+    }
+    .coupon-item-card {
+      background: #fafafa;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 9px 11px;
+      margin-bottom: 8px;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .coupon-item-card:last-child {
+      margin-bottom: 0;
+    }
+    .coupon-item-card:hover {
+      border-color: #2b5329;
+      background: #f8faf8;
+    }
+    .coupon-item-card.is-applied {
+      border-color: #22c55e;
+      background: #f0fdf4;
+    }
+    .coupon-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .coupon-badge-code {
+      font-family: monospace;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      color: #0f172a;
+      background: #f1f5f9;
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px dashed #cbd5e1;
+    }
+    .coupon-badge-discount {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #15803d;
+      background: #dcfce7;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .coupon-desc-text {
+      font-size: 0.76rem;
+      color: #475569;
+      line-height: 1.35;
+      margin-bottom: 5px;
+    }
+    .coupon-card-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+      color: #64748b;
+      margin-top: 4px;
+    }
+    .coupon-apply-btn {
+      background: #2b5329;
+      color: #ffffff;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: background 0.15s;
+    }
+    .coupon-apply-btn:hover {
+      background: #1b351a;
+    }
+    .coupon-apply-btn.applied {
+      background: #15803d;
+      cursor: default;
+    }
+    .applied-coupon-pill {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      padding: 7px 12px;
+      border-radius: 5px;
+      font-size: 0.82rem;
+    }
+    .applied-coupon-pill .pill-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #166534;
+      font-weight: 600;
+    }
+    .applied-coupon-pill .pill-remove-btn {
+      background: transparent;
+      border: none;
+      color: #dc2626;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
+    }
+    .coupon-min-hint {
+      font-size: 0.7rem;
+      color: #b45309;
+      font-weight: 500;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .summary-calc-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 0.88rem;
+      color: #555555;
+    }
+
+    .summary-calc-row.total-line {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid #e1e1e1;
+      color: var(--color-brand-black);
+    }
+
+    .total-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+    }
+
+    .total-price-val {
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .total-currency-code {
+      font-size: 0.82rem;
+      font-weight: 400;
+      color: var(--color-text-sub);
+      margin-right: 6px;
+    }
+
+    .tax-notice-text {
+      font-size: 0.78rem;
+      color: var(--color-text-sub);
+      margin-top: 4px;
+    }
+
+    .razorpay-app-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(5px);
+      z-index: 100000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      animation: rzpFadeIn 0.2s ease-out;
+    }
+
+    .rzp-splash-card {
+      width: 100%;
+      max-width: 480px;
+      height: 380px;
+      background: #ffffff;
+      border-radius: 14px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      animation: rzpPopIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .rzp-splash-shield {
+      width: 90px;
+      height: 110px;
+      margin-bottom: 40px;
+      animation: rzpPulse 1.8s ease-in-out infinite;
+    }
+
+    .rzp-splash-footer {
+      position: absolute;
+      bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    .rzp-blue-brand {
+      color: #0c2340;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .rzp-main-window {
+      width: 100%;
+      max-width: 720px;
+      height: 520px;
+      background: #ffffff;
+      border-radius: 14px;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.4);
+      display: flex;
+      overflow: hidden;
+      position: relative;
+      animation: rzpPopIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .rzp-win-left {
+      width: 38%;
+      background: var(--color-razorpay-burgundy);
+      color: #ffffff;
+      padding: 24px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .rzp-win-brand-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .rzp-win-avatar {
+      width: 36px;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #ffffff;
+      font-family: var(--font-serif);
+    }
+
+    .rzp-win-brand-name {
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin: 0;
+    }
+
+    .rzp-win-price-card {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 14px 18px;
+      color: #1d1d1b;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+      position: relative;
+      z-index: 2;
+    }
+
+    .rzp-price-label {
+      font-size: 0.74rem;
+      color: #64748b;
+      margin-bottom: 2px;
+      display: block;
+    }
+
+    .rzp-price-value {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #111827;
+      letter-spacing: -0.02em;
+    }
+
+    .rzp-win-user-pill {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #374151;
+      font-size: 0.78rem;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      position: relative;
+      z-index: 2;
+    }
+
+    .rzp-user-pill-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .rzp-win-isometric-art {
+      position: absolute;
+      bottom: 40px;
+      right: 10px;
+      width: 170px;
+      height: 120px;
+      pointer-events: none;
+      opacity: 0.85;
+      z-index: 1;
+    }
+
+    .rzp-win-sec-footer {
+      margin-top: auto;
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.7);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .rzp-win-right {
+      width: 62%;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .rzp-win-right-header {
+      padding: 16px 22px 14px;
+      border-bottom: 1px solid #f1f3f5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .rzp-win-title {
+      font-size: 0.96rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 0;
+      flex: 1;
+      text-align: center;
+      padding-left: 20px;
+    }
+
+    .rzp-win-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .rzp-ctrl-dots {
+      color: #9ca3af;
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .rzp-ctrl-close {
+      background: transparent;
+      border: none;
+      font-size: 1.4rem;
+      line-height: 1;
+      color: #6b7280;
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+
+    .rzp-ctrl-close:hover {
+      color: #111827;
+    }
+
+    .rzp-win-columns-wrap {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .rzp-sub-methods-col {
+      width: 40%;
+      background: #faf6f5;
+      border-right: 1px solid #f0e9e7;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .rzp-method-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 16px;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #f2ecea;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+    }
+
+    .rzp-method-btn.active {
+      background: #ffffff;
+      font-weight: 600;
+      box-shadow: 2px 0 0 #ffffff;
+    }
+
+    .rzp-method-name {
+      font-size: 0.88rem;
+      color: #1f2937;
+    }
+
+    .rzp-method-icons {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .mini-card-icon {
+      height: 14px;
+      object-fit: contain;
+    }
+
+    .rzp-sub-detail-col {
+      width: 60%;
+      padding: 24px 22px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .rzp-sub-heading {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 14px;
+    }
+
+    .rzp-card-input-box {
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+
+    .rzp-card-num-input {
+      width: 100%;
+      height: 42px;
+      padding: 0 14px;
+      border: none;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 0.88rem;
+      color: #1f2937;
+    }
+
+    .rzp-card-num-input:focus {
+      outline: none;
+      background: #f9fafb;
+    }
+
+    .rzp-card-row-split {
+      display: flex;
+    }
+
+    .rzp-card-half-input {
+      width: 50%;
+      height: 40px;
+      padding: 0 14px;
+      border: none;
+      font-size: 0.88rem;
+      color: #1f2937;
+    }
+
+    .rzp-card-half-input:first-child {
+      border-right: 1px solid #e5e7eb;
+    }
+
+    .rzp-card-half-input:focus {
+      outline: none;
+      background: #f9fafb;
+    }
+
+    .rzp-rbi-check-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: #4b5563;
+      margin-bottom: 22px;
+      cursor: pointer;
+    }
+
+    .rzp-rbi-check-row input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      accent-color: #1d0f0f;
+    }
+
+    .rzp-btn-continue {
+      width: 100%;
+      height: 46px;
+      background: #1d0f0f;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: auto;
+      transition: background 0.15s, transform 0.15s;
+    }
+
+    .rzp-btn-continue:hover {
+      background: #000000;
+      transform: translateY(-1px);
+    }
+
+    .rzp-wallet-item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .rzp-wallet-item-row:hover {
+      border-color: #1d0f0f;
+      background: #faf6f5;
+    }
+
+    .rzp-wallet-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.86rem;
+      font-weight: 500;
+      color: #1f2937;
+    }
+
+    .rzp-otp-modal-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(2px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 50;
+      animation: rzpFadeIn 0.2s ease-out;
+    }
+
+    .rzp-otp-dialog {
+      width: 100%;
+      max-width: 440px;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 30px 28px 24px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+      position: relative;
+      text-align: center;
+      animation: rzpPopIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .rzp-otp-close-x {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: transparent;
+      border: none;
+      font-size: 1.3rem;
+      color: #6b7280;
+      cursor: pointer;
+    }
+
+    .rzp-otp-close-x:hover {
+      color: #111827;
+    }
+
+    .rzp-otp-logo {
+      width: 44px;
+      height: 44px;
+      margin: 0 auto 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .rzp-otp-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 6px;
+    }
+
+    .rzp-otp-subtitle {
+      font-size: 0.84rem;
+      color: #6b7280;
+      margin-bottom: 20px;
+    }
+
+    .rzp-otp-input {
+      width: 100%;
+      height: 46px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 1.15rem;
+      letter-spacing: 0.2em;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 12px;
+    }
+
+    .rzp-otp-input:focus {
+      outline: none;
+      border-color: #1d0f0f;
+    }
+
+    .rzp-otp-resend {
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-bottom: 22px;
+    }
+
+    .rzp-otp-footer-sec {
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      font-size: 0.74rem;
+      color: #64748b;
+    }
+
+    .rzp-otp-timeout {
+      font-size: 0.76rem;
+      color: #dc2626;
+      font-weight: 600;
+      margin-top: 6px;
+    }
+
+    @keyframes rzpFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes rzpPopIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes rzpPulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 4px 14px rgba(59, 130, 246, 0.4)); }
+      50% { transform: scale(1.05); filter: drop-shadow(0 8px 24px rgba(37, 99, 235, 0.65)); }
+    }
+    @keyframes rzpSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 992px) {
+      .checkout-container {
+        flex-direction: column-reverse;
+      }
+      .checkout-sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+        border-left: none;
+        border-bottom: 1px solid #e1e1e1;
+        padding: 30px 24px;
+      }
+      .checkout-main {
+        padding: 30px 24px 60px;
+      }
+      .rzp-main-window {
+        flex-direction: column;
+        width: 100%;
+        height: auto;
+        max-height: 92vh;
+        overflow-y: auto;
+        min-width: 0;
+      }
+      .rzp-win-left {
+        width: 100%;
+        padding: 16px 18px 12px;
+        flex-shrink: 0;
+      }
+      .rzp-win-brand-header {
+        margin-bottom: 12px;
+      }
+      .rzp-win-price-card {
+        padding: 10px 14px;
+        margin-bottom: 8px;
+      }
+      .rzp-price-value {
+        font-size: 1.3rem;
+      }
+      .rzp-win-user-pill {
+        padding: 8px 12px;
+      }
+      .rzp-win-isometric-art {
+        display: none;
+      }
+      .rzp-win-sec-footer {
+        display: none;
+      }
+      .rzp-win-right {
+        width: 100%;
+        min-width: 0;
+      }
+      .rzp-win-columns-wrap {
+        flex-direction: column;
+        min-width: 0;
+        overflow: hidden;
+      }
+      .rzp-sub-methods-col {
+        width: 100%;
+        min-width: 0;
+        flex-direction: row;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-right: none;
+        border-bottom: 1px solid #f0e9e7;
+        flex-shrink: 0;
+      }
+      .rzp-method-btn {
+        padding: 12px 14px;
+        flex-shrink: 0;
+        white-space: nowrap;
+        border-bottom: none;
+        border-right: 1px solid #f2ecea;
+        gap: 8px;
+      }
+      .rzp-sub-detail-col {
+        width: 100%;
+        min-width: 0;
+        padding: 18px 16px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .razorpay-app-modal-overlay {
+        padding: 8px 6px;
+        align-items: center;
+      }
+      .rzp-main-window {
+        width: 100% !important;
+        max-width: 100% !important;
+        border-radius: 10px !important;
+        max-height: 94vh !important;
+      }
+      .rzp-win-left {
+        padding: 12px 14px 10px !important;
+      }
+      .rzp-win-brand-name {
+        font-size: 1rem !important;
+      }
+      .rzp-win-price-card {
+        padding: 8px 12px !important;
+      }
+      .rzp-price-value {
+        font-size: 1.2rem !important;
+      }
+      .rzp-win-right-header {
+        padding: 10px 14px !important;
+      }
+      .rzp-win-title {
+        font-size: 0.88rem !important;
+        padding-left: 10px !important;
+      }
+      .rzp-method-btn {
+        padding: 10px 10px !important;
+        font-size: 0.8rem !important;
+      }
+      .rzp-sub-detail-col {
+        padding: 14px 12px !important;
+      }
+      .rzp-card-num-input,
+      .rzp-card-half-input {
+        font-size: 0.82rem !important;
+      }
+      .rzp-btn-continue {
+        height: 42px !important;
+        font-size: 0.88rem !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="clothifyTopProgress" class="clothify-top-progress"></div>
+  <div id="clothifyPageLoader" class="clothify-preloader">
+    <div class="preloader-content">
+      <div class="preloader-image-wrap">
+        <img src="/static/images/loader-logo.png" 
+             alt="Their Nibs" 
+             class="preloader-custom-img" 
+             onerror="this.onerror=null; this.src='/static/images/loader-logo-square.png';">
+      </div>
+      <h2 class="preloader-brand-title">Their Nibs</h2>
+      <div class="preloader-brand-subtitle">Luxury Sleepwear &amp; Loungewear</div>
+      <div class="preloader-bar-wrap">
+        <div class="preloader-bar-inner"></div>
+      </div>
+      <div class="preloader-status-text" id="preloaderStatusText">Entering Boutique...</div>
+    </div>
+  </div>
+
+<div class="checkout-container">
+
+  <main class="checkout-main">
+
+    <header class="checkout-brand-header">
+      <a href="{% url 'homepage' %}" class="brand-logo" aria-label="Their Nibs Home">
+        <div class="brand-emblem" aria-hidden="true">
+          <svg width="24" height="16" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 14L4 4L9 9L12 2L15 9L20 4L22 14H2Z"/>
+            <circle cx="12" cy="2" r="1" fill="currentColor"/>
+            <circle cx="4" cy="4" r="1" fill="currentColor"/>
+            <circle cx="20" cy="4" r="1" fill="currentColor"/>
+            <line x1="2" y1="16" x2="22" y2="16"/>
+          </svg>
+        </div>
+        <span class="brand-name">Their Nibs</span>
+      </a>
+    </header>
+
+    <nav class="checkout-breadcrumbs" aria-label="Checkout Navigation">
+      <a href="{% url 'womens_new_in' %}" class="crumb-item" id="crumbCart">Cart</a>
+      <span class="crumb-sep">&rsaquo;</span>
+      <span class="crumb-item active" id="crumbInfo" onclick="goToStep('information')">Information</span>
+      <span class="crumb-sep">&rsaquo;</span>
+      <span class="crumb-item" id="crumbShipping" onclick="goToStep('shipping')">Shipping</span>
+      <span class="crumb-sep">&rsaquo;</span>
+      <span class="crumb-item" id="crumbPayment" onclick="goToStep('payment')">Payment</span>
+      <span class="crumb-sep">&rsaquo;</span>
+      <span class="crumb-item" id="crumbReview" onclick="goToStep('review')">Review</span>
+    </nav>
+
+    <div id="stepInformationSection">
+
+      <section class="express-checkout-wrap" aria-label="Express checkout options">
+        <h2 class="express-checkout-title">Express checkout</h2>
+        <div class="express-buttons-row">
+
+          <button type="button" class="btn-express btn-express-razorpay" onclick="openRazorpayAppModal()" title="Pay instantly with Razorpay">
+            <span class="btn-express-badge">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+              Razorpay
+            </span>
+          </button>
+
+          <button type="button" class="btn-express btn-express-cod" onclick="selectExpressPayment('cod')" title="Pay on delivery">
+            <span class="btn-express-badge">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                <line x1="12" y1="22.08" x2="12" y2="12"/>
+              </svg>
+              Cash on Delivery (COD)
+            </span>
+          </button>
+
+        </div>
+
+        <div class="or-divider">
+          <span>OR</span>
+        </div>
+
+        <p class="checkout-subtitle-note">Complete the details below to complete your order.</p>
+      </section>
+
+      <form id="checkoutInformationForm" onsubmit="event.preventDefault(); goToStep('shipping');">
+
+        <section class="form-section">
+          <div class="section-header-row">
+            <h3 class="section-heading">Contact</h3>
+            <a href="{% url 'customer_login' %}" class="section-link">Sign in</a>
+          </div>
+
+          <div class="input-field-wrap">
+            <span class="floating-label">Email</span>
+            <input type="email" id="customerEmail" class="form-control-input" required value="{{ customer_email|default:'customer@boutique.co.uk' }}" placeholder=" ">
+            <span class="input-icon-info" title="We'll send order updates and receipts here">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </span>
+          </div>
+
+          <div class="checkbox-row">
+            <input type="checkbox" id="emailNewsOffers" checked>
+            <label for="emailNewsOffers">Email me with news and offers</label>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <h3 class="section-heading" style="margin-bottom: 14px;">Shipping address</h3>
+
+          <div class="input-field-wrap">
+            <span class="floating-label">Country/Region</span>
+            <select id="shippingCountry" class="form-control-select">
+              <option value="India" selected>India</option>
+            </select>
+            <span class="select-arrow">&#9662;</span>
+          </div>
+
+          <div class="form-row-2col">
+            <div class="input-field-wrap">
+              <span class="floating-label">First name</span>
+              <input type="text" id="shippingFirstName" class="form-control-input" required value="{{ first_name|default:'Eleanor' }}" placeholder=" ">
+            </div>
+            <div class="input-field-wrap">
+              <span class="floating-label">Last name</span>
+              <input type="text" id="shippingLastName" class="form-control-input" required value="{{ last_name|default:'Vance' }}" placeholder=" ">
+            </div>
+          </div>
+
+          <div class="input-field-wrap">
+            <span class="floating-label">Address</span>
+            <input type="text" id="shippingAddress" class="form-control-input" required value="14 Kensington High Street" placeholder=" ">
+          </div>
+
+          <div class="input-field-wrap">
+            <span class="floating-label">Apartment, suite, etc. (optional)</span>
+            <input type="text" id="shippingApartment" class="form-control-input" value="Suite 4B" placeholder=" ">
+          </div>
+
+          <div class="form-row-2col">
+            <div class="input-field-wrap">
+              <span class="floating-label">City</span>
+              <input type="text" id="shippingCity" class="form-control-input" required value="London" placeholder=" ">
+            </div>
+            <div class="input-field-wrap">
+              <span class="floating-label">Postcode</span>
+              <input type="text" id="shippingPostcode" class="form-control-input" required value="W8 4PT" placeholder=" ">
+            </div>
+          </div>
+
+          <div class="input-field-wrap">
+            <span class="floating-label">Phone</span>
+            <input type="tel" id="shippingPhone" class="form-control-input" required value="+91 85115 30779" placeholder=" ">
+            <span class="input-icon-info" title="In case the courier needs to contact you regarding delivery">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </span>
+          </div>
+
+          <div class="checkbox-row">
+            <input type="checkbox" id="saveInfoCheck" checked>
+            <label for="saveInfoCheck">Save this information for next time</label>
+          </div>
+        </section>
+
+        <div class="checkout-actions-row">
+          <a href="{% url 'womens_new_in' %}" class="btn-return-cart">
+            &lsaquo; Return to cart
+          </a>
+          <button type="submit" class="btn-continue-step">
+            Continue to shipping
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+    <div id="stepShippingSection" style="display: none;">
+
+      <div class="checkout-summary-box">
+        <div class="summary-box-row">
+          <span class="summary-box-label">Contact</span>
+          <span class="summary-box-val" id="summaryContactVal">customer@boutique.co.uk &bull; +91 85115 30779</span>
+          <span class="summary-box-action" onclick="goToStep('information', 'customerEmail')">Change</span>
+        </div>
+        <div class="summary-box-row">
+          <span class="summary-box-label">Ship to</span>
+          <span class="summary-box-val" id="summaryAddressVal">14 Kensington High Street, Suite 4B, Mumbai 400001, India</span>
+          <span class="summary-box-action" onclick="goToStep('information', 'shippingAddress')">Change</span>
+        </div>
+      </div>
+
+      <h3 class="section-heading" style="margin-bottom: 14px;">Shipping method</h3>
+
+      <div class="shipping-options-list">
+
+        <label class="shipping-option-item selected" onclick="selectShippingRate('standard', 0.00, this)">
+          <div class="shipping-option-left">
+            <input type="radio" name="shipping_rate" value="standard" checked>
+            <div>
+              <div class="shipping-option-title">Standard Delivery</div>
+              <div class="shipping-option-time">3-5 business days &bull; Tracked via BlueDart / Delhivery</div>
+            </div>
+          </div>
+          <span class="shipping-option-price" style="color: #2e7d32;">FREE</span>
+        </label>
+
+        <label class="shipping-option-item" onclick="selectShippingRate('express', 149.00, this)">
+          <div class="shipping-option-left">
+            <input type="radio" name="shipping_rate" value="express">
+            <div>
+              <div class="shipping-option-title">Express Tracked Courier</div>
+              <div class="shipping-option-time">1-2 business days &bull; SMS Delivery updates</div>
+            </div>
+          </div>
+          <span class="shipping-option-price">₹149.00</span>
+        </label>
+
+      </div>
+
+      <div class="checkout-actions-row">
+        <a href="javascript:void(0)" onclick="goToStep('information')" class="btn-return-cart">
+          &lsaquo; Return to information
+        </a>
+        <button type="button" class="btn-continue-step" onclick="goToStep('payment')">
+          Continue to payment
+        </button>
+      </div>
+
+    </div>
+
+    <div id="stepPaymentSection" style="display: none;">
+
+      <div class="checkout-summary-box">
+        <div class="summary-box-row">
+          <span class="summary-box-label">Contact</span>
+          <span class="summary-box-val" id="paymentSummaryContact">customer@theirnibs.com &bull; +91 85115 30779</span>
+          <span class="summary-box-action" onclick="goToStep('information', 'customerEmail')">Change</span>
+        </div>
+        <div class="summary-box-row">
+          <span class="summary-box-label">Ship to</span>
+          <span class="summary-box-val" id="paymentSummaryAddress">14 Kensington High Street, Suite 4B, Mumbai 400001, India</span>
+          <span class="summary-box-action" onclick="goToStep('information', 'shippingAddress')">Change</span>
+        </div>
+        <div class="summary-box-row">
+          <span class="summary-box-label">Method</span>
+          <span class="summary-box-val" id="paymentSummaryMethod">Standard Delivery &bull; FREE</span>
+          <span class="summary-box-action" onclick="goToStep('shipping')">Change</span>
+        </div>
+      </div>
+
+      <h3 class="section-heading" style="margin-bottom: 6px;">Payment</h3>
+      <p style="font-size: 0.82rem; color: var(--color-text-sub); margin-bottom: 16px;">All transactions are secure and encrypted.</p>
+
+      <form action="{% url 'place_order' %}" method="POST" id="finalPaymentForm">
+        {% csrf_token %}
+        <input type="hidden" name="email" id="postEmail" value="">
+        <input type="hidden" name="first_name" id="postFirstName" value="">
+        <input type="hidden" name="last_name" id="postLastName" value="">
+        <input type="hidden" name="address" id="postAddress" value="">
+        <input type="hidden" name="city" id="postCity" value="">
+        <input type="hidden" name="postcode" id="postPostcode" value="">
+        <input type="hidden" name="country" id="postCountry" value="">
+        <input type="hidden" name="phone" id="postPhone" value="">
+        <input type="hidden" name="payment_method" id="postPaymentMethod" value="Razorpay">
+        <input type="hidden" name="payment_id" id="postPaymentId" value="">
+        <input type="hidden" name="cart_items_json" id="postCartItemsJson" value="">
+        <input type="hidden" name="total_amount" id="postTotalAmount" value="40.00">
+        <input type="hidden" name="coupon_code" id="postCouponCode" value="">
+        <input type="hidden" name="discount_amount" id="postDiscountAmount" value="0.00">
+
+        <div class="payment-options-wrap">
+
+          <div class="payment-option-header selected" id="optHeaderRazorpay" onclick="switchPaymentMethod('razorpay')">
+            <div class="payment-option-left">
+              <input type="radio" name="payment_choice" id="payRadioRazorpay" value="razorpay" checked>
+              <strong>Razorpay (Cards, UPI, Netbanking, Wallets)</strong>
+            </div>
+            <div class="payment-icons-row">
+              <span class="pay-badge" style="color:#0c2340; font-weight:700;">Razorpay</span>
+              <span class="pay-badge">UPI</span>
+              <span class="pay-badge">Visa</span>
+              <span class="pay-badge">Mastercard</span>
+            </div>
+          </div>
+          <div class="payment-option-body active" id="optBodyRazorpay">
+            <p style="font-size: 0.84rem; color: #444; line-height: 1.5; margin-bottom: 16px;">
+              Pay securely via <strong>Razorpay</strong>. You can choose from Credit/Debit Cards, UPI (GPay, PhonePe, Paytm), Net Banking, or Digital Wallets.
+            </p>
+            <button type="button" class="btn-continue-step" style="width: 100%; background: var(--color-razorpay-blue); display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="openRazorpayAppModal()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              <span>Pay <span class="btnPayAmount">₹40.00</span> with Razorpay</span>
+            </button>
+          </div>
+
+          <div class="payment-option-header" id="optHeaderCod" onclick="switchPaymentMethod('cod')">
+            <div class="payment-option-left">
+              <input type="radio" name="payment_choice" id="payRadioCod" value="cod">
+              <strong>Cash on Delivery (COD)</strong>
+            </div>
+            <span class="pay-badge" style="background:#f4f4f4;">Pay on Arrival</span>
+          </div>
+          <div class="payment-option-body" id="optBodyCod">
+            <p style="font-size: 0.84rem; color: #444; line-height: 1.5; margin-bottom: 16px;">
+              Pay in cash or card when your package is delivered to your doorstep. Please keep the exact amount ready upon arrival.
+            </p>
+            <button type="submit" class="btn-continue-step" style="width: 100%; background: #1d1d1b;">
+              Complete Order (Cash on Delivery)
+            </button>
+          </div>
+
+        </div>
+
+        <div class="checkout-actions-row">
+          <a href="javascript:void(0)" onclick="goToStep('shipping')" class="btn-return-cart">
+            &lsaquo; Return to shipping
+          </a>
+        </div>
+      </form>
+
+    </div>
+
+    <footer class="checkout-policy-links">
+      <a href="{% url 'homepage' %}#refund-policy">Refund policy</a>
+      <a href="{% url 'homepage' %}#delivery-returns">Shipping</a>
+      <a href="{% url 'homepage' %}#privacy-policy">Privacy policy</a>
+      <a href="{% url 'homepage' %}#terms-of-service">Terms of service</a>
+      <a href="{% url 'homepage' %}#cancellations">Cancellations</a>
+      <a href="{% url 'homepage' %}#contact-us">Contact</a>
+    </footer>
+
+  </main>
+
+  <aside class="checkout-sidebar" id="checkoutStickySidebar" aria-label="Order Summary">
+
+    <div class="order-items-scroll" id="checkoutItemsList">
+    </div>
+
+    <div class="checkout-discount-wrapper" id="checkoutDiscountWrapper" style="position: relative; margin-bottom: 24px; border-bottom: 1px solid #e1e1e1; padding-bottom: 20px;">
+      <div class="discount-input-row" style="margin-bottom: 6px; border-bottom: none; padding-bottom: 0;">
+        <input type="text" id="checkoutDiscountInput" class="discount-text-input" placeholder="DISCOUNT CODE OR GIFT CARD" autocomplete="off" onfocus="openCheckoutCouponsDropdown()" onclick="openCheckoutCouponsDropdown()">
+        <button type="button" class="btn-apply-discount" onclick="applyCheckoutDiscount()">Apply</button>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+        <button type="button" class="coupons-trigger-link" onclick="toggleCheckoutCouponsDropdown()" style="display: inline-flex; align-items: center; gap: 5px; font-size: 0.8rem; color: #2b5329; font-weight: 600; cursor: pointer; background: none; border: none; padding: 0; text-decoration: underline;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -1px;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          <span id="checkoutCouponsTriggerText">View available coupons</span>
+        </button>
+      </div>
+
+      <div id="checkoutCouponsDropdown" class="coupons-popover" style="display: none;">
+        <div class="coupons-popover-header">
+          <span>Available Seller Coupons</span>
+          <button type="button" class="coupons-popover-close" onclick="closeCheckoutCouponsDropdown()">&times;</button>
+        </div>
+        <div id="checkoutCouponsList" class="coupons-popover-body">
+          <div style="text-align: center; padding: 12px; color: #64748b; font-size: 0.8rem;">Loading available coupons...</div>
+        </div>
+      </div>
+
+      <div id="checkoutAppliedCouponPill" class="applied-coupon-pill" style="display: none; margin-top: 10px;">
+        <div class="pill-info">
+          <span class="pill-tag">✓</span>
+          <span class="pill-code" id="checkoutAppliedCode">CODE</span>
+          <span class="pill-savings" id="checkoutAppliedSavings">(-₹0.00)</span>
+        </div>
+        <button type="button" class="pill-remove-btn" onclick="removeCheckoutCoupon()" title="Remove coupon">Remove</button>
+      </div>
+    </div>
+
+    <div class="summary-calc-row">
+      <span id="summarySubtotalLabel">Subtotal &bull; 1 item</span>
+      <span id="summarySubtotalVal" style="font-weight: 500; color: #1d1d1b;">₹40.00</span>
+    </div>
+
+    <div class="summary-calc-row">
+      <span>Shipping <span title="Free standard delivery over ₹60" style="cursor:help;">&#9432;</span></span>
+      <span id="summaryShippingVal" style="font-weight: 500;">Calculated at next step</span>
+    </div>
+
+    <div class="summary-calc-row" id="discountSummaryRow" style="display: none; color: #2e7d32;">
+      <span>Discount (<span id="discountCodeName">CODE</span>)</span>
+      <span id="discountSummaryVal">-₹0.00</span>
+    </div>
+
+    <div class="summary-calc-row total-line">
+      <span class="total-title">Total</span>
+      <div>
+        <span class="total-currency-code">INR</span>
+        <span class="total-price-val" id="summaryTotalVal">₹40.00</span>
+      </div>
+    </div>
+
+    <div class="tax-notice-text" id="summaryTaxNotice">
+      Including ₹7.20 in taxes
+    </div>
+
+  </aside>
+
+</div>
+
+<div class="razorpay-app-modal-overlay" id="razorpayAppModal" style="display: none;" onclick="handleRazorpayModalBackdrop(event)">
+
+  <div class="rzp-splash-card" id="rzpSplashCard">
+
+    <svg class="rzp-splash-shield" viewBox="0 0 100 120" fill="none">
+      <path d="M50 0C50 0 85 10 95 30C95 80 50 115 50 120C50 115 5 80 5 30C15 10 50 0 50 0Z" fill="url(#rzpShieldGrad)" filter="drop-shadow(0 6px 16px rgba(10,50,120,0.3))"/>
+      <path d="M42 28L58 28L46 62L62 62L36 94L44 68L30 68L42 28Z" fill="#ffffff"/>
+      <defs>
+        <linearGradient id="rzpShieldGrad" x1="0" y1="0" x2="100" y2="120" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#3b82f6"/>
+          <stop offset="100%" stop-color="#1d4ed8"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <div class="rzp-splash-footer">
+      Secured By <span class="rzp-blue-brand"><svg width="15" height="15" viewBox="0 0 24 24" fill="#0c2340"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Razorpay</span>
+    </div>
+  </div>
+
+  <div class="rzp-main-window" id="rzpMainWindow" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="rzpWinTitle">
+
+    <div class="rzp-win-left">
+      <div class="rzp-win-brand-header">
+        <div class="rzp-win-avatar">T</div>
+        <h3 class="rzp-win-brand-name">Their Nibs</h3>
+      </div>
+
+      <div class="rzp-win-price-card">
+        <span class="rzp-price-label">Price Summary</span>
+        <div class="rzp-price-value" id="rzpWinAmountDisplay">₹40.00</div>
+      </div>
+
+      <div class="rzp-win-user-pill">
+        <div class="rzp-user-pill-left">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span id="rzpUsingAsText">Using as +91 85115 30779</span>
+        </div>
+        <span style="font-size: 0.9rem; color: #9ca3af;">&rsaquo;</span>
+      </div>
+
+      <svg class="rzp-win-isometric-art" viewBox="0 0 200 140" fill="none">
+        <ellipse cx="60" cy="95" rx="30" ry="12" fill="#752b2a"/>
+        <path d="M30 95v10c0 6.6 13.4 12 30 12s30-5.4 30-12V95z" fill="#501a19"/>
+        <ellipse cx="60" cy="85" rx="30" ry="12" fill="#8c3332"/>
+        <path d="M30 85v10c0 6.6 13.4 12 30 12s30-5.4 30-12V85z" fill="#672221"/>
+        <ellipse cx="60" cy="75" rx="30" ry="12" fill="#a43c3b"/>
+        <polygon points="110,60 170,25 185,55 125,90" fill="#9e3a39"/>
+        <polygon points="125,90 185,55 185,62 125,97" fill="#672221"/>
+        <polygon points="110,60 125,90 125,97 110,67" fill="#501a19"/>
+        <rect x="135" y="55" width="20" height="8" rx="2" fill="#ffffff" opacity="0.8" transform="rotate(-30 135 55)"/>
+        <polygon points="90,95 125,75 160,95 125,115" fill="#a43c3b"/>
+        <polygon points="90,95 125,115 125,138 90,118" fill="#752b2a"/>
+        <polygon points="125,115 160,95 160,118 125,138" fill="#501a19"/>
+      </svg>
+
+      <div class="rzp-win-sec-footer">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="#ffffff"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span>Secured by <strong>Razorpay</strong></span>
+      </div>
+    </div>
+
+    <div class="rzp-win-right">
+
+      <div class="rzp-win-right-header">
+        <h4 class="rzp-win-title" id="rzpWinTitle">Payment Options</h4>
+        <div class="rzp-win-controls">
+          <span class="rzp-ctrl-dots">&bull;&bull;&bull;</span>
+          <button type="button" class="rzp-ctrl-close" onclick="closeRazorpayAppModal()" aria-label="Close dialog">&times;</button>
+        </div>
+      </div>
+
+      <div class="rzp-win-columns-wrap">
+
+        <div class="rzp-sub-methods-col">
+
+          <button type="button" class="rzp-method-btn active" id="rzpBtnMethodCards" onclick="selectRzpMethodTab('cards')">
+            <span class="rzp-method-name">Cards</span>
+            <div class="rzp-method-icons">
+              <span class="pay-badge" style="padding:1px 3px; font-size:0.6rem;">VISA</span>
+              <span class="pay-badge" style="padding:1px 3px; font-size:0.6rem;">MC</span>
+              <span class="pay-badge" style="padding:1px 3px; font-size:0.6rem;">RuPay</span>
+            </div>
+          </button>
+
+          <button type="button" class="rzp-method-btn" id="rzpBtnMethodNetbanking" onclick="selectRzpMethodTab('netbanking')">
+            <span class="rzp-method-name">Netbanking</span>
+            <div class="rzp-method-icons">
+              <span class="pay-badge" style="padding:1px 3px; font-size:0.6rem; background:#fee2e2; color:#991b1b;">SBI</span>
+              <span class="pay-badge" style="padding:1px 3px; font-size:0.6rem; background:#dbeafe; color:#1e40af;">HDFC</span>
+            </div>
+          </button>
+
+          <button type="button" class="rzp-method-btn" id="rzpBtnMethodWallet" onclick="selectRzpMethodTab('wallet')">
+            <span class="rzp-method-name">Wallet</span>
+            <div class="rzp-method-icons">
+              <span class="pay-badge" style="padding:1px 3px; font-size:0.6rem; background:#eff6ff; color:#2563eb;">M</span>
+              <span class="pay-badge" style="padding:1px 3px; font-size:0.6rem; background:#fff7ed; color:#c2410c;">A</span>
+            </div>
+          </button>
+
+          <button type="button" class="rzp-method-btn" id="rzpBtnMethodUpi" onclick="selectRzpMethodTab('upi')">
+            <span class="rzp-method-name">UPI / QR</span>
+            <div class="rzp-method-icons">
+              <span class="pay-badge" style="padding:1px 3px; font-size:0.6rem; background:#f0fdf4; color:#166534;">GPay</span>
+              <span class="pay-badge" style="padding:1px 3px; font-size:0.6rem; background:#faf5ff; color:#6b21a8;">PhonePe</span>
+            </div>
+          </button>
+
+        </div>
+
+        <div class="rzp-sub-detail-col">
+
+          <div id="rzpPaneCards" style="display: flex; flex-direction: column; height: 100%;">
+            <div class="rzp-sub-heading">Add a new card</div>
+
+            <div class="rzp-card-input-box">
+              <input type="text" class="rzp-card-num-input" placeholder="Card Number" value="4532 8921 7340 8923">
+              <div class="rzp-card-row-split">
+                <input type="text" class="rzp-card-half-input" placeholder="MM / YY" value="08/28">
+                <input type="password" class="rzp-card-half-input" placeholder="CVV" maxlength="4" value="384">
+              </div>
+            </div>
+
+            <label class="rzp-rbi-check-row">
+              <input type="checkbox" checked>
+              <span>Save this card as per RBI guidelines</span>
+            </label>
+
+            <button type="button" class="rzp-btn-continue" onclick="openRzpOtpModal('Debit/Credit Card')">
+              Continue
+            </button>
+          </div>
+
+          <div id="rzpPaneNetbanking" style="display: none; flex-direction: column; height: 100%;">
+            <div class="rzp-sub-heading">Popular Banks</div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+              <label class="rzp-wallet-item-row" style="margin: 0;">
+                <div class="rzp-wallet-left">
+                  <input type="radio" name="nbBank" value="HDFC Bank" checked>
+                  <span>HDFC Bank</span>
+                </div>
+              </label>
+              <label class="rzp-wallet-item-row" style="margin: 0;">
+                <div class="rzp-wallet-left">
+                  <input type="radio" name="nbBank" value="ICICI Bank">
+                  <span>ICICI Bank</span>
+                </div>
+              </label>
+              <label class="rzp-wallet-item-row" style="margin: 0;">
+                <div class="rzp-wallet-left">
+                  <input type="radio" name="nbBank" value="State Bank of India">
+                  <span>State Bank of India</span>
+                </div>
+              </label>
+              <label class="rzp-wallet-item-row" style="margin: 0;">
+                <div class="rzp-wallet-left">
+                  <input type="radio" name="nbBank" value="Axis Bank">
+                  <span>Axis Bank</span>
+                </div>
+              </label>
+            </div>
+
+            <button type="button" class="rzp-btn-continue" onclick="openRzpOtpModal('Netbanking')">
+              Continue
+            </button>
+          </div>
+
+          <div id="rzpPaneWallet" style="display: none; flex-direction: column; height: 100%;">
+            <div class="rzp-sub-heading">All Wallet Options</div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+              <label class="rzp-wallet-item-row" style="margin: 0; cursor: pointer;">
+                <div class="rzp-wallet-left">
+                  <input type="radio" name="rzpWalletOpt" value="MobiKwik" checked>
+                  <span class="pay-badge" style="background:#0284c7; color:#fff; font-weight:700;">M</span>
+                  <span>MobiKwik</span>
+                </div>
+                <span style="color:#9ca3af;">&rsaquo;</span>
+              </label>
+
+              <label class="rzp-wallet-item-row" style="margin: 0; cursor: pointer;">
+                <div class="rzp-wallet-left">
+                  <input type="radio" name="rzpWalletOpt" value="Airtel Payments Bank">
+                  <span class="pay-badge" style="background:#dc2626; color:#fff; font-weight:700;">A</span>
+                  <span>Airtel Payments Bank</span>
+                </div>
+                <span style="color:#9ca3af;">&rsaquo;</span>
+              </label>
+
+              <label class="rzp-wallet-item-row" style="margin: 0; cursor: pointer;">
+                <div class="rzp-wallet-left">
+                  <input type="radio" name="rzpWalletOpt" value="Freecharge">
+                  <span class="pay-badge" style="background:#ea580c; color:#fff; font-weight:700;">F</span>
+                  <span>Freecharge</span>
+                </div>
+                <span style="color:#9ca3af;">&rsaquo;</span>
+              </label>
+
+              <label class="rzp-wallet-item-row" style="margin: 0; cursor: pointer;">
+                <div class="rzp-wallet-left">
+                  <input type="radio" name="rzpWalletOpt" value="JioMoney">
+                  <span class="pay-badge" style="background:#2563eb; color:#fff; font-weight:700;">J</span>
+                  <span>JioMoney</span>
+                </div>
+                <span style="color:#9ca3af;">&rsaquo;</span>
+              </label>
+            </div>
+
+            <button type="button" class="rzp-btn-continue" onclick="continueWalletOtp()">
+              Continue
+            </button>
+          </div>
+
+          <div id="rzpPaneUpi" style="display: none; flex-direction: column; height: 100%;">
+            <div class="rzp-sub-heading">Pay with UPI</div>
+
+            <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: #faf6f5; border-radius: 8px; margin-bottom: 12px;">
+              <img id="rzpDynamicQr" src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=upi://pay?pa=theirnibs@razorpay&pn=Their%20Nibs%20London&am=40.00&cu=INR" alt="QR" style="width: 70px; height: 70px; border-radius: 4px; border: 1px solid #e5e7eb;">
+              <div>
+                <strong style="font-size: 0.82rem; color: #111;">Scan &amp; Pay instantly</strong>
+                <p style="font-size: 0.72rem; color: #6b7280; margin: 2px 0 0;">Google Pay, PhonePe, Paytm</p>
+              </div>
+            </div>
+
+            <input type="text" class="rzp-card-num-input" style="border: 1px solid #d1d5db; border-radius: 6px; margin-bottom: 12px;" placeholder="e.g. 8511530779@upi" value="8511530779@upi">
+
+            <button type="button" class="rzp-btn-continue" onclick="openRzpOtpModal('UPI Payment')">
+              Continue
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="rzp-otp-modal-overlay" id="rzpOtpOverlay" style="display: none;">
+      <div class="rzp-otp-dialog">
+        <button type="button" class="rzp-otp-close-x" onclick="closeRzpOtpModal()" aria-label="Close OTP dialog">&times;</button>
+
+        <div class="rzp-otp-logo">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="#0284c7">
+            <rect width="24" height="24" rx="6" fill="#0284c7"/>
+            <path d="M7 16V8l5 4 5-4v8" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </div>
+
+        <h3 class="rzp-otp-title">Enter OTP to complete Payment</h3>
+        <p class="rzp-otp-subtitle" id="rzpOtpSubtitleText">Enter OTP sent to +91XXXXX0779</p>
+
+        <form id="rzpOtpForm" onsubmit="event.preventDefault(); submitRzpOtpPayment();" style="margin: 0; padding: 0;">
+          <input type="text" class="rzp-otp-input" id="rzpOtpCodeInput" placeholder="Enter OTP" value="" maxlength="6" autocomplete="one-time-code" onkeydown="if(event.key==='Enter'){ event.preventDefault(); submitRzpOtpPayment(); }" inputmode="numeric">
+          <div id="rzpOtpError" style="display: none; color: #dc2626; font-size: 0.76rem; margin-top: -6px; margin-bottom: 8px; font-weight: 500;">Please enter the OTP manually to proceed.</div>
+          <p style="font-size: 0.74rem; color: #64748b; margin-top: 3px; margin-bottom: 10px;">(Test Mode: Enter any 4-6 digit OTP manually to proceed)</p>
+
+          <div class="rzp-otp-resend" id="rzpOtpTimerText">Resend OTP in 27s</div>
+
+          <button type="submit" class="rzp-btn-continue" id="rzpOtpSubmitBtn">
+            Continue
+          </button>
+        </form>
+
+        <div class="rzp-otp-footer-sec">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="#0c2340"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span>Secured by <strong style="color:#0c2340;">Razorpay</strong></span>
+        </div>
+
+        <div class="rzp-otp-timeout" id="rzpTimeoutCountdown">Timeout in 2:56 mins</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+  const DEFAULT_IMAGE_2_ITEMS = [
+    {
+      title: "Ecru Retro Sky Cotton Traditional Pyjama Set",
+      variant: "Cream / S",
+      price: 40.00,
+      qty: 1,
+      image: "/static/images/products/51_Womens_Satin_Joy_oh_Joy_Oversize_Pyjama_set_009_5_UNCROPPED.jpg"
+    }
+  ];
+
+  let cartItems = [];
+  let shippingCost = 0.00;
+  let discountAmount = 0.00;
+  let activeDiscountCode = '';
+  let availableCheckoutCoupons = [];
+  let appliedCouponData = null;
+  let selectedRzpMethod = 'cards';
+  let otpCountdownSeconds = 27;
+  let otpTimerInterval = null;
+
+  try {
+    const savedCoupon = localStorage.getItem('theirnibs_applied_coupon');
+    if (savedCoupon) {
+      appliedCouponData = JSON.parse(savedCoupon);
+      if (appliedCouponData && appliedCouponData.code) {
+        activeDiscountCode = appliedCouponData.code.toUpperCase();
+      }
+    }
+  } catch(e) {}
+
+  function parseNum(val) {
+    if (typeof val === 'number') return val;
+    if (!val) return 0;
+    return parseFloat(String(val).replace(/[^0-9.]/g, '')) || 0;
+  }
+
+  function loadCartData() {
+    try {
+      const stored = localStorage.getItem('theirnibs_bag');
+      if (stored !== null) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          if (parsed.length > 0) {
+            cartItems = parsed.map(item => ({
+              title: item.title,
+              variant: (item.color || 'Cream') + ' / ' + (item.size || 'S'),
+              price: parseNum(item.price) || 40.00,
+              qty: item.qty || 1,
+              image: item.image || '/static/images/products/51_Womens_Satin_Joy_oh_Joy_Oversize_Pyjama_set_009_5_UNCROPPED.jpg'
+            }));
+          } else {
+            cartItems = [];
+          }
+        }
+      } else {
+        cartItems = DEFAULT_IMAGE_2_ITEMS.slice();
+      }
+    } catch(e) {
+      if (!cartItems || cartItems.length === 0) {
+        cartItems = DEFAULT_IMAGE_2_ITEMS.slice();
+      }
+    }
+
+    if (activeDiscountCode) {
+      const inp = document.getElementById('checkoutDiscountInput');
+      if (inp) inp.value = activeDiscountCode;
+    }
+
+    renderSummaryItems();
+  }
+
+  function renderSummaryItems() {
+    const listEl = document.getElementById('checkoutItemsList');
+    if (!listEl) return;
+
+    if (!cartItems || cartItems.length === 0) {
+      listEl.innerHTML = `
+        <div class="checkout-empty-cart" style="padding: 28px 10px; text-align: center; color: #737373;">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" style="margin-bottom: 10px; display: inline-block;">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+          <p style="font-size: 0.95rem; font-weight: 500; color: #1f2937; margin-bottom: 6px;">Your checkout bag is empty</p>
+          <p style="font-size: 0.82rem; color: #6b7280; margin-bottom: 14px;">All items have been removed from your order.</p>
+          <a href="/collections/all/" style="display: inline-block; padding: 8px 18px; background: #1d1d1b; color: #ffffff; text-decoration: none; border-radius: 4px; font-size: 0.84rem; font-weight: 600;">Return to Shop</a>
+        </div>
+      `;
+      const subtotalLabel = document.getElementById('summarySubtotalLabel');
+      if (subtotalLabel) subtotalLabel.textContent = 'Subtotal \u00b7 0 items';
+      const subtotalEl = document.getElementById('summarySubtotalVal');
+      if (subtotalEl) subtotalEl.textContent = '₹0.00';
+      const totalEl = document.getElementById('summaryTotalVal');
+      if (totalEl) totalEl.textContent = '₹0.00';
+      const taxEl = document.getElementById('summaryTaxNotice');
+      if (taxEl) taxEl.textContent = 'Including ₹0.00 in taxes';
+      document.querySelectorAll('.btnPayAmount').forEach(b => b.textContent = '₹0.00');
+      const rzpDisp = document.getElementById('rzpWinAmountDisplay');
+      if (rzpDisp) rzpDisp.textContent = '₹0.00';
+      const postTotal = document.getElementById('postTotalAmount');
+      if (postTotal) postTotal.value = '0.00';
+      const postCart = document.getElementById('postCartItemsJson');
+      if (postCart) postCart.value = '[]';
+      return;
+    }
+
+    let totalQty = 0;
+    let subtotal = 0;
+    let html = '';
+
+    cartItems.forEach((item, idx) => {
+      const itemSub = item.price * (item.qty || 1);
+      totalQty += (item.qty || 1);
+      subtotal += itemSub;
+
+      html += `
+        <div class="order-summary-item" data-idx="${idx}">
+          <div class="item-thumbnail-wrap">
+            <img src="${item.image}" alt="${item.title}" class="item-thumbnail-img" onerror="this.onerror=null; this.src='/static/images/products/womens-duck-egg-wisteria.png';">
+            <span class="item-badge-count">${item.qty || 1}</span>
+          </div>
+          <div class="item-details-col">
+            <h4 class="item-title-text">${item.title}</h4>
+            <div class="item-variant-text">${item.variant}</div>
+            <button type="button" class="btn-checkout-remove-item" onclick="removeCheckoutItem(${idx})" title="Remove ${item.title}">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -1px; margin-right: 2px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              Remove
+            </button>
+          </div>
+          <div class="item-price-col">₹${itemSub.toFixed(2)}</div>
+        </div>
+      `;
+    });
+
+    listEl.innerHTML = html;
+
+    const row = document.getElementById('discountSummaryRow');
+    const nameEl = document.getElementById('discountCodeName');
+    const valEl = document.getElementById('discountSummaryVal');
+    const pill = document.getElementById('checkoutAppliedCouponPill');
+    const pillCode = document.getElementById('checkoutAppliedCode');
+    const pillSavings = document.getElementById('checkoutAppliedSavings');
+
+    if (activeDiscountCode && appliedCouponData) {
+      const minReq = appliedCouponData.min_order_amount || 0;
+      if (subtotal >= minReq) {
+        if (appliedCouponData.discount_type === 'percentage') {
+          discountAmount = subtotal * (appliedCouponData.discount_value / 100);
+          if (appliedCouponData.max_discount && discountAmount > appliedCouponData.max_discount) {
+            discountAmount = appliedCouponData.max_discount;
+          }
+        } else {
+          discountAmount = Math.min(subtotal, appliedCouponData.discount_value || appliedCouponData.discount_amount);
+        }
+
+        if (row && nameEl && valEl) {
+          nameEl.textContent = activeDiscountCode;
+          valEl.textContent = `-₹${discountAmount.toFixed(2)}`;
+          row.style.display = 'flex';
+        }
+        if (pill && pillCode && pillSavings) {
+          pillCode.textContent = activeDiscountCode;
+          pillSavings.textContent = `(-₹${discountAmount.toFixed(2)})`;
+          pill.style.display = 'flex';
+        }
+      } else {
+        discountAmount = 0.00;
+        if (row) row.style.display = 'none';
+        if (pill && pillCode && pillSavings) {
+          pillCode.textContent = activeDiscountCode;
+          pillSavings.textContent = `(Min order ₹${minReq} req)`;
+          pill.style.display = 'flex';
+        }
+      }
+    } else {
+      discountAmount = 0.00;
+      if (row) row.style.display = 'none';
+      if (pill) pill.style.display = 'none';
+    }
+
+    const subtotalLabel = document.getElementById('summarySubtotalLabel');
+    if (subtotalLabel) {
+      subtotalLabel.textContent = `Subtotal \u00b7 ${totalQty} item${totalQty === 1 ? '' : 's'}`;
+    }
+
+    const subtotalEl = document.getElementById('summarySubtotalVal');
+    if (subtotalEl) {
+      subtotalEl.textContent = `₹${subtotal.toFixed(2)}`;
+    }
+
+    const totalDue = Math.max(0, subtotal - discountAmount + shippingCost);
+    const taxApprox = (totalDue * 0.18).toFixed(2);
+
+    const totalEl = document.getElementById('summaryTotalVal');
+    if (totalEl) totalEl.textContent = `₹${totalDue.toFixed(2)}`;
+
+    const taxEl = document.getElementById('summaryTaxNotice');
+    if (taxEl) taxEl.textContent = `Including ₹${taxApprox} in taxes`;
+
+    document.querySelectorAll('.btnPayAmount').forEach(b => b.textContent = `₹${totalDue.toFixed(2)}`);
+    const rzpDisp = document.getElementById('rzpWinAmountDisplay');
+    if (rzpDisp) rzpDisp.textContent = `₹${totalDue.toFixed(2)}`;
+
+    const postTotal = document.getElementById('postTotalAmount');
+    if (postTotal) postTotal.value = totalDue.toFixed(2);
+
+    const postCoupon = document.getElementById('postCouponCode');
+    if (postCoupon) postCoupon.value = (discountAmount > 0) ? activeDiscountCode : '';
+
+    const postDisc = document.getElementById('postDiscountAmount');
+    if (postDisc) postDisc.value = discountAmount.toFixed(2);
+
+    const postCart = document.getElementById('postCartItemsJson');
+    if (postCart) postCart.value = JSON.stringify(cartItems);
+
+    const qrEl = document.getElementById('rzpDynamicQr');
+    if (qrEl) {
+      qrEl.src = `https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=upi://pay?pa=theirnibs@razorpay%26pn=Their%20Nibs%20London%26am=${totalDue.toFixed(2)}%26cu=INR`;
+    }
+  }
+
+  function removeCheckoutItem(idx) {
+    if (idx < 0 || idx >= cartItems.length) return;
+
+    cartItems.splice(idx, 1);
+
+    try {
+      localStorage.setItem('theirnibs_bag', JSON.stringify(cartItems));
+      const bagBadge = document.querySelector('.action-badge');
+      if (bagBadge) {
+        const totalCount = cartItems.reduce((acc, it) => acc + (it.qty || 1), 0);
+        bagBadge.textContent = totalCount;
+        bagBadge.style.display = totalCount > 0 ? 'flex' : 'none';
+      }
+    } catch(e) {}
+
+    const postCart = document.getElementById('postCartItemsJson');
+    if (postCart) postCart.value = JSON.stringify(cartItems);
+
+    renderSummaryItems();
+  }
+
+  function fetchCheckoutCoupons(callback) {
+    fetch('/api/coupons/available/')
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'success') {
+          availableCheckoutCoupons = data.coupons || [];
+          renderCheckoutCouponsDropdown();
+          if (callback) callback(availableCheckoutCoupons);
+        }
+      })
+      .catch(err => {
+        console.error('Error fetching available coupons:', err);
+      });
+  }
+
+  function openCheckoutCouponsDropdown() {
+    const dropdown = document.getElementById('checkoutCouponsDropdown');
+    if (dropdown) {
+      dropdown.style.display = 'block';
+      fetchCheckoutCoupons();
+    }
+  }
+
+  function closeCheckoutCouponsDropdown() {
+    const dropdown = document.getElementById('checkoutCouponsDropdown');
+    if (dropdown) dropdown.style.display = 'none';
+  }
+
+  function toggleCheckoutCouponsDropdown() {
+    const dropdown = document.getElementById('checkoutCouponsDropdown');
+    if (!dropdown) return;
+    if (dropdown.style.display === 'none' || !dropdown.style.display) {
+      openCheckoutCouponsDropdown();
+    } else {
+      closeCheckoutCouponsDropdown();
+    }
+  }
+
+  function renderCheckoutCouponsDropdown() {
+    const listEl = document.getElementById('checkoutCouponsList');
+    if (!listEl) return;
+
+    if (!availableCheckoutCoupons || availableCheckoutCoupons.length === 0) {
+      listEl.innerHTML = '<div style="padding: 12px; text-align: center; color: #64748b; font-size: 0.8rem;">No active seller coupons right now.</div>';
+      return;
+    }
+
+    const currentSubtotal = cartItems.reduce((acc, it) => acc + (it.price * (it.qty || 1)), 0);
+    const appliedCode = activeDiscountCode ? activeDiscountCode.toUpperCase() : '';
+
+    let html = '';
+    availableCheckoutCoupons.forEach(c => {
+      const isApplied = appliedCode === c.code.toUpperCase();
+      const meetsMin = currentSubtotal >= (c.min_order || 0);
+      const diff = Math.max(0, (c.min_order || 0) - currentSubtotal);
+
+      html += `
+        <div class="coupon-item-card ${isApplied ? 'is-applied' : ''}" onclick="selectCheckoutCoupon('${c.code}')">
+          <div class="coupon-card-top">
+            <span class="coupon-badge-code">${c.code}</span>
+            <span class="coupon-badge-discount">${c.discount_display}</span>
+          </div>
+          <div class="coupon-desc-text">${c.description}</div>
+          ${!meetsMin ? `<span class="coupon-min-hint">Min order ${c.min_order_display} (Add ₹${diff.toFixed(2)} more)</span>` : ''}
+          <div class="coupon-card-bottom">
+            <span>${c.validity}</span>
+            <button type="button" class="coupon-apply-btn ${isApplied ? 'applied' : ''}" onclick="event.stopPropagation(); selectCheckoutCoupon('${c.code}')">
+              ${isApplied ? 'Applied ✓' : 'Apply'}
+            </button>
+          </div>
+        </div>
+      `;
+    });
+
+    listEl.innerHTML = html;
+  }
+
+  function selectCheckoutCoupon(code) {
+    const input = document.getElementById('checkoutDiscountInput');
+    if (input) input.value = code;
+    applyCheckoutDiscount(code);
+  }
+
+  function applyCheckoutDiscount(codeOverride) {
+    const input = document.getElementById('checkoutDiscountInput');
+    const code = (codeOverride || (input ? input.value : '')).trim().toUpperCase();
+
+    if (!code) {
+      alert('Please enter a discount code.');
+      return;
+    }
+
+    const subtotal = cartItems.reduce((acc, it) => acc + (it.price * (it.qty || 1)), 0);
+
+    fetch('/api/coupons/apply/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken') || ''
+      },
+      body: JSON.stringify({ code: code, subtotal: subtotal })
+    })
+    .then(res => res.json().then(data => ({ status: res.status, body: data })))
+    .then(result => {
+      if (result.status === 200 && result.body.status === 'success') {
+        appliedCouponData = result.body;
+        activeDiscountCode = result.body.code;
+        discountAmount = parseFloat(result.body.discount_amount) || 0;
+        localStorage.setItem('theirnibs_applied_coupon', JSON.stringify(result.body));
+        closeCheckoutCouponsDropdown();
+        renderSummaryItems();
+        alert(result.body.message || `Coupon "${code}" applied! You saved ₹${discountAmount.toFixed(2)}`);
+      } else {
+        alert(result.body.message || 'Invalid discount coupon code.');
+      }
+    })
+    .catch(err => {
+      console.error('Apply coupon error:', err);
+      alert('Could not validate discount code. Please try again.');
+    });
+  }
+
+  function removeCheckoutCoupon() {
+    fetch('/api/coupons/remove/', { method: 'POST', headers: { 'X-CSRFToken': getCookie('csrftoken') || '' } })
+      .catch(() => {});
+    appliedCouponData = null;
+    activeDiscountCode = '';
+    discountAmount = 0.00;
+    localStorage.removeItem('theirnibs_applied_coupon');
+    const input = document.getElementById('checkoutDiscountInput');
+    if (input) input.value = '';
+    renderSummaryItems();
+    renderCheckoutCouponsDropdown();
+  }
+
+  document.addEventListener('click', function(e) {
+    const wrapper = document.getElementById('checkoutDiscountWrapper');
+    const dropdown = document.getElementById('checkoutCouponsDropdown');
+    if (wrapper && dropdown && !wrapper.contains(e.target)) {
+      dropdown.style.display = 'none';
+    }
+  });
+
+  function goToStep(step, focusFieldId) {
+    const secInfo = document.getElementById('stepInformationSection');
+    const secShip = document.getElementById('stepShippingSection');
+    const secPay = document.getElementById('stepPaymentSection');
+
+    const crumbInfo = document.getElementById('crumbInfo');
+    const crumbShip = document.getElementById('crumbShipping');
+    const crumbPay = document.getElementById('crumbPayment');
+    const crumbReview = document.getElementById('crumbReview');
+
+    const email = document.getElementById('customerEmail').value || 'customer@boutique.co.uk';
+    const firstName = document.getElementById('shippingFirstName').value || 'Eleanor';
+    const lastName = document.getElementById('shippingLastName').value || 'Vance';
+    const addr = document.getElementById('shippingAddress').value || '14 Kensington High Street';
+    const apt = document.getElementById('shippingApartment').value || 'Suite 4B';
+    const city = document.getElementById('shippingCity').value || 'Mumbai';
+    const pcode = document.getElementById('shippingPostcode').value || '400001';
+    const country = document.getElementById('shippingCountry').value || 'India';
+    const phone = document.getElementById('shippingPhone').value || '+91 85115 30779';
+
+    const fullAddr = `${addr}${apt ? ', ' + apt : ''}, ${city} ${pcode}, ${country}`;
+
+    const contactTexts = [email, phone].filter(Boolean).join(' \u00b7 ');
+    document.getElementById('summaryContactVal').textContent = contactTexts;
+    document.getElementById('paymentSummaryContact').textContent = contactTexts;
+    document.getElementById('summaryAddressVal').textContent = fullAddr;
+    document.getElementById('paymentSummaryAddress').textContent = fullAddr;
+
+    const usingAsEl = document.getElementById('rzpUsingAsText');
+    if (usingAsEl) usingAsEl.textContent = `Using as ${phone}`;
+
+    const otpSub = document.getElementById('rzpOtpSubtitleText');
+    if (otpSub) {
+      const last4 = phone.slice(-4) || '0779';
+      otpSub.textContent = `Enter OTP sent to +91XXXXX${last4}`;
+    }
+
+    document.getElementById('postEmail').value = email;
+    document.getElementById('postFirstName').value = firstName;
+    document.getElementById('postLastName').value = lastName;
+    document.getElementById('postAddress').value = addr + (apt ? ' ' + apt : '');
+    document.getElementById('postCity').value = city;
+    document.getElementById('postPostcode').value = pcode;
+    document.getElementById('postCountry').value = country;
+    document.getElementById('postPhone').value = phone;
+
+    secInfo.style.display = 'none';
+    secShip.style.display = 'none';
+    secPay.style.display = 'none';
+
+    crumbInfo.classList.remove('active');
+    crumbShip.classList.remove('active');
+    crumbPay.classList.remove('active');
+    crumbReview.classList.remove('active');
+
+    if (step === 'information') {
+      secInfo.style.display = 'block';
+      crumbInfo.classList.add('active');
+      if (focusFieldId) {
+        setTimeout(() => {
+          const el = document.getElementById(focusFieldId);
+          if (el) {
+            el.focus();
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 150);
+      }
+    } else if (step === 'shipping') {
+      secShip.style.display = 'block';
+      crumbShip.classList.add('active');
+      document.getElementById('summaryShippingVal').textContent = shippingCost === 0 ? 'FREE' : `₹${shippingCost.toFixed(2)}`;
+    } else if (step === 'payment' || step === 'review') {
+      secPay.style.display = 'block';
+      if (step === 'review') {
+        crumbReview.classList.add('active');
+      } else {
+        crumbPay.classList.add('active');
+      }
+    }
+
+    if (!focusFieldId) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  function selectShippingRate(type, cost, elem) {
+    shippingCost = cost;
+    document.querySelectorAll('.shipping-option-item').forEach(el => el.classList.remove('selected'));
+    if (elem) elem.classList.add('selected');
+
+    const methodText = type === 'standard' ? 'Standard Delivery \u2022 FREE' : 'Express Tracked Courier \u2022 ₹149.00';
+    document.getElementById('paymentSummaryMethod').textContent = methodText;
+    document.getElementById('summaryShippingVal').textContent = cost === 0 ? 'FREE' : `₹${cost.toFixed(2)}`;
+
+    renderSummaryItems();
+  }
+
+  function switchPaymentMethod(method) {
+    const optRazorpay = document.getElementById('optHeaderRazorpay');
+    const optCod = document.getElementById('optHeaderCod');
+    const bodyRazorpay = document.getElementById('optBodyRazorpay');
+    const bodyCod = document.getElementById('optBodyCod');
+    const radioRazorpay = document.getElementById('payRadioRazorpay');
+    const radioCod = document.getElementById('payRadioCod');
+    const postMethod = document.getElementById('postPaymentMethod');
+
+    if (method === 'razorpay') {
+      optRazorpay.classList.add('selected');
+      optCod.classList.remove('selected');
+      bodyRazorpay.classList.add('active');
+      bodyCod.classList.remove('active');
+      radioRazorpay.checked = true;
+      if (postMethod) postMethod.value = 'Razorpay (Online)';
+    } else {
+      optCod.classList.add('selected');
+      optRazorpay.classList.remove('selected');
+      bodyCod.classList.add('active');
+      bodyRazorpay.classList.remove('active');
+      radioCod.checked = true;
+      if (postMethod) postMethod.value = 'Cash on Delivery';
+    }
+  }
+
+  function selectExpressPayment(type) {
+    goToStep('payment');
+    switchPaymentMethod(type);
+    if (type === 'razorpay') {
+      setTimeout(openRazorpayAppModal, 250);
+    }
+  }
+
+  function openRazorpayAppModal() {
+    const modal = document.getElementById('razorpayAppModal');
+    const splash = document.getElementById('rzpSplashCard');
+    const mainWin = document.getElementById('rzpMainWindow');
+    const otpOverlay = document.getElementById('rzpOtpOverlay');
+    if (!modal) return;
+
+    renderSummaryItems();
+
+    splash.style.display = 'flex';
+    mainWin.style.display = 'none';
+    otpOverlay.style.display = 'none';
+
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    setTimeout(() => {
+      splash.style.display = 'none';
+      mainWin.style.display = 'flex';
+    }, 550);
+  }
+
+  function closeRazorpayAppModal() {
+    const modal = document.getElementById('razorpayAppModal');
+    if (modal) modal.style.display = 'none';
+    document.body.style.overflow = '';
+    clearInterval(otpTimerInterval);
+  }
+
+  function handleRazorpayModalBackdrop(event) {
+    if (event.target === document.getElementById('razorpayAppModal')) {
+      closeRazorpayAppModal();
+    }
+  }
+
+  function selectRzpMethodTab(tab) {
+    selectedRzpMethod = tab;
+    const tabs = ['cards', 'netbanking', 'wallet', 'upi'];
+    tabs.forEach(t => {
+      const btn = document.getElementById('rzpBtnMethod' + capitalize(t));
+      const pane = document.getElementById('rzpPane' + capitalize(t));
+      if (btn) btn.classList.remove('active');
+      if (pane) pane.style.display = 'none';
+    });
+
+    const activeBtn = document.getElementById('rzpBtnMethod' + capitalize(tab));
+    const activePane = document.getElementById('rzpPane' + capitalize(tab));
+    if (activeBtn) activeBtn.classList.add('active');
+    if (activePane) activePane.style.display = 'flex';
+  }
+
+  function capitalize(s) {
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  function continueWalletOtp() {
+    const selected = document.querySelector('input[name="rzpWalletOpt"]:checked');
+    const walletName = selected ? selected.value : 'Wallet';
+    openRzpOtpModal(walletName + ' Wallet');
+  }
+
+  function openRzpOtpModal(sourceName) {
+    const otpOverlay = document.getElementById('rzpOtpOverlay');
+    if (!otpOverlay) return;
+
+    const otpInput = document.getElementById('rzpOtpCodeInput');
+    if (otpInput) {
+      otpInput.value = '';
+      otpInput.style.borderColor = '#d1d5db';
+    }
+    const errEl = document.getElementById('rzpOtpError');
+    if (errEl) errEl.style.display = 'none';
+
+    const phone = document.getElementById('shippingPhone')?.value || '+91 85115 30779';
+    const last4 = phone.slice(-4) || '0779';
+    const subEl = document.getElementById('rzpOtpSubtitleText');
+    if (subEl) {
+      subEl.textContent = `Enter OTP sent to +91XXXXX${last4}${sourceName ? ' (' + sourceName + ')' : ''}`;
+    }
+
+    otpOverlay.style.display = 'flex';
+    if (otpInput) {
+      setTimeout(() => otpInput.focus(), 150);
+    }
+
+    otpCountdownSeconds = 27;
+    const timerText = document.getElementById('rzpOtpTimerText');
+    clearInterval(otpTimerInterval);
+    otpTimerInterval = setInterval(() => {
+      otpCountdownSeconds--;
+      if (timerText) {
+        if (otpCountdownSeconds > 0) {
+          timerText.textContent = `Resend OTP in ${otpCountdownSeconds}s`;
+        } else {
+          timerText.innerHTML = '<a href="javascript:void(0)" onclick="openRzpOtpModal()" style="color:#0284c7; text-decoration:underline;">Resend OTP</a>';
+          clearInterval(otpTimerInterval);
+        }
+      }
+    }, 1000);
+  }
+
+  function closeRzpOtpModal() {
+    const otpOverlay = document.getElementById('rzpOtpOverlay');
+    if (otpOverlay) otpOverlay.style.display = 'none';
+    clearInterval(otpTimerInterval);
+  }
+
+  function syncCheckoutFormData() {
+    const email = document.getElementById('customerEmail')?.value || 'customer@boutique.co.uk';
+    const firstName = document.getElementById('shippingFirstName')?.value || 'Eleanor';
+    const lastName = document.getElementById('shippingLastName')?.value || 'Vance';
+    const addr = document.getElementById('shippingAddress')?.value || '14 Kensington High Street';
+    const apt = document.getElementById('shippingApartment')?.value || 'Suite 4B';
+    const city = document.getElementById('shippingCity')?.value || 'Mumbai';
+    const pcode = document.getElementById('shippingPostcode')?.value || '400001';
+    const country = document.getElementById('shippingCountry')?.value || 'India';
+    const phone = document.getElementById('shippingPhone')?.value || '+91 85115 30779';
+    const total = document.getElementById('postTotalAmount')?.value || '40.00';
+
+    const pEmail = document.getElementById('postEmail');
+    if (pEmail) pEmail.value = email;
+    const pFirst = document.getElementById('postFirstName');
+    if (pFirst) pFirst.value = firstName;
+    const pLast = document.getElementById('postLastName');
+    if (pLast) pLast.value = lastName;
+    const pAddr = document.getElementById('postAddress');
+    if (pAddr) pAddr.value = addr + (apt ? ' ' + apt : '');
+    const pCity = document.getElementById('postCity');
+    if (pCity) pCity.value = city;
+    const pPost = document.getElementById('postPostcode');
+    if (pPost) pPost.value = pcode;
+    const pCountry = document.getElementById('postCountry');
+    if (pCountry) pCountry.value = country;
+    const pPhone = document.getElementById('postPhone');
+    if (pPhone) pPhone.value = phone;
+    const pTotal = document.getElementById('postTotalAmount');
+    if (pTotal && (!pTotal.value || pTotal.value === '')) pTotal.value = total;
+  }
+
+  let isSubmittingOtp = false;
+
+  function submitRzpOtpPayment() {
+    if (isSubmittingOtp) return;
+
+    const otpInput = document.getElementById('rzpOtpCodeInput');
+    const otpVal = otpInput ? otpInput.value.replace(/\s+/g, '').trim() : '';
+    const errEl = document.getElementById('rzpOtpError');
+
+    if (!otpVal || otpVal.length < 4) {
+      if (errEl) {
+        errEl.textContent = 'Please enter the OTP manually to proceed (at least 4 digits).';
+        errEl.style.display = 'block';
+      }
+      if (otpInput) {
+        otpInput.style.borderColor = '#dc2626';
+        otpInput.focus();
+      }
+      return;
+    }
+
+    isSubmittingOtp = true;
+    clearInterval(otpTimerInterval);
+
+    const btn = document.getElementById('rzpOtpSubmitBtn');
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Verifying OTP...';
+    }
+
+    syncCheckoutFormData();
+
+    const testPaymentId = 'pay_TNIB' + Math.floor(1000000 + Math.random() * 9000000);
+
+    const postPaymentId = document.getElementById('postPaymentId');
+    if (postPaymentId) postPaymentId.value = testPaymentId;
+
+    const postMethod = document.getElementById('postPaymentMethod');
+    if (postMethod) postMethod.value = 'Razorpay (Test Mode - Online Verified)';
+
+    const postCartItems = document.getElementById('postCartItemsJson');
+    if (postCartItems) {
+      postCartItems.value = JSON.stringify(cartItems || []);
+    }
+
+    const dialog = document.querySelector('.rzp-otp-dialog');
+    if (dialog) {
+      dialog.innerHTML = `
+        <div style="width: 60px; height: 60px; background: #ecfdf5; color: #059669; border: 2px solid #a7f3d0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 12px auto 16px;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h3 style="font-size: 1.3rem; font-weight: 700; color: #111827; margin-bottom: 6px;">Payment Successful!</h3>
+        <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 12px;">Payment ID: <strong style="color: #111827;">${testPaymentId}</strong></p>
+        <p style="font-size: 0.88rem; color: #059669; font-weight: 600; margin-bottom: 14px;">Generating your PDF invoice &amp; redirecting...</p>
+        <div style="width: 24px; height: 24px; border: 2.5px solid #e5e7eb; border-top-color: #059669; border-radius: 50%; animation: rzpSpin 0.7s linear infinite; margin: 0 auto 10px;"></div>
+      `;
+    }
+
+    setTimeout(() => {
+      try {
+        const form = document.getElementById('finalPaymentForm');
+        if (form) {
+          form.submit();
+        } else {
+          window.location.href = "{% url 'order_success' %}";
+        }
+      } catch (err) {
+        console.warn('Form submit fallback:', err);
+        window.location.href = "{% url 'order_success' %}";
+      }
+    }, 1000);
+  }
+
+  const fForm = document.getElementById('finalPaymentForm');
+  if (fForm) {
+    fForm.addEventListener('submit', function() {
+      syncCheckoutFormData();
+      const postCartItems = document.getElementById('postCartItemsJson');
+      if (postCartItems && (postCartItems.value === undefined || postCartItems.value === null)) {
+        postCartItems.value = JSON.stringify(cartItems || []);
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    loadCartData();
+
+    const otpInput = document.getElementById('rzpOtpCodeInput');
+    if (otpInput) {
+      otpInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          submitRzpOtpPayment();
+        }
+      });
+
+      otpInput.addEventListener('input', function() {
+        const val = this.value.replace(/[^0-9]/g, '');
+        this.value = val;
+        if (val.length === 6) {
+          setTimeout(() => {
+            if (!isSubmittingOtp) {
+              submitRzpOtpPayment();
+            }
+          }, 300);
+        }
+      });
+    }
+  });
+</script>
+
+  <script src="/static/js/preloader.js?v=20261012-loader10s"></script>
+</body>
+</html>

@@ -1,0 +1,369 @@
+{% extends 'seller_panel/base.html' %}
+
+{% block title %}Customer Reviews &amp; Ratings{% endblock %}
+{% block page_heading %}Customer — Reviews &amp; Feedback{% endblock %}
+
+{% block content %}
+<style>
+    .review-stat-card {
+        background: #ffffff;
+        border: 1px solid var(--border-subtle, #e2e8f0);
+        border-radius: var(--radius-md, 10px);
+        padding: 1.1rem 1.35rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .status-pill {
+        display: inline-block;
+        padding: 0.25rem 0.65rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .badge-in-stock { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+    .badge-out-stock { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+
+    .clothify-modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(15, 23, 42, 0.55);
+        backdrop-filter: blur(3px);
+        z-index: 99999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        overflow-y: auto;
+    }
+    .clothify-modal-backdrop.active {
+        display: flex !important;
+    }
+    .clothify-modal-dialog {
+        background: #ffffff;
+        border-radius: 12px;
+        max-width: 700px;
+        width: 100%;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+        animation: modalSlideIn 0.2s ease-out;
+        margin: auto;
+    }
+    @keyframes modalSlideIn {
+        from { opacity: 0; transform: translateY(-15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .star-rating {
+        color: #f59e0b;
+        letter-spacing: 1px;
+    }
+</style>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; margin: 0; color: var(--primary, #2b5329); font-weight: 700;">
+            Customer Reviews &amp; Feedback
+        </h2>
+        <span style="font-size: 0.88rem; color: var(--text-muted, #64748b);">
+            Monitor product ratings, read customer feedback, and post official seller responses.
+        </span>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+    <div class="review-stat-card" >
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #64748b;">Average Rating</div>
+        <div class="seller-card-value" style="color: #f59e0b; margin-top: 4px;">
+            {{ avg_rating }} <span class="seller-card-unit">/ 5</span>
+        </div>
+        <div style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">Across reviewed products</div>
+    </div>
+
+    <div class="review-stat-card" >
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #64748b;">Total Reviews</div>
+        <div class="seller-card-value" style="color: #2563eb; margin-top: 4px;">
+            {{ total_reviews }}
+        </div>
+        <div style="font-size: 0.8rem; color: #2563eb; margin-top: 4px; font-weight: 500;">Reviews received</div>
+    </div>
+
+    <div class="review-stat-card" >
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #64748b;">Unanswered Reviews</div>
+        <div class="seller-card-value" style="color: #d97706; margin-top: 4px;">
+            {{ unanswered_count }}
+        </div>
+        <div style="font-size: 0.8rem; color: #d97706; margin-top: 4px; font-weight: 500;">Reviews awaiting a reply</div>
+    </div>
+
+    <div class="review-stat-card" >
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #64748b;">Responded Reviews</div>
+        <div class="seller-card-value" style="color: #16a34a; margin-top: 4px;">
+            {{ responded_count }}
+        </div>
+        <div style="font-size: 0.8rem; color: #16a34a; margin-top: 4px; font-weight: 500;">Reviews with seller replies</div>
+    </div>
+</div>
+
+<div class="clothify-card" style="padding: 1.1rem 1.25rem; background: #ffffff; margin-bottom: 1.5rem;">
+    <form method="GET" action="{% url 'seller_panel:reviews' %}" style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 220px;">
+            <input type="text" name="q" value="{{ current_q }}" class="form-control" placeholder="Search product or review text..." style="font-size: 0.88rem;">
+        </div>
+
+        <div style="width: 140px;">
+            <select name="rating" class="form-select" style="font-size: 0.88rem;">
+                <option value="all" {% if current_rating == 'all' %}selected{% endif %}>All Ratings</option>
+                <option value="5" {% if current_rating == '5' %}selected{% endif %}>5 Stars ★★★★★</option>
+                <option value="4" {% if current_rating == '4' %}selected{% endif %}>4 Stars ★★★★☆</option>
+                <option value="3" {% if current_rating == '3' %}selected{% endif %}>3 Stars ★★★☆☆</option>
+                <option value="2" {% if current_rating == '2' %}selected{% endif %}>2 Stars ★★☆☆☆</option>
+                <option value="1" {% if current_rating == '1' %}selected{% endif %}>1 Star ★☆☆☆☆</option>
+            </select>
+        </div>
+
+        <div style="width: 140px;">
+            <select name="status" class="form-select" style="font-size: 0.88rem;">
+                <option value="all" {% if current_status == 'all' %}selected{% endif %}>All Statuses</option>
+                <option value="answered" {% if current_status == 'answered' %}selected{% endif %}>Answered</option>
+                <option value="unanswered" {% if current_status == 'unanswered' %}selected{% endif %}>Unanswered</option>
+            </select>
+        </div>
+
+        <div style="width: 160px;">
+            <select name="category" class="form-select" style="font-size: 0.88rem;">
+                <option value="all" {% if current_category == 'all' %}selected{% endif %}>All Categories</option>
+                <option value="Nightwear" {% if current_category == 'Nightwear' %}selected{% endif %}>Nightwear &amp; Pyjamas</option>
+                <option value="Robes" {% if current_category == 'Robes' %}selected{% endif %}>Kimono Robes</option>
+                <option value="Nightdresses" {% if current_category == 'Nightdresses' %}selected{% endif %}>Nightdresses</option>
+                <option value="Accessories" {% if current_category == 'Accessories' %}selected{% endif %}>Accessories</option>
+            </select>
+        </div>
+
+        <div style="width: 140px;">
+            <select name="sort" class="form-select" style="font-size: 0.88rem;">
+                <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest First</option>
+                <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Oldest First</option>
+                <option value="highest" {% if current_sort == 'highest' %}selected{% endif %}>Highest Rating</option>
+                <option value="lowest" {% if current_sort == 'lowest' %}selected{% endif %}>Lowest Rating</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn" style="background: #2b5329; color: #ffffff; font-size: 0.88rem; font-weight: 600; padding: 6px 16px;">
+            <i class="bi bi-funnel me-1"></i> Filter
+        </button>
+        <a href="{% url 'seller_panel:reviews' %}" class="btn" style="background: #f1f5f9; color: #475569; font-size: 0.88rem; font-weight: 600; padding: 6px 14px;">
+            Reset
+        </a>
+    </form>
+</div>
+
+<div class="clothify-card" style="background: #ffffff; padding: 0; overflow: hidden; margin-bottom: 2rem;">
+    <div style="padding: 1.1rem 1.35rem; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between;">
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; margin: 0; font-weight: 700; color: var(--primary, #2b5329);">
+            Verified Customer Product Feedback
+        </h3>
+        <span style="font-size: 0.82rem; color: #64748b; font-weight: 500;">
+            Showing {{ reviews|length }} review(s)
+        </span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table align-middle" style="margin-bottom: 0; font-size: 0.88rem;">
+            <thead style="background-color: #f8fafc; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; color: #64748b;">
+                <tr>
+                    <th style="padding: 0.9rem 1.2rem;">Customer</th>
+                    <th style="padding: 0.9rem 1.2rem;">Product</th>
+                    <th style="padding: 0.9rem 1rem; text-align: center;">Rating</th>
+                    <th style="padding: 0.9rem 1.2rem;">Review Details</th>
+                    <th style="padding: 0.9rem 1rem; text-align: center;">Date</th>
+                    <th style="padding: 0.9rem 1rem; text-align: center;">Status</th>
+                    <th style="padding: 0.9rem 1.2rem; text-align: center;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rev in reviews %}
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 0.9rem 1.2rem;">
+                        <strong style="color: #0f172a; display: block; font-size: 0.9rem;">{{ rev.customer_name }}</strong>
+                        {% if rev.is_verified %}
+                        <span style="font-size: 0.73rem; color: #166534; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 1px 6px; border-radius: 4px; font-weight: 600;">
+                            <i class="bi bi-patch-check-fill me-1"></i> Verified Buyer
+                        </span>
+                        {% endif %}
+                    </td>
+
+                    <td style="padding: 0.9rem 1.2rem;">
+                        <div style="display: flex; align-items: center; gap: 0.6rem;">
+                            <div style="width: 36px; height: 36px; border-radius: 6px; background: #f8fafc; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid #e2e8f0; flex-shrink: 0;">
+                                <i class="bi bi-image text-muted"></i>
+                            </div>
+                            <div>
+                                <strong style="color: #334155; font-size: 0.88rem; display: block;">{{ rev.product_name }}</strong>
+                                <span style="font-size: 0.75rem; color: #64748b;">SKU: {{ rev.product_sku }}</span>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td style="padding: 0.9rem 1rem; text-align: center;">
+                        <div class="star-rating" style="font-size: 0.95rem;">
+                            {% if rev.rating == 5 %}★★★★★
+                            {% elif rev.rating == 4 %}★★★★☆
+                            {% elif rev.rating == 3 %}★★★☆☆
+                            {% elif rev.rating == 2 %}★★☆☆☆
+                            {% else %}★☆☆☆☆{% endif %}
+                        </div>
+                        <span style="font-weight: 700; font-size: 0.8rem; color: #0f172a;">{{ rev.rating_float }} / 5</span>
+                    </td>
+
+                    <td style="padding: 0.9rem 1.2rem; max-width: 280px;">
+                        <p style="margin: 0; color: #334155; font-size: 0.85rem; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                            "{{ rev.review_text }}"
+                        </p>
+                        {% if rev.seller_reply %}
+                        <div style="margin-top: 4px; font-size: 0.75rem; color: #166534; font-weight: 500;">
+                            <i class="bi bi-reply-fill me-1"></i> Seller Replied
+                        </div>
+                        {% endif %}
+                    </td>
+
+                    <td style="padding: 0.9rem 1rem; text-align: center; color: #64748b; font-size: 0.82rem;">
+                        {{ rev.date }}
+                    </td>
+
+                    <td style="padding: 0.9rem 1rem; text-align: center;">
+                        <span class="status-pill {{ rev.badge_class }}">{{ rev.status }}</span>
+                    </td>
+
+                    <td style="padding: 0.9rem 1.2rem; text-align: center;">
+                        <button type="button" class="btn btn-sm" style="background: #2b5329; color: #ffffff; font-size: 0.8rem; font-weight: 600; padding: 4px 12px; border-radius: 4px;"
+                                onclick="openReviewModal('{{ rev.id }}', '{{ rev.customer_name|escapejs }}', '{{ rev.product_name|escapejs }}', '{{ rev.rating }}', '{{ rev.review_text|escapejs }}', '{{ rev.date }}', '{{ rev.seller_reply|default:''|escapejs }}')">
+                            <i class="bi bi-chat-left-text me-1"></i> View / Reply
+                        </button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 2.5rem; color: #64748b;">
+                        No customer reviews match your search or filter selection.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="clothify-modal-backdrop" id="reviewReplyModal">
+    <div class="clothify-modal-dialog">
+        <div style="background: #faf6f0; border-bottom: 1px solid #e2e8f0; padding: 1.2rem 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+            <h5 style="font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 1.4rem; color: #2b5329; margin: 0;" id="modalTitle">
+                Customer Review Details
+            </h5>
+            <button type="button" style="background: transparent; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b; line-height: 1;" onclick="closeModal('reviewReplyModal')">&times;</button>
+        </div>
+
+        <form method="POST" action="{% url 'seller_panel:reply_review_action' %}">
+            {% csrf_token %}
+            <input type="hidden" name="review_id" id="modalReviewId">
+
+            <div style="padding: 1.5rem; font-size: 0.88rem;">
+
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-md, 10px); padding: 1rem; margin-bottom: 1.25rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                        <div>
+                            <strong style="color: #0f172a; font-size: 1rem;" id="modalCustomerName">Customer Name</strong>
+                            <span style="font-size: 0.75rem; color: #166534; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 1px 6px; border-radius: 4px; font-weight: 600; margin-left: 6px;">
+                                Verified Purchase
+                            </span>
+                        </div>
+                        <span style="font-size: 0.8rem; color: #64748b;" id="modalReviewDate">08 Oct 2026</span>
+                    </div>
+
+                    <div style="color: #475569; font-size: 0.85rem; margin-bottom: 8px;" id="modalProductName">
+                        Product Name
+                    </div>
+
+                    <div class="star-rating" style="font-size: 1.1rem; margin-bottom: 8px;" id="modalStars">
+                        ★★★★★
+                    </div>
+
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.85rem; color: #1e293b; font-style: italic; font-size: 0.9rem;" id="modalReviewBody">
+                        "Review text..."
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" style="font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">
+                        OFFICIAL SELLER RESPONSE *
+                    </label>
+                    <textarea name="seller_reply" id="modalReplyInput" class="form-control" rows="4" placeholder="Write a polite, professional reply to thank the customer or offer assistance..." required style="font-size: 0.88rem;"></textarea>
+                </div>
+
+                <div style="display: flex; align-items: center; justify-content: space-between; background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 0.75rem 0.9rem; font-size: 0.8rem; color: #92400e;">
+                    <div>
+                        <i class="bi bi-shield-exclamation me-1"></i>
+                        <strong>Clothify Policy Note:</strong> Sellers cannot delete negative customer reviews. Genuine feedback improves store quality.
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-danger" style="font-size: 0.75rem; padding: 2px 8px; flex-shrink: 0; margin-left: 8px;" onclick="alert('Review report flag submitted to Clothify Content Moderation for review.');">
+                        <i class="bi bi-flag me-1"></i> Report Spam
+                    </button>
+                </div>
+
+            </div>
+
+            <div style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 1rem 1.5rem; display: flex; justify-content: flex-end; gap: 0.75rem;">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('reviewReplyModal')" style="font-size: 0.88rem; font-weight: 600; padding: 8px 16px;">Cancel</button>
+                <button type="submit" class="btn" style="background: #2b5329; color: #ffffff; font-size: 0.88rem; font-weight: 600; padding: 8px 20px;">
+                    Submit Reply
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openModal(id) {
+    var modal = document.getElementById(id);
+    if(modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+function closeModal(id) {
+    var modal = document.getElementById(id);
+    if(modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+function openReviewModal(id, customer, product, rating, text, date, existingReply) {
+    document.getElementById('modalReviewId').value = id;
+    document.getElementById('modalCustomerName').innerText = customer;
+    document.getElementById('modalProductName').innerText = 'Product: ' + product;
+    document.getElementById('modalReviewDate').innerText = date;
+    document.getElementById('modalReviewBody').innerText = '"' + text + '"';
+
+    var starsStr = '';
+    var r = parseInt(rating);
+    for(var i=0; i<5; i++) {
+        starsStr += (i < r) ? '★' : '☆';
+    }
+    document.getElementById('modalStars').innerText = starsStr + ' (' + rating + '.0/5)';
+
+    document.getElementById('modalReplyInput').value = existingReply || '';
+
+    openModal('reviewReplyModal');
+}
+
+window.addEventListener('click', function(event) {
+    var modal = document.getElementById('reviewReplyModal');
+    if (event.target === modal) {
+        closeModal('reviewReplyModal');
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,445 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Login &ndash; Their Nibs Luxury Loungewear &amp; Sleepwear</title>
+
+  <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg?v=crown2026">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/images/favicon-32.png?v=crown2026">
+  <link rel="icon" type="image/png" sizes="192x192" href="/static/images/favicon-192.png?v=crown2026">
+  <link rel="apple-touch-icon" href="/static/images/favicon.png?v=crown2026">
+  <link rel="shortcut icon" type="image/x-icon" href="/static/images/favicon.ico?v=crown2026">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
+  <link rel="stylesheet" href="{% static 'css/seller_register.css' %}">
+  <link rel="stylesheet" href="{% static 'css/preloader.css' %}?v=20261012-loader10s">
+
+  <style>
+    .customer-login-container {
+      max-width: 1100px;
+      margin: 40px auto 70px;
+      padding: 0 20px;
+    }
+
+    .login-card-wrapper {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: var(--color-white);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+
+    .customer-login-header {
+      background-color: var(--color-brand-dark);
+      color: var(--color-white);
+      border-bottom: 3px solid var(--color-peach);
+      padding: 28px 30px;
+      text-align: center;
+    }
+
+    .customer-login-header h1 {
+      font-family: var(--font-serif);
+      font-size: 2.3rem;
+      font-style: italic;
+      color: var(--color-white);
+      margin-bottom: 6px;
+    }
+
+    .customer-login-header p {
+      font-size: 0.9rem;
+      color: var(--color-peach-light);
+    }
+
+    .customer-login-body {
+      padding: 34px 32px;
+    }
+
+    .login-type-toggle-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 26px;
+      background-color: var(--color-bg-light);
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px solid var(--color-border);
+    }
+
+    .login-toggle-btn {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.92rem;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+      background-color: transparent;
+      color: var(--color-primary);
+    }
+
+    .login-toggle-btn.active {
+      background-color: var(--color-brand-dark);
+      color: var(--color-white);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    .password-toggle-wrap {
+      position: relative;
+      width: 100%;
+    }
+
+    .password-toggle-wrap input.form-control {
+      width: 100%;
+      padding-right: 48px;
+      box-sizing: border-box;
+      font-size: 0.95rem;
+    }
+
+    .password-toggle-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      color: #666;
+      padding: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      transition: color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .password-toggle-btn:hover {
+      color: var(--color-brand-dark);
+      background-color: rgba(0, 0, 0, 0.06);
+    }
+
+    .login-row-options {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      font-size: 0.86rem;
+    }
+
+    .forgot-link {
+      color: var(--color-brand-dark);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .forgot-link:hover {
+      text-decoration: underline;
+    }
+
+    .create-account-box {
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid var(--color-border);
+      text-align: center;
+    }
+
+    .create-account-box p {
+      font-size: 0.92rem;
+      color: var(--color-text-meta);
+      margin-bottom: 12px;
+    }
+
+    .btn-create-account-outline {
+      display: inline-block;
+      width: 100%;
+      text-align: center;
+      padding: 12px 20px;
+      border: 2px solid var(--color-brand-dark);
+      border-radius: 6px;
+      background-color: transparent;
+      color: var(--color-brand-dark);
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+    }
+
+    .btn-create-account-outline:hover {
+      background-color: var(--color-brand-dark);
+      color: var(--color-white);
+    }
+
+    @media (max-width: 640px) {
+      .customer-login-container {
+        margin: 20px auto 40px;
+        padding: 0 12px;
+      }
+      .customer-login-header {
+        padding: 22px 16px;
+      }
+      .customer-login-header h1 {
+        font-size: 1.85rem;
+      }
+      .customer-login-body {
+        padding: 24px 18px;
+      }
+      .login-type-toggle-bar {
+        flex-direction: column;
+        gap: 6px;
+      }
+      .login-row-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="clothifyTopProgress" class="clothify-top-progress"></div>
+  <div id="clothifyPageLoader" class="clothify-preloader">
+    <div class="preloader-content">
+      <div class="preloader-image-wrap">
+        <img src="/static/images/loader-logo.png" 
+             alt="Their Nibs" 
+             class="preloader-custom-img" 
+             onerror="this.onerror=null; this.src='/static/images/loader-logo-square.png';">
+      </div>
+      <h2 class="preloader-brand-title">Their Nibs</h2>
+      <div class="preloader-brand-subtitle">Luxury Sleepwear &amp; Loungewear</div>
+      <div class="preloader-bar-wrap">
+        <div class="preloader-bar-inner"></div>
+      </div>
+      <div class="preloader-status-text" id="preloaderStatusText">Entering Boutique...</div>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="header-container">
+
+      <a href="{% url 'homepage' %}" class="brand-logo" aria-label="Their Nibs Home">
+        <div class="brand-emblem" aria-hidden="true">
+          <svg width="24" height="18" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 14L4 4L9 9L12 2L15 9L20 4L22 14H2Z"/>
+            <circle cx="12" cy="2" r="1" fill="currentColor"/>
+            <circle cx="4" cy="4" r="1" fill="currentColor"/>
+            <circle cx="20" cy="4" r="1" fill="currentColor"/>
+            <line x1="2" y1="16" x2="22" y2="16"/>
+          </svg>
+        </div>
+        <span class="brand-name">Their Nibs</span>
+      </a>
+
+      <nav class="nav-desktop" aria-label="Primary Navigation">
+        <div class="nav-item">
+          <a href="{% url 'homepage' %}#halloween" class="nav-link">Halloween</a>
+        </div>
+        <div class="nav-item">
+          <a href="{% url 'homepage' %}#women" class="nav-link">Women</a>
+        </div>
+        <div class="nav-item">
+          <a href="{% url 'homepage' %}#mens" class="nav-link">Men’s</a>
+        </div>
+        <div class="nav-item">
+          <a href="{% url 'homepage' %}#kids" class="nav-link">Kids</a>
+        </div>
+        <div class="nav-item">
+          <a href="{% url 'homepage' %}#accessories" class="nav-link">Accessories</a>
+        </div>
+        <div class="nav-item">
+          <a href="{% url 'homepage' %}#gifting" class="nav-link">Gifting</a>
+        </div>
+      </nav>
+
+      <div class="header-actions">
+        <a href="{% url 'homepage' %}" class="btn-secondary" style="padding: 6px 16px; font-size: 0.85rem;">&larr; Back to Home</a>
+
+        {% if request.session.customer_logged_in %}
+        <span style="font-size: 0.85rem; font-weight: 600; color: var(--color-white);">
+          Hi, {{ request.session.customer_name|default:"Customer" }}
+        </span>
+        <a href="{% url 'customer_logout' %}" class="btn-logout">Log Out</a>
+        {% else %}
+        <a href="{% url 'customer_login' %}" class="btn-login" style="color: var(--color-white); border-color: var(--color-white);">Log In</a>
+        <a href="{% url 'customer_register' %}" class="btn-create-account">Create Account</a>
+        {% endif %}
+      </div>
+
+    </div>
+  </header>
+
+  <main class="customer-login-container">
+    <div class="login-card-wrapper">
+
+      <div class="customer-login-header">
+        <h1>Welcome Back</h1>
+        <p id="headerSubtitle">Log in to access your Their Nibs account, saved items &amp; orders.</p>
+      </div>
+
+      <div class="customer-login-body">
+
+        {% if messages %}
+        <div style="margin-bottom: 1.25rem;">
+          {% for message in messages %}
+          <div style="padding: 0.75rem 1rem; border-radius: 6px; font-size: 0.88rem; background-color: #fce8e6; color: #c5221f; border: 1px solid #f5c2c0; margin-bottom: 0.5rem;">
+            {{ message }}
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{% url 'customer_login' %}" id="unifiedLoginForm">
+          {% csrf_token %}
+          <input type="hidden" name="login_type" id="login_type_input" value="customer">
+          <input type="hidden" name="next" value="{{ next|default:'' }}">
+
+          <div class="form-group full-width" style="margin-bottom: 18px;">
+            <label for="login_email" id="emailLabel">Email Address or Username <span class="required">*</span></label>
+            <input type="text" id="login_email" name="email" class="form-control" placeholder="name@example.com" required style="width: 100%; box-sizing: border-box;">
+          </div>
+
+          <div class="form-group full-width" style="margin-bottom: 16px;">
+            <label for="login_password">Password <span class="required">*</span></label>
+            <div class="password-toggle-wrap">
+              <input type="password" id="login_password" name="password" class="form-control" placeholder="Enter your password" required>
+              <button type="button" class="password-toggle-btn" aria-label="Toggle Password Visibility" onclick="togglePassVisibility('login_password', this)">
+                <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="login-row-options">
+            <label class="same-address-checkbox" style="margin: 0;">
+              <input type="checkbox" id="remember_me" name="remember_me">
+              <span style="font-size: 0.86rem; color: var(--color-text-main);" id="rememberText">Remember me</span>
+            </label>
+            <a href="#forgot-password" onclick="alert('Password reset link will be sent to your registered email.'); return false;" class="forgot-link">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="btn-submit-step" id="submitLoginBtn" style="width: 100%; justify-content: center; padding: 14px; font-size: 0.98rem; font-weight: 600;">
+            Log In
+          </button>
+
+          <div class="create-account-box" id="customerFooterBox">
+            <p>New to Their Nibs?</p>
+            <a href="{% url 'customer_register' %}" class="btn-create-account-outline">
+              Create Account
+            </a>
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="brand-name">Their Nibs</span>
+        <p>British-inspired boutique sleepwear &amp; loungewear brand designing beautiful prints to brighten up every cosy moment at home.</p>
+        <div class="footer-portal-buttons">
+          <a href="{% url 'admin_panel:login' %}" class="footer-portal-btn">
+            Admin Portal Login
+          </a>
+          <a href="{% url 'seller_login' %}" class="footer-portal-btn">
+            Seller Portal Login
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>ABOUT US</h4>
+        <ul>
+          <li><a href="{% url 'homepage' %}#about-us">About Us</a></li>
+          <li><a href="{% url 'homepage' %}#size-guides">Size guides</a></li>
+          <li><a href="{% url 'homepage' %}#behind-the-seams">Behind The Seams</a></li>
+          <li><a href="{% url 'homepage' %}#contact-us">Contact us</a></li>
+          <li><a href="{% url 'homepage' %}#wholesale-enquiries">Wholesale enquiries</a></li>
+          <li><a href="{% url 'homepage' %}#their-nibs-stores">Their Nibs Stores</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>HERE TO HELP</h4>
+        <ul>
+          <li><a href="{% url 'homepage' %}#delivery-returns">Delivery &amp; returns</a></li>
+          <li><a href="{% url 'homepage' %}#refund-policy">Refund policy</a></li>
+          <li><a href="{% url 'homepage' %}#terms-conditions">Terms &amp; conditions</a></li>
+          <li><a href="{% url 'homepage' %}#terms-of-service">Terms of service</a></li>
+          <li><a href="{% url 'homepage' %}#privacy-policy">Privacy policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-community">
+        <h4>JOIN OUR COMMUNITY</h4>
+        <p class="community-desc">Sign up to our email newsletter to get access to exclusive offers, giveaways and get involved in our antics behind-the-scenes!</p>
+        <form class="community-newsletter-form" onsubmit="event.preventDefault(); alert('Thank you for subscribing to Their Nibs!');">
+          <div class="community-input-wrap">
+            <input type="email" class="community-newsletter-input" placeholder="Enter your email" required aria-label="Email Address">
+            <button type="submit" class="community-newsletter-btn">SUBSCRIBE</button>
+          </div>
+        </form>
+        <div class="footer-social-row">
+          <a href="https://www.facebook.com/theirnibs/" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="Facebook">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+          </a>
+          <a href="https://www.instagram.com/theirnibs/" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="Instagram">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+          </a>
+          <a href="https://www.tiktok.com/@theirnibs" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="TikTok">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298 0 .59.043.87.127V9.32a6.31 6.31 0 0 0-.87-.06A6.334 6.334 0 0 0 3.15 15.6a6.34 6.34 0 0 0 10.74 4.54c1.19-1.19 1.86-2.8 1.86-4.47V8.71a8.17 8.17 0 0 0 4.84 1.59v-3.45a4.77 4.77 0 0 1-1-.16z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="footer-copyright">Copyright &copy; 2026, THEIR NIBS. All rights reserved. See our <a href="{% url 'homepage' %}#terms-of-service">terms of use</a> and <a href="{% url 'homepage' %}#privacy-policy">privacy notice</a>.</p>
+    </div>
+  </footer>
+
+  <script>
+    const eyeOpenSVG = `<svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+    const eyeOffSVG = `<svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+
+    function togglePassVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.innerHTML = eyeOffSVG;
+        btn.setAttribute('aria-label', 'Hide Password');
+      } else {
+        input.type = 'password';
+        btn.innerHTML = eyeOpenSVG;
+        btn.setAttribute('aria-label', 'Show Password');
+      }
+    }
+  </script>
+  <script src="{% static 'js/preloader.js' %}?v=20261012-loader10s"></script>
+</body>
+</html>

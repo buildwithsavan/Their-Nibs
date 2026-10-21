@@ -1,0 +1,76 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Store Settings{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Store Configuration</h1>
+        <p class="page-subtitle">Configure currency, shipping thresholds, tax parameters, and Gemini AI guardrails.</p>
+    </div>
+</div>
+
+<div class="clothify-card" style="max-width: 780px;">
+    <div class="card-header">
+        <h3 class="card-title">General E-Commerce Parameters</h3>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            {% csrf_token %}
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Store Brand Name *</label>
+                    {{ form.site_name }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tagline</label>
+                    {{ form.tagline }}
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Support Email *</label>
+                    {{ form.contact_email }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contact Phone</label>
+                    {{ form.contact_phone }}
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Currency Symbol</label>
+                    {{ form.currency_symbol }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Currency Code</label>
+                    {{ form.currency_code }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Low Stock Alert Threshold</label>
+                    {{ form.low_stock_threshold }}
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Standard Tax (GST %)</label>
+                    {{ form.tax_percentage }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Free Shipping Min Spend (₹)</label>
+                    {{ form.free_shipping_min }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Default Shipping Fee (₹)</label>
+                    {{ form.shipping_fee }}
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem; margin-top: 1rem;">Save Store Settings</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

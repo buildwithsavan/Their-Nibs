@@ -1,0 +1,1232 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ product.name|default:"Mens Navy Contrast Relaxed Fit Gauze Pyjama Set" }} &ndash; Their Nibs</title>
+
+  <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg?v=crown2026">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/images/favicon-32.png?v=crown2026">
+  <link rel="icon" type="image/png" sizes="192x192" href="/static/images/favicon-192.png?v=crown2026">
+  <link rel="apple-touch-icon" href="/static/images/favicon.png?v=crown2026">
+  <link rel="shortcut icon" type="image/x-icon" href="/static/images/favicon.ico?v=crown2026">
+
+  <meta name="description" content="{{ product.description|truncatewords:25 }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'css/homepage.css' %}?v=20261014-pdp-v2">
+  <link rel="stylesheet" href="{% static 'css/preloader.css' %}?v=20261012-loader10s">
+
+  <style>
+    :root {
+      --color-brand-black: #1d1d1b;
+      --color-brand-border: #d4d4d8;
+      --color-brand-peach: #f1c0ad;
+      --color-brand-peach-hover: #e5ab96;
+      --color-brand-peach-light: #f7e0d6;
+      --color-text-main: #1d1d1b;
+      --color-text-sub: #64748b;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #ffffff;
+      color: var(--color-text-main);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .pdp-top-announcement {
+      background-color: #f7cfc0;
+      color: #1d1d1b;
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      letter-spacing: 0.02em;
+      text-align: center;
+    }
+
+    .pdp-announce-arrow {
+      background: none;
+      border: none;
+      color: #1d1d1b;
+      font-size: 0.9rem;
+      cursor: pointer;
+      opacity: 0.6;
+      transition: opacity 0.15s;
+    }
+    .pdp-announce-arrow:hover { opacity: 1; }
+
+    .pdp-btn-notify-me {
+      flex: 1;
+      height: 52px;
+      background: #1d1d1b;
+      color: #ffffff;
+      border: none;
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: background 0.2s ease, transform 0.15s ease;
+    }
+    .pdp-btn-notify-me:hover {
+      background: #333333;
+      transform: translateY(-1px);
+    }
+    .pdp-notify-message {
+      padding: 14px 18px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 4px;
+      color: #166534;
+      font-size: 0.95rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .pdp-btn-continue-shopping {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 50px;
+      background: #1d1d1b;
+      color: #ffffff;
+      text-decoration: none;
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      border-radius: 3px;
+      transition: background 0.2s ease, transform 0.15s ease;
+    }
+    .pdp-btn-continue-shopping:hover {
+      background: #333333;
+      transform: translateY(-1px);
+    }
+
+    .pdp-breadcrumbs-bar {
+      background-color: #ffffff;
+      border-bottom: 1px solid #f0ede9;
+      width: 100%;
+      padding: 12px 24px;
+      box-sizing: border-box;
+    }
+    .pdp-breadcrumbs-container {
+      max-width: 1360px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .pdp-back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #1d1d1b;
+      text-decoration: none;
+      padding: 7px 14px 7px 10px;
+      background: #faf6f2;
+      border: 1px solid #e7ded7;
+      border-radius: 20px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .pdp-back-button:hover {
+      background: #f1c0ad;
+      border-color: #e5ab96;
+      color: #1d1d1b;
+      transform: translateX(-2px);
+    }
+    .pdp-back-button svg {
+      transition: transform 0.2s ease;
+    }
+    .pdp-back-button:hover svg {
+      transform: translateX(-3px);
+    }
+    .pdp-breadcrumbs-nav {
+      display: flex;
+      align-items: center;
+      font-size: 0.82rem;
+      color: #71717a;
+    }
+    .pdp-breadcrumbs-list {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0;
+      margin: 0;
+      flex-wrap: wrap;
+    }
+    .pdp-breadcrumbs-list li a {
+      color: #52525b;
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+    .pdp-breadcrumbs-list li a:hover {
+      color: #1d1d1b;
+      text-decoration: underline;
+    }
+    .pdp-breadcrumbs-list li.separator {
+      color: #a1a1aa;
+      font-size: 0.75rem;
+    }
+    .pdp-breadcrumbs-list li.current {
+      color: #1d1d1b;
+      font-weight: 500;
+      max-width: 320px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    @media (max-width: 640px) {
+      .pdp-breadcrumbs-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .pdp-breadcrumbs-nav {
+        font-size: 0.78rem;
+      }
+      .pdp-breadcrumbs-list li.current {
+        max-width: 220px;
+      }
+    }
+
+    .pdp-main-section {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 24px 24px 60px 24px;
+    }
+
+    .pdp-grid {
+      display: grid;
+      grid-template-columns: 56% 44%;
+      gap: 48px;
+      align-items: start;
+    }
+
+    @media (max-width: 992px) {
+      .pdp-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+    }
+
+    .pdp-gallery-col {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .pdp-hero-wrap {
+      position: relative;
+      width: 100%;
+      border-radius: 2px;
+      overflow: hidden;
+      background-color: #f7f5f2;
+    }
+
+    .pdp-hero-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+    }
+
+    .pdp-thumbs-strip {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+
+    .pdp-thumb-card {
+      width: 80px;
+      height: 98px;
+      border-radius: 2px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      background: #f7f5f2;
+      flex-shrink: 0;
+      transition: border-color 0.15s ease;
+    }
+
+    .pdp-thumb-card.active, .pdp-thumb-card:hover {
+      border-color: #1d1d1b;
+    }
+
+    .pdp-thumb-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .pdp-info-col {
+      padding-top: 6px;
+    }
+
+    .pdp-product-title {
+      font-family: var(--font-serif);
+      font-size: 2.25rem;
+      font-weight: 500;
+      line-height: 1.25;
+      color: #1d1d1b;
+      margin-bottom: 14px;
+      letter-spacing: -0.01em;
+    }
+
+    .pdp-price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .pdp-current-price {
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: #1d1d1b;
+      font-family: var(--font-sans);
+    }
+
+    .pdp-currency-toggle {
+      font-size: 0.78rem;
+      color: #64748b;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .pdp-price-divider {
+      width: 100%;
+      height: 1px;
+      background-color: #d4d4d8;
+      margin: 18px 0 24px 0;
+      border: none;
+    }
+
+    .pdp-size-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 12px;
+    }
+
+    .pdp-size-heading {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      font-style: italic;
+      color: #1d1d1b;
+      font-weight: 500;
+    }
+
+    .pdp-size-guide-link {
+      font-size: 0.85rem;
+      color: #666666;
+      text-decoration: underline;
+      cursor: pointer;
+      font-family: var(--font-sans);
+    }
+
+    .pdp-size-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .pdp-size-btn {
+      height: 48px;
+      background: #ffffff;
+      border: 1px solid #d4d4d8;
+      border-radius: 2px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: #1d1d1b;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-sans);
+    }
+
+    .pdp-size-btn:hover {
+      border-color: #1d1d1b;
+      background: #faf8f5;
+    }
+
+    .pdp-size-btn.active {
+      background: #1d1d1b;
+      color: #ffffff;
+      border-color: #1d1d1b;
+      font-weight: 600;
+    }
+
+    .pdp-stock-notice-text {
+      color: #d97706;
+      font-size: 0.86rem;
+      font-weight: 500;
+      margin-top: 10px;
+    }
+
+    .pdp-stock-underline-bar {
+      width: 34px;
+      height: 3px;
+      background: #e57e56;
+      margin-top: 6px;
+      margin-bottom: 24px;
+      border-radius: 1px;
+    }
+
+    .pdp-qty-heading {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      font-weight: 500;
+      color: #1d1d1b;
+      margin-bottom: 10px;
+    }
+
+    .pdp-qty-stepper {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid #d4d4d8;
+      border-radius: 2px;
+      width: 110px;
+      height: 46px;
+      background: #ffffff;
+      margin-bottom: 20px;
+    }
+
+    .pdp-qty-btn {
+      width: 36px;
+      height: 100%;
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      color: #1d1d1b;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.15s;
+    }
+
+    .pdp-qty-btn:hover {
+      background-color: #f4f4f5;
+    }
+
+    .pdp-qty-val {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #1d1d1b;
+      text-align: center;
+    }
+
+    .pdp-actions-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 34px;
+    }
+
+    .pdp-btn-select-size {
+      flex: 1;
+      height: 52px;
+      background-color: var(--color-brand-peach);
+      color: #1d1d1b;
+      border: none;
+      border-radius: 2px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pdp-btn-select-size:hover {
+      background-color: var(--color-brand-peach-hover);
+    }
+
+    .pdp-btn-wishlist-box {
+      width: 52px;
+      height: 52px;
+      background-color: var(--color-brand-peach);
+      color: #1d1d1b;
+      border: none;
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+
+    .pdp-btn-wishlist-box:hover {
+      background-color: var(--color-brand-peach-hover);
+      transform: scale(1.02);
+    }
+
+    .pdp-btn-wishlist-box.active svg {
+      fill: #e57e56;
+      stroke: #e57e56;
+    }
+
+    .pdp-finishing-section {
+      margin-top: 10px;
+      margin-bottom: 24px;
+    }
+
+    .finishing-touches-title {
+      font-family: var(--font-serif);
+      font-size: 1.85rem;
+      font-weight: 500;
+      color: #1d1d1b;
+      margin-bottom: 16px;
+      letter-spacing: -0.01em;
+    }
+
+    .finishing-touches-cards-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .touch-card {
+      background-color: #faf5f0;
+      border-radius: 2px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .touch-card:hover {
+      background-color: #f6ede5;
+    }
+
+    .touch-card-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .touch-card-img {
+      width: 82px;
+      height: 82px;
+      object-fit: cover;
+      border-radius: 2px;
+      background: #ffffff;
+      flex-shrink: 0;
+    }
+
+    .touch-card-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .touch-card-title {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: #1d1d1b;
+      margin-bottom: 4px;
+      line-height: 1.3;
+    }
+
+    .touch-card-price {
+      font-size: 0.92rem;
+      color: #1d1d1b;
+      font-weight: 500;
+      font-family: var(--font-sans);
+    }
+
+    .touch-card-checkbox {
+      width: 22px;
+      height: 22px;
+      border: 1.5px solid #d4d4d8;
+      border-radius: 3px;
+      background: #ffffff;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .touch-card.is-selected .touch-card-checkbox {
+      background: #1d1d1b;
+      border-color: #1d1d1b;
+    }
+
+    .touch-card.is-selected .touch-card-checkbox::after {
+      content: '✓';
+      color: #ffffff;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .pdp-btn-select-products {
+      width: 100%;
+      height: 48px;
+      background-color: #f7e0d6;
+      color: #a88;
+      border: none;
+      border-radius: 2px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      margin-top: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .pdp-btn-select-products.is-active {
+      background-color: var(--color-brand-peach);
+      color: #1d1d1b;
+    }
+
+    .pdp-btn-select-products.is-active:hover {
+      background-color: var(--color-brand-peach-hover);
+    }
+
+    .collection-features-bar {
+      background-color: #ffffff;
+      padding: 50px 24px;
+      margin-top: 55px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .collection-features-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      box-sizing: border-box;
+    }
+
+    .collection-feature-item {
+      background-color: #faf5f0;
+      border: 1px solid rgba(242, 193, 174, 0.65);
+      border-radius: 8px;
+      padding: 34px 22px 30px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+      box-sizing: border-box;
+    }
+
+    .collection-feature-item:hover {
+      background-color: #ffffff;
+      border-color: #e47e56;
+      transform: translateY(-4px);
+      box-shadow: 0 10px 24px rgba(228, 126, 86, 0.14);
+    }
+
+    .collection-feature-icon-circle {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background-color: #faeee5;
+      border: 1px solid rgba(228, 126, 86, 0.35);
+      color: #c85a32;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      transition: transform 0.25s ease, background-color 0.25s ease, color 0.25s ease;
+    }
+
+    .collection-feature-item:hover .collection-feature-icon-circle {
+      transform: scale(1.08);
+      background-color: #f7dacb;
+      color: #1d1d1b;
+    }
+
+    .collection-feature-title {
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #1d1d1b;
+      margin: 0 0 6px 0;
+      letter-spacing: -0.01em;
+      line-height: 1.3;
+    }
+
+    .collection-feature-sub {
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 0.85rem;
+      font-weight: 400;
+      line-height: 1.45;
+      color: #64748b;
+      margin: 0;
+      max-width: 250px;
+    }
+
+    @media (max-width: 992px) {
+      .collection-features-inner {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .collection-features-bar {
+        padding: 35px 16px;
+        margin-top: 35px;
+      }
+      .collection-features-inner {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .collection-feature-item {
+        padding: 28px 18px 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="clothifyTopProgress" class="clothify-top-progress"></div>
+  <div id="clothifyPageLoader" class="clothify-preloader">
+    <div class="preloader-content">
+      <div class="preloader-image-wrap">
+        <img src="/static/images/loader-logo.png" 
+             alt="Their Nibs" 
+             class="preloader-custom-img" 
+             onerror="this.onerror=null; this.src='/static/images/loader-logo-square.png';">
+      </div>
+      <h2 class="preloader-brand-title">Their Nibs</h2>
+      <div class="preloader-brand-subtitle">Luxury Sleepwear &amp; Loungewear</div>
+      <div class="preloader-bar-wrap">
+        <div class="preloader-bar-inner"></div>
+      </div>
+      <div class="preloader-status-text" id="preloaderStatusText">Entering Boutique...</div>
+    </div>
+  </div>
+
+  {% include 'includes/announcement_bar.html' %}
+
+  {% include 'includes/header.html' %}
+
+  <div class="pdp-breadcrumbs-bar">
+    <div class="pdp-breadcrumbs-container">
+      <div class="pdp-breadcrumbs-left">
+        <a href="{{ back_url|default:category_url|default:'/collections/new-in-1/' }}" class="pdp-back-button" id="pdpBackBtn" aria-label="Go back to previous page">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          <span>Back to {{ category_name|default:"Collection" }}</span>
+        </a>
+      </div>
+      <nav class="pdp-breadcrumbs-nav" aria-label="Breadcrumb">
+        <ol class="pdp-breadcrumbs-list">
+          <li><a href="{% url 'homepage' %}">Home</a></li>
+          <li class="separator">/</li>
+          <li><a href="{{ category_url|default:'/collections/new-in-1/' }}">{{ category_name|default:"Women's Pyjamas" }}</a></li>
+          {% if subcategory_name %}
+          <li class="separator">/</li>
+          <li><a href="{{ subcategory_url }}">{{ subcategory_name }}</a></li>
+          {% endif %}
+          <li class="separator">/</li>
+          <li class="current" aria-current="page">{{ product.name|default:"Pyjama Set" }}</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <main class="pdp-main-section">
+    <div class="pdp-grid">
+
+      <div class="pdp-gallery-col">
+        <div class="pdp-hero-wrap">
+          <img id="pdpMainHeroImg" 
+               src="{{ gallery.0|default:product.image_url|default:'/static/images/products/mens-navy-contrast-gauze.png' }}" 
+               alt="{{ product.name|default:'Their Nibs Luxury Pyjama Set' }}" 
+               class="pdp-hero-img">
+        </div>
+
+        <div class="pdp-thumbs-strip">
+          {% for img_url in gallery %}
+          <div class="pdp-thumb-card {% if forloop.first %}active{% endif %}" onclick="switchPdpHero(this, '{{ img_url }}')">
+            <img src="{{ img_url }}" alt="View angle {{ forloop.counter }}">
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="pdp-info-col">
+
+        <h1 class="pdp-product-title" id="pdpProductTitle">
+          {{ product.name|default:"Mens Navy Contrast Relaxed Fit Gauze Pyjama Set" }}
+        </h1>
+
+        <div class="pdp-price-row">
+          <span class="pdp-current-price" id="pdpPriceDisplay">
+            ₹{{ product.price|default:"48.00" }}
+          </span>
+        </div>
+
+        <div class="pdp-price-divider"></div>
+
+        <div class="pdp-size-header-row">
+          <span class="pdp-size-heading">Size:</span>
+          <a href="javascript:void(0)" class="pdp-size-guide-link" onclick="openSizeGuideModal()">Size guide</a>
+        </div>
+
+        <div class="pdp-size-grid" id="pdpSizeGrid">
+          {% for s in sizes %}
+          <button type="button" 
+                  class="pdp-size-btn {% if s == 'M' %}active{% endif %}" 
+                  data-size="{{ s }}" 
+                  onclick="selectPdpSize('{{ s }}', this)">
+            {{ s }}
+          </button>
+          {% endfor %}
+        </div>
+
+        {% if stock <= 0 or product.stock <= 0 or product.status == 'out_of_stock' %}
+        <div class="pdp-stock-notice-text pdp-stock-out" style="color: #dc2626; font-weight: 600;">
+          Currently Out of Stock
+        </div>
+        <div class="pdp-stock-underline-bar" style="background-color: #ef4444; width: 100%;"></div>
+        {% else %}
+        <div class="pdp-stock-notice-text">
+          Only {{ stock }} left. Order soon!
+        </div>
+        <div class="pdp-stock-underline-bar"></div>
+
+        <h3 class="pdp-qty-heading">Quantity</h3>
+        <div class="pdp-qty-stepper">
+          <button type="button" class="pdp-qty-btn" onclick="adjustPdpQty(-1)" aria-label="Decrease quantity">&minus;</button>
+          <span class="pdp-qty-val" id="pdpQtyVal">1</span>
+          <button type="button" class="pdp-qty-btn" onclick="adjustPdpQty(1)" aria-label="Increase quantity">&plus;</button>
+        </div>
+        {% endif %}
+
+        {% if stock <= 0 or product.stock <= 0 or product.status == 'out_of_stock' %}
+        <div class="pdp-notify-container" id="pdpNotifyContainer">
+          <div class="pdp-actions-row" id="pdpNotifyActionRow">
+            <button type="button" class="pdp-btn-notify-me" id="pdpBtnNotifyMe" onclick="handlePdpNotifyMe()">
+              Notify Me
+            </button>
+            <button type="button" class="pdp-btn-wishlist-box" onclick="togglePdpWishlist(this)" aria-label="Add to Wishlist" id="pdpWishlistBtn">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </button>
+          </div>
+          <div class="pdp-notify-success-wrap" id="pdpNotifySuccessWrap" style="display: none; margin-top: 14px;">
+            <div class="pdp-notify-message">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <span>You will be notify once the product is avaliable</span>
+            </div>
+            <a href="{% if product.category %}{% url 'collection_detail' product.category.slug %}{% else %}{% url 'collection_detail' 'new-in-1' %}{% endif %}" class="pdp-btn-continue-shopping">
+              Continue Shopping
+            </a>
+          </div>
+        </div>
+        {% else %}
+        <div class="pdp-actions-row">
+          <button type="button" class="pdp-btn-select-size" id="pdpMainAddBagBtn" onclick="submitPdpAddToBag()">
+            Select Size
+          </button>
+          <button type="button" class="pdp-btn-wishlist-box" onclick="togglePdpWishlist(this)" aria-label="Add to Wishlist" id="pdpWishlistBtn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </button>
+        </div>
+        {% endif %}
+
+        <div class="pdp-finishing-section">
+          <h2 class="finishing-touches-title">The finishing touches</h2>
+
+          <div class="finishing-touches-cards-wrap">
+            {% for touch in finishing_touches %}
+            <div class="touch-card" 
+                 id="{{ touch.id }}" 
+                 onclick="toggleFinishingTouch('{{ touch.id }}', '{{ touch.name|escapejs }}', '{{ touch.price }}', '{{ touch.image }}')">
+              <div class="touch-card-left">
+                <img src="{{ touch.image }}" alt="{{ touch.name }}" class="touch-card-img">
+                <div class="touch-card-info">
+                  <h4 class="touch-card-title">{{ touch.name }}</h4>
+                  <div class="touch-card-price">₹{{ touch.price }}</div>
+                </div>
+              </div>
+              <div class="touch-card-checkbox" aria-hidden="true"></div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <button type="button" class="pdp-btn-select-products" id="btnSelectProducts" onclick="submitFinishingTouches()">
+            Select products
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+    <section class="collection-features-bar" aria-label="Their Nibs Guarantees and Services">
+      <div class="collection-features-inner">
+
+        <div class="collection-feature-item">
+          <div class="collection-feature-icon-circle" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="3" width="15" height="13"/>
+              <polygon points="16 8 20 8 23 11 23 16 16 16 8"/>
+              <circle cx="5.5" cy="18.5" r="2.5"/>
+              <circle cx="18.5" cy="18.5" r="2.5"/>
+              <line x1="5" y1="9" x2="11" y2="9"/>
+              <polyline points="9 6 12 9 9 12"/>
+            </svg>
+          </div>
+          <h3 class="collection-feature-title">Easy Returns</h3>
+          <p class="collection-feature-sub">30-day no quibble guarantee</p>
+        </div>
+
+        <div class="collection-feature-item">
+          <div class="collection-feature-icon-circle" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+          </div>
+          <h3 class="collection-feature-title">Worldwide Shipping</h3>
+          <p class="collection-feature-sub">Receive your order around 3-5 days after shipment</p>
+        </div>
+
+        <div class="collection-feature-item">
+          <div class="collection-feature-icon-circle" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22v-6"/>
+              <path d="M7.5 12a4.5 4.5 0 0 1 9 0 4.5 4.5 0 0 1 4.5 4.5c0 2.5-2 4.5-4.5 4.5H7.5C5 21 3 19 3 16.5A4.5 4.5 0 0 1 7.5 12z"/>
+              <path d="M12 12a3 3 0 0 1 3-3c0-2-1.5-3-3-3s-3 1-3 3a3 3 0 0 1 3 3z"/>
+            </svg>
+          </div>
+          <h3 class="collection-feature-title">Premium Quality</h3>
+          <p class="collection-feature-sub">Made with love, using high-quality premium materials</p>
+        </div>
+
+        <div class="collection-feature-item">
+          <div class="collection-feature-icon-circle" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/>
+              <line x1="8" y1="8" x2="16" y2="8"/>
+              <line x1="8" y1="12" x2="16" y2="12"/>
+              <line x1="8" y1="16" x2="13" y2="16"/>
+            </svg>
+          </div>
+          <h3 class="collection-feature-title">Buy Now, Pay Later</h3>
+          <p class="collection-feature-sub">Instalments with 0% interest and no extra charges through Klarna</p>
+        </div>
+      </div>
+    </section>
+
+  {% include 'includes/footer.html' %}
+
+  <script>
+    let selectedSize = 'M';
+    let currentQty = 1;
+    const basePriceINR = parseFloat('{{ product.price|default:"48.00" }}') || 48.00;
+    const productName = "{{ product.name|default:'Mens Navy Contrast Relaxed Fit Gauze Pyjama Set'|escapejs }}";
+    const productSlug = "{{ product.slug|default:'mens-navy-contrast-gauze-pyjama-set'|escapejs }}";
+    const mainImgUrl = "{{ gallery.0|default:'/static/images/products/mens-navy-contrast-gauze.png' }}";
+
+    const selectedFinishingTouches = {};
+
+    function switchPdpHero(card, imgUrl) {
+      document.querySelectorAll('.pdp-thumb-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      const hero = document.getElementById('pdpMainHeroImg');
+      if (hero) hero.src = imgUrl;
+    }
+
+    function selectPdpSize(sizeVal, btn) {
+      selectedSize = sizeVal;
+      document.querySelectorAll('.pdp-size-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const addBtn = document.getElementById('pdpMainAddBagBtn');
+      if (addBtn) {
+        addBtn.textContent = `Add to Bag (${sizeVal})`;
+      }
+    }
+
+    function adjustPdpQty(delta) {
+      currentQty += delta;
+      if (currentQty < 1) currentQty = 1;
+      if (currentQty > 10) currentQty = 10;
+      const valEl = document.getElementById('pdpQtyVal');
+      if (valEl) valEl.textContent = currentQty;
+    }
+
+    function togglePdpWishlist(btn) {
+      btn.classList.toggle('active');
+      let wishlist = [];
+      try {
+        wishlist = JSON.parse(localStorage.getItem('tn_wishlist') || '[]');
+      } catch(e) { wishlist = []; }
+
+      if (btn.classList.contains('active')) {
+        const item = {
+          id: productSlug,
+          name: productName,
+          price: '₹' + basePriceINR.toFixed(2),
+          price_num: basePriceINR,
+          image: mainImgUrl,
+          size: selectedSize,
+          slug: productSlug,
+          savedAt: new Date().toISOString()
+        };
+        wishlist = wishlist.filter(x => x.slug !== productSlug);
+        wishlist.unshift(item);
+      } else {
+        wishlist = wishlist.filter(x => x.slug !== productSlug);
+      }
+
+      try {
+        localStorage.setItem('tn_wishlist', JSON.stringify(wishlist));
+      } catch(e) {}
+    }
+
+    function openSizeGuideModal() {
+      alert("Their Nibs Size Guide:\n\n• XS (UK 8): Chest 36\" | Waist 28-30\"\n• S (UK 10): Chest 38\" | Waist 30-32\"\n• M (UK 12): Chest 40\" | Waist 32-34\"\n• L (UK 14): Chest 42\" | Waist 34-36\"\n• XL (UK 16): Chest 44\" | Waist 36-38\"\n• XXL (UK 18): Chest 46\" | Waist 38-40\"\n• 3XL (UK 20): Chest 48\" | Waist 40-42\"\n\nAll sleepwear fits true to size in a relaxed, comfortable cut.");
+    }
+
+    function closeSizeGuideModal() {}
+
+    function toggleFinishingTouch(id, name, price, img) {
+      const card = document.getElementById(id);
+      if (!card) return;
+
+      if (selectedFinishingTouches[id]) {
+        delete selectedFinishingTouches[id];
+        card.classList.remove('is-selected');
+      } else {
+        selectedFinishingTouches[id] = { id, name, price: parseFloat(price) || 0, img };
+        card.classList.add('is-selected');
+      }
+
+      const btnSelect = document.getElementById('btnSelectProducts');
+      const count = Object.keys(selectedFinishingTouches).length;
+      if (btnSelect) {
+        if (count > 0) {
+          btnSelect.classList.add('is-active');
+          btnSelect.textContent = `Add ${count} Selected Item${count > 1 ? 's' : ''} to Bag`;
+        } else {
+          btnSelect.classList.remove('is-active');
+          btnSelect.textContent = 'Select products';
+        }
+      }
+    }
+
+    function updateCartBadge() {
+      let bag = [];
+      try {
+        bag = JSON.parse(localStorage.getItem('theirnibs_bag') || '[]');
+      } catch(e) { bag = []; }
+      const totalQty = bag.reduce((sum, item) => sum + (item.qty || 1), 0);
+      const badges = document.querySelectorAll('#cartCountBadge, #headerCartCount');
+      badges.forEach(b => b.textContent = totalQty);
+    }
+
+    function handlePdpNotifyMe() {
+      const actionRow = document.getElementById('pdpNotifyActionRow');
+      const successWrap = document.getElementById('pdpNotifySuccessWrap');
+      if (actionRow) actionRow.style.display = 'none';
+      if (successWrap) successWrap.style.display = 'block';
+    }
+
+    function openMobileNav() {
+      const drawer = document.getElementById('mobileNavDrawer');
+      const backdrop = document.getElementById('mobileNavBackdrop');
+      if (drawer) drawer.classList.add('active');
+      if (backdrop) backdrop.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileNav() {
+      const drawer = document.getElementById('mobileNavDrawer');
+      const backdrop = document.getElementById('mobileNavBackdrop');
+      if (drawer) drawer.classList.remove('active');
+      if (backdrop) backdrop.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function submitFinishingTouches() {
+      const count = Object.keys(selectedFinishingTouches).length;
+      if (count === 0) return;
+
+      let bag = [];
+      try {
+        bag = JSON.parse(localStorage.getItem('theirnibs_bag') || '[]');
+      } catch(e) { bag = []; }
+
+      Object.values(selectedFinishingTouches).forEach(touch => {
+        bag.push({
+          title: touch.name,
+          price: '₹' + touch.price.toFixed(2),
+          image: touch.img,
+          slug: touch.id,
+          size: 'Standard',
+          qty: 1
+        });
+      });
+
+      try {
+        localStorage.setItem('theirnibs_bag', JSON.stringify(bag));
+        localStorage.setItem('theirnibs_cart', JSON.stringify(bag));
+      } catch(e) {}
+
+      updateCartBadge();
+      const btnSelect = document.getElementById('btnSelectProducts');
+      if (btnSelect) {
+        btnSelect.textContent = '✓ Added Selected Items!';
+        btnSelect.style.backgroundColor = '#15803d';
+        setTimeout(() => {
+          btnSelect.textContent = `Add ${count} Selected Items to Bag`;
+          btnSelect.style.backgroundColor = '';
+        }, 1600);
+      }
+    }
+
+    function submitPdpAddToBag() {
+      const isUserLoggedIn = {% if request.session.customer_logged_in or request.session.customer_id or user.is_authenticated %}true{% else %}false{% endif %};
+      if (!isUserLoggedIn) {
+        alert('Please log in to add items to your shopping bag.');
+        window.location.href = "{% url 'customer_login' %}?next=" + encodeURIComponent(window.location.pathname + window.location.search);
+        return;
+      }
+
+      let bag = [];
+      try {
+        bag = JSON.parse(localStorage.getItem('theirnibs_bag') || '[]');
+      } catch(e) { bag = []; }
+
+      const existingBagItem = bag.find(item => item.slug === productSlug && item.size === selectedSize);
+      if (existingBagItem) {
+        existingBagItem.qty = (existingBagItem.qty || 1) + currentQty;
+      } else {
+        bag.push({
+          title: productName,
+          price: '₹' + basePriceINR.toFixed(2),
+          image: mainImgUrl,
+          slug: productSlug,
+          size: selectedSize,
+          qty: currentQty
+        });
+      }
+
+      // Add any selected finishing touches
+      Object.values(selectedFinishingTouches).forEach(touch => {
+        bag.push({
+          title: touch.name,
+          price: '₹' + touch.price.toFixed(2),
+          image: touch.img,
+          slug: touch.id,
+          size: 'Standard',
+          qty: 1
+        });
+      });
+
+      try {
+        localStorage.setItem('theirnibs_bag', JSON.stringify(bag));
+        localStorage.setItem('theirnibs_cart', JSON.stringify(bag));
+      } catch(e) {}
+
+      updateCartBadge();
+
+      const addBtn = document.getElementById('pdpMainAddBagBtn');
+      if (addBtn) {
+        const origText = addBtn.textContent;
+        addBtn.textContent = '✓ Added to Bag!';
+        addBtn.style.backgroundColor = '#15803d';
+        addBtn.style.color = '#ffffff';
+        setTimeout(() => {
+          addBtn.textContent = origText;
+          addBtn.style.backgroundColor = '';
+          addBtn.style.color = '';
+        }, 1600);
+      }
+    }
+
+    function openCartDrawer() {
+      window.location.href = "{% url 'checkout' %}";
+    }
+
+    function closeCartDrawer() {}
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateCartBadge();
+      document.querySelectorAll('.mobile-menu-toggle').forEach(btn => {
+        btn.addEventListener('click', openMobileNav);
+      });
+      const mobClose = document.getElementById('mobileNavClose');
+      if (mobClose) mobClose.addEventListener('click', closeMobileNav);
+      const mobBackdrop = document.getElementById('mobileNavBackdrop');
+      if (mobBackdrop) mobBackdrop.addEventListener('click', closeMobileNav);
+
+      // Contextual back button handler: goes back to previous cards/collection or category fallback
+      const backBtn = document.getElementById('pdpBackBtn');
+      if (backBtn) {
+        backBtn.addEventListener('click', function(e) {
+          if (window.history.length > 1 && document.referrer && document.referrer.indexOf(window.location.host) !== -1 && document.referrer !== window.location.href) {
+            e.preventDefault();
+            window.history.back();
+          }
+        });
+      }
+    });
+  </script>
+  <script src="/static/js/preloader.js?v=20261012-loader10s"></script>
+</body>
+</html>

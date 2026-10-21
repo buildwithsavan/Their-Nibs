@@ -1,0 +1,241 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Dedicated Shipping &amp; Logistics Desk{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Dedicated Shipping &amp; Logistics Hub</h1>
+        <p class="page-subtitle">Track outbound boutique parcel dispatches, multi-carrier manifests, live AWB tracking numbers, and delivery fulfillment.</p>
+    </div>
+    <div class="page-actions">
+        <a href="/admin-panel/orders/" class="btn btn-secondary">
+            <span>Orders Desk</span>
+        </a>
+    </div>
+</div>
+
+<div class="stats-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 1.15rem;">
+    <div class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-title">Total Shipments</span>
+        </div>
+        <div class="stat-value">{{ total_shipments }}</div>
+        <div class="stat-subtext"><span class="stat-trend-up">Generated AWB manifests</span></div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-title">In Transit</span>
+        </div>
+        <div class="stat-value">{{ in_transit_count }}</div>
+        <div class="stat-subtext"><span class="stat-trend-up">Active courier transit</span></div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-title">Successfully Delivered</span>
+        </div>
+        <div class="stat-value">{{ delivered_count }}</div>
+        <div class="stat-subtext"><span class="stat-trend-up">Parcels received by shoppers</span></div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-card-header">
+            <span class="stat-title">RTO / Returns</span>
+        </div>
+        <div class="stat-value">{{ rto_count }}</div>
+        <div class="stat-subtext">
+            {% if rto_count > 0 %}
+            <span class="stat-trend-down">Return to origin shipments</span>
+            {% else %}
+            <span class="stat-trend-up">0% return exceptions</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="clothify-card" style="margin-bottom: 1rem; padding: 0.85rem 1.15rem; background: #ffffff;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.08em;">Integrated Courier Networks:</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;">
+            {% for c in couriers %}
+            <div style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.75rem; background: #fbf9f5; border: 1px solid #e4ded5; border-radius: 6px; font-size: 0.82rem; font-weight: 600; color: var(--primary);">
+                <span style="width: 8px; height: 8px; border-radius: 50%; background: #059669;"></span>
+                <span>{{ c.name }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<form method="GET" class="filter-bar">
+    <div class="search-input">
+        <input type="text" name="q" value="{{ current_q }}" class="form-control" placeholder="Search AWB tracking #, order number, recipient name, city...">
+    </div>
+    <div style="min-width: 170px;">
+        <select name="courier" class="form-select" onchange="this.form.submit()">
+            <option value="">All Couriers</option>
+            {% for c in couriers %}
+            <option value="{{ c.id }}" {% if current_courier == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div style="min-width: 170px;">
+        <select name="status" class="form-select" onchange="this.form.submit()">
+            <option value="all">All Dispatch Statuses</option>
+            <option value="manifested" {% if current_status == 'manifested' %}selected{% endif %}>Manifest Created</option>
+            <option value="picked_up" {% if current_status == 'picked_up' %}selected{% endif %}>Picked Up</option>
+            <option value="in_transit" {% if current_status == 'in_transit' %}selected{% endif %}>In Transit</option>
+            <option value="out_for_delivery" {% if current_status == 'out_for_delivery' %}selected{% endif %}>Out for Delivery</option>
+            <option value="delivered" {% if current_status == 'delivered' %}selected{% endif %}>Delivered</option>
+            <option value="rto_initiated" {% if current_status == 'rto_initiated' %}selected{% endif %}>RTO Initiated</option>
+            <option value="returned" {% if current_status == 'returned' %}selected{% endif %}>Returned</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
+    <a href="/admin-panel/shipping/" class="btn btn-secondary btn-sm">Reset</a>
+</form>
+
+<div class="clothify-card">
+    <div class="card-header" style="display: flex; align-items: center; justify-content: space-between;">
+        <h3 class="card-title">Live Dispatch &amp; Tracking Manifests</h3>
+        <span style="font-size: 0.78rem; color: var(--text-muted);">{{ shipments.paginator.count }} active shipments</span>
+    </div>
+    <div class="table-responsive">
+        <table class="clothify-table">
+            <thead>
+                <tr>
+                    <th>Shipment Ref</th>
+                    <th>Order &amp; Customer</th>
+                    <th>Carrier &amp; Tracking AWB</th>
+                    <th>Weight &amp; Parcel</th>
+                    <th>Est. Delivery</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Update Logistics</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for shp in shipments %}
+                <tr>
+                    <td>
+                        <strong style="color: var(--primary); font-size: 0.9rem;">{{ shp.shipment_id }}</strong>
+                        <div style="font-size: 0.72rem; color: var(--text-muted);">{{ shp.created_at|date:"d M Y, H:i" }}</div>
+                    </td>
+                    <td>
+                        <a href="/admin-panel/orders/{{ shp.order.id }}/" style="font-weight: 700; color: var(--accent); text-decoration: none;">
+                            #{{ shp.order.order_number }}
+                        </a>
+                        <div style="font-size: 0.82rem; color: var(--primary);">{{ shp.order.shipping_name }}</div>
+                        <div style="font-size: 0.72rem; color: var(--text-muted);">{{ shp.order.shipping_city }}, {{ shp.order.shipping_state }}</div>
+                    </td>
+                    <td>
+                        <div style="font-weight: 600; font-size: 0.84rem; color: var(--primary);">{{ shp.courier.name|default:"Courier Assigned" }}</div>
+                        {% if shp.tracking_number %}
+                        <div style="font-family: monospace; font-size: 0.8rem; color: #2563eb; background: #eff6ff; padding: 0.12rem 0.45rem; border-radius: 4px; display: inline-block; margin-top: 0.15rem;">
+                            {{ shp.tracking_number }}
+                        </div>
+                        {% else %}
+                        <span style="font-size: 0.75rem; color: var(--text-muted); font-style: italic;">AWB Pending</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div style="font-size: 0.82rem; font-weight: 600; color: var(--primary);">{{ shp.weight_kg }} kg</div>
+                        <div style="font-size: 0.70rem; color: var(--text-muted);">{{ shp.dimensions }}</div>
+                    </td>
+                    <td>
+                        <span style="font-size: 0.82rem; color: var(--primary);">{{ shp.estimated_delivery|date:"d M Y"|default:"Pending" }}</span>
+                    </td>
+                    <td>
+                        {% if shp.status == 'delivered' %}
+                        <span class="status-badge status-delivered">✓ Delivered</span>
+                        {% elif shp.status == 'in_transit' or shp.status == 'out_for_delivery' %}
+                        <span class="status-badge status-shipped">🚚 {{ shp.get_status_display }}</span>
+                        {% elif shp.status == 'picked_up' or shp.status == 'manifested' %}
+                        <span class="status-badge status-pending">⏳ {{ shp.get_status_display }}</span>
+                        {% else %}
+                        <span class="status-badge status-cancelled">⚠️ {{ shp.get_status_display }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: right;">
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="openLogisticsModal('{{ shp.id }}', '{{ shp.shipment_id }}', '{{ shp.tracking_number|default:'' }}', '{{ shp.status }}')" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;">
+                            Update Status ▾
+                        </button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2.5rem 1rem;">
+                        No shipments found matching the criteria.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if shipments.has_other_pages %}
+    <div class="card-footer" style="padding: 0.75rem 1.25rem; display: flex; justify-content: flex-end; gap: 0.5rem;">
+        {% if shipments.has_previous %}
+        <a href="?page={{ shipments.previous_page_number }}&status={{ current_status }}&courier={{ current_courier }}&q={{ current_q }}" class="btn btn-secondary btn-sm">Previous</a>
+        {% endif %}
+        <span style="display: flex; align-items: center; padding: 0 0.5rem; font-size: 0.8rem; color: var(--text-muted);">
+            Page {{ shipments.number }} of {{ shipments.paginator.num_pages }}
+        </span>
+        {% if shipments.has_next %}
+        <a href="?page={{ shipments.next_page_number }}&status={{ current_status }}&courier={{ current_courier }}&q={{ current_q }}" class="btn btn-secondary btn-sm">Next</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<div id="logisticsModal" style="display: none; position: fixed; inset: 0; background: rgba(30, 38, 50, 0.45); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+    <div style="background: #ffffff; border-radius: 10px; width: 100%; max-width: 440px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); overflow: hidden; border: 1px solid var(--border-subtle);">
+        <div style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between;">
+            <h4 style="margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--primary);" id="modalShipmentTitle">Update Shipment</h4>
+            <button type="button" onclick="closeLogisticsModal()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted);">✕</button>
+        </div>
+        <form method="POST" id="logisticsUpdateForm" style="padding: 1.25rem;">
+            {% csrf_token %}
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.35rem;">Dispatch Status</label>
+                <select name="status" id="modalStatusSelect" class="form-select">
+                    <option value="manifested">Manifest Created</option>
+                    <option value="picked_up">Picked Up by Courier</option>
+                    <option value="in_transit">In Transit</option>
+                    <option value="out_for_delivery">Out for Delivery</option>
+                    <option value="delivered">Delivered Successfully</option>
+                    <option value="rto_initiated">RTO Initiated (Return)</option>
+                    <option value="returned">Returned to Origin</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.35rem;">Tracking / AWB Number</label>
+                <input type="text" name="tracking_number" id="modalTrackingInput" class="form-control" placeholder="e.g. BLUEDART12345678IN">
+            </div>
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.35rem;">Logistics Update Notes</label>
+                <input type="text" name="dispatch_notes" class="form-control" placeholder="e.g. Dispatched from Mumbai Central Hub">
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+                <button type="button" onclick="closeLogisticsModal()" class="btn btn-secondary btn-sm">Cancel</button>
+                <button type="submit" class="btn btn-primary btn-sm">Save Logistics Update</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openLogisticsModal(id, shipmentId, tracking, status) {
+        document.getElementById('modalShipmentTitle').innerText = 'Update ' + shipmentId;
+        document.getElementById('logisticsUpdateForm').action = '/admin-panel/shipping/' + id + '/update-status/';
+        document.getElementById('modalTrackingInput').value = tracking;
+        document.getElementById('modalStatusSelect').value = status;
+        document.getElementById('logisticsModal').style.display = 'flex';
+    }
+    function closeLogisticsModal() {
+        document.getElementById('logisticsModal').style.display = 'none';
+    }
+</script>
+{% endblock %}
