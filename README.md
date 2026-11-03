@@ -1,12 +1,5 @@
 # Their Nibs — Luxury Sleepwear & Loungewear Platform
 
-[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![Django](https://img.shields.io/badge/Django-6.1.1-092E20?style=for-the-badge&logo=django&logoColor=white)](https://www.djangoproject.com/)
-[![SQLite](https://img.shields.io/badge/SQLite-db.sqlite3-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://www.sqlite.org/)
-[![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://en.wikipedia.org/wiki/HTML5)
-[![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://en.wikipedia.org/wiki/CSS)
-[![JavaScript](https://img.shields.io/badge/JavaScript-ES6%2B-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 > A modern, multi-portal luxury e-commerce platform inspired by British heritage nightwear. Built with Django and designed for seamless multi-channel retail across Customers, Sellers, and Store Administrators.
 
@@ -44,49 +37,42 @@
 ## Visual Showcase & Platform Screenshots
 
 ### 1. Customer Boutique Storefront
-*Immersive British heritage luxury nightwear shopping experience with hand-drawn signature prints and responsive catalog layout.*
 
 ![Customer Storefront Homepage](https://res.cloudinary.com/doexdsxo/image/upload/v1792560445/Screenshot_2026-10-21_105402.png)
 
 ---
 
 ### 2. Interactive Department Mega Menu
-*Deep multi-tier navigation supporting Shop by Style, Fabric, and Curated Occasions with instantaneous hover interactions.*
 
 ![Mega Menu Navigation](https://res.cloudinary.com/doexdsxo/image/upload/v1792560850/Screenshot_2026-10-21_105934.png)
 
 ---
 
 ### 3. Real-Time Order Tracking & Milestone Pipeline
-*5-stage live fulfillment progress bar with courier synchronization (BlueDart Express AWB) and dispatch milestones.*
 
 ![Order Tracking Pipeline](https://res.cloudinary.com/doexdsxo/image/upload/v1792560847/Screenshot_2026-10-21_110159.png)
 
 ---
 
 ### 4. Dedicated Merchant & Seller Onboarding Portal
-*Secure boutique login and multi-step onboarding workflow for independent nightwear creators and fashion brands.*
 
 ![Seller Portal Authentication](https://res.cloudinary.com/doexdsxo/image/upload/v1792560437/Screenshot_2026-10-21_105503.png)
 
 ---
 
 ### 5. Seller Studio — Low Stock Replenishment Center
-*Actionable merchant center categorizing critical stock shortages (1–3 units), below-threshold alerts, and one-click replenishment.*
 
 ![Seller Replenishment Center](docs/screenshots/05_seller_replenishment_center.png)
 
 ---
 
 ### 6. Admin Studio Operations Dashboard
-*Central executive command center displaying live revenue metrics, recent orders feed, and real-time fulfillment donut distribution.*
 
 ![Admin Studio Dashboard](https://res.cloudinary.com/doexdsxo/image/upload/v1792560848/Screenshot_2026-10-21_110259.png)
 
 ---
 
 ### 7. Multi-Vendor KYC Moderation & Seller Governance
-*Granular merchant compliance verification examining business entity records, GSTIN/PAN proofs, and one-click store moderation.*
 
 ![Seller KYC Verification](https://res.cloudinary.com/doexdsxo/image/upload/v1792560849/Screenshot_2026-10-21_110318.png)
 
@@ -105,7 +91,7 @@
 | **Payment** | **Razorpay** | Secure online payment processing with Razorpay Checkout, payment verification, and transaction handling |
 ---
 
-## 📁 Project Directory Structure
+## Project Directory Structure
 
 ```text
 theirnibs/
@@ -117,9 +103,9 @@ theirnibs/
 │   ├── views.py            # Inventory management & restock views
 │   └── templates/          # Seller panel HTML templates
 ├── store/                  # Customer storefront, checkout, cart & invoice generation
-│   ├── invoice_generator.py# ReportLab PDF invoice generation
-│   ├── views.py            # Store, cart, checkout & customer account views
-│   └── urls.py             # Customer-facing routing
+│   ├── invoice_generator.py  # ReportLab PDF invoice generation
+│   ├── views.py              # Store, cart, checkout & customer account views
+│   └── urls.py               # Customer-facing routing
 ├── product/                # Product collection views & catalog filters
 ├── templates/              # Base templates, navigation headers, modals & customer portal
 ├── static/                 # CSS stylesheets, custom JS modules, brand logos & favicon assets
@@ -135,7 +121,7 @@ theirnibs/
 
 ---
 
-## 🚀 Quick Start & Setup Guide
+## Quick Start & Setup Guide
 
 ### 1. Prerequisites
 * **Python 3.10+** installed on your system.
@@ -183,7 +169,7 @@ Open your browser and navigate to:
 
 ---
 
-## 🔑 Demo Credentials & Portal Access
+##  Demo Credentials & Portal Access
 
 The pre-seeded SQLite database comes pre-configured with active accounts across all three platform tiers for immediate evaluation:
 
@@ -192,11 +178,6 @@ The pre-seeded SQLite database comes pre-configured with active accounts across 
 | **Store Administrator** | [`/admin-panel/`](http://127.0.0.1:8000/admin-panel/) | `admin` | `admin123` | Full superuser access, platform governance, order dispatch, COD review, and vendor KYC moderation |
 | **Verified Merchant / Seller** | [`/seller-panel/`](http://127.0.0.1:8000/seller-panel/) | `seller@gmail.com` | `seller123` | Authorized seller studio, catalog creation, inventory alerts, low-stock replenishment & order management |
 | **Customer Shopper** | [`/`](http://127.0.0.1:8000/) or [`/customer/login/`](http://127.0.0.1:8000/customer/login/) | `user@gmail.com` | `user123` | Boutique purchasing, size selector, interactive wishlist, COD/online checkout & 5-stage order tracking |
-
-> ** Quick Tip**: If you ever need to reset or re-seed these default credentials on a fresh clone or new database, simply run:
-> ```bash
-> python seed_demo_accounts.py
-> ```
 
 ---
 
@@ -213,5 +194,5 @@ This project was built collaboratively by our dedicated team of 4 software engin
 
 ---
 
-## 📄 License
+## License
 This project is open-source and available under the [MIT License](LICENSE).
